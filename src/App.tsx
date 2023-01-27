@@ -1,5 +1,5 @@
-import React from 'react';
-import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
+import React, { useState } from 'react';
+import { addStyles, MathField, EditableMathField, EditableMathFieldProps } from '@numberworks/react-mathquill'
 import './App.css';
 
 addStyles();
@@ -9,42 +9,36 @@ enum FieldType {
     Text = 'TEXT'
 }
 
-class MathNoteField extends React.Component {
-    state: {
-        type: FieldType, initialValue: string
-    }
+interface MathNoteFieldProps {value: [string, React.Dispatch<React.SetStateAction<string>>], onFocus: (event: React.FocusEvent) => null}
 
-    constructor(props: { value: string }) {
-        super(props);
-        this.state = { type: FieldType.Math, initialValue: props.value ?? '' }
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange(field: MathField): void {
-        if (field.latex() === '"') {
-            this.setState({ type: FieldType.Text });
+function MathNoteField(props: MathNoteFieldProps) {
+    const [type, setType] = useState(props.value.charAt(0) == '"' ? FieldType.Text : FieldType.Math);
+    const [value, setValue] = props.value;
+    
+    const handleMathFieldChange = (target: MathField) => {
+        if (target.latex() == '"') {
+            setType(FieldType.Text);
         }
+        setValue(target.latex());
+    }
+    
+    const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue('"' + event.target.value);
     }
 
-    render() {
-        return (
-            this.state.type === FieldType.Math ?
-                <EditableMathField latex={this.state.initialValue} onChange={this.handleChange} config={{spaceBehavesLikeTab: true}} />
-                : <input autoFocus className="text-note" />
-        )
-    }
+    return (
+        type === FieldType.Math ?
+            <EditableMathField latex={value} onChange={handleMathFieldChange} config={{spaceBehavesLikeTab: true}} onFocus={props.onFocus} />
+            : <input autoFocus className="text-note" onChange={handleTextNoteChange} value={} onFocus={props.onFocus} />
+    )
 }
 
 function App() {
+    const [lines, setLines] = useState([] as string[]);
+    const [focusIndex, setFocusIndex] = useState(0);
     return (
         <div className="App">
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
+            {lines.map((e, i) => <MathNoteField value={e} onFocus={() => setFocusIndex(i)}/>)}
         </div>
     );
 }
