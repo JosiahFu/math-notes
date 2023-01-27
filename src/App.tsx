@@ -9,14 +9,20 @@ enum FieldType {
     Text = 'TEXT'
 }
 
-class MathNoteField extends React.Component {
-    state: {
-        type: FieldType, initialValue: string
-    }
+interface MathNoteFieldProps {value: string, onFocus: () => null}
 
-    constructor(props: { value: string }) {
+class MathNoteField extends React.Component {
+    initialValue: string;
+    handleFocus: () => null;
+    state: {
+        type: FieldType
+    };
+
+    constructor(props: MathNoteFieldProps) {
         super(props);
-        this.state = { type: FieldType.Math, initialValue: props.value ?? '' }
+        this.state = { type: FieldType.Math };
+        this.initialValue = props.value ?? '';
+        this.handleFocus = props.onFocus;
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -29,24 +35,55 @@ class MathNoteField extends React.Component {
     render() {
         return (
             this.state.type === FieldType.Math ?
-                <EditableMathField latex={this.state.initialValue} onChange={this.handleChange} config={{spaceBehavesLikeTab: true}} />
-                : <input autoFocus className="text-note" />
+                <EditableMathField latex={this.initialValue} onChange={this.handleChange} config={{spaceBehavesLikeTab: true}} onFocus={this.handleFocus} />
+                : <input autoFocus className="text-note" onFocus={this.handleFocus}/>
         )
     }
 }
 
-function App() {
-    return (
-        <div className="App">
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-            <MathNoteField />
-        </div>
-    );
+interface Props {}
+
+class App extends React.Component {
+    state: {lines: React.ReactElement[], focusedIndex: number};
+    
+    constructor(props: Props) {
+        super(props);
+        this.state = {lines: [<MathNoteField />], focusedIndex: 0};
+        this.setFocus = this.setFocus.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+    }
+    
+    setFocus(index: number) {
+        this.setState({focusedIndex: index});
+    }
+    
+    handleKeyDown(event: React.KeyboardEvent) {
+        switch (event.key) {
+            case "ArrowUp":
+                //..
+                this.state.lines.forEach((e, i) => {
+                    
+                    
+                })
+                 break;
+            case "ArrowDown":
+            case "Enter":
+                this.setFocus(2);
+               break;
+            default:
+                return;
+
+        }
+        event.preventDefault();
+    }
+
+    render() {
+        return (
+            <div className="App">
+                {this.state.lines}
+            </div>
+        );
+    }
 }
 
 export default App;
