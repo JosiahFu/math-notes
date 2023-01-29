@@ -18,6 +18,11 @@ class MathNoteState {
         this.value = value;
         this.type = type;
     };
+    
+    // Todo convert this to default values in constructor
+    static blank(): MathNoteState {
+        return new this('', FieldType.Math);
+    }
 }
 
 interface MathNoteFieldProps {
@@ -120,7 +125,7 @@ function Notes(props: NotesProps) {
             case "Enter":
                 if (focusIndex === lines.length - 1)
                     // Creating new lines
-                    setLines([...lines, new MathNoteState('', FieldType.Math)]);
+                    setLines([...lines, MathNoteState.blank()]);
                 focusIndex < lines.length && setFocusIndex(focusIndex + 1);
                 break;
             case "ArrowDown":
@@ -155,7 +160,7 @@ function Notes(props: NotesProps) {
 }
 
 function App() {
-    const [lines, setLines] = useState([{ value: '', type: FieldType.Math }] as { value: string, type: FieldType }[]);
+    const [lines, setLines] = useState([MathNoteState.blank()] as MathNoteState[]);
     const [title, setTitle] = useState('');
     
     const setDocumentTitle = (documentTitle: string) => {
