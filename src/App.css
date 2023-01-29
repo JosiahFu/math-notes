@@ -9,8 +9,11 @@ span.mq-editable-field, .text-note {
     font-family: inherit;
 }
 
-.App {
-    margin: 20px;
+.notes {
+    padding: 20px;
     display: flex;
     flex-flow: column nowrap;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }

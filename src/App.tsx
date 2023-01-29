@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
 import './App.css';
 
@@ -9,28 +9,44 @@ enum FieldType {
     Text = 'TEXT'
 }
 
+// type MathNoteState = {value: string, type: FieldType};
+class MathNoteState {
+    value: string;
+    type: FieldType;
+
+    constructor(value: string, type: FieldType) {
+        this.value = value;
+        this.type = type;
+    };
+}
+
 interface MathNoteFieldProps {
     value: string,
     type: FieldType,
-    setState: (value: string, type: FieldType) => void,
+    setState: (state: MathNoteState) => void,
     focused: boolean,
     onFocus: (event: React.FocusEvent) => void
 }
 
 function MathNoteField(props: MathNoteFieldProps) {
-    const [field, setField] = useState<MathField>();
-    useEffect(() => {props.focused && field?.focus()});
+    const textInput = useRef<HTMLInputElement>(null);
+    const mathField = useRef<MathField>();
+
+    useEffect(() => {
+        if (props.focused)
+            props.type === FieldType.Math ? mathField.current?.focus() : textInput.current?.focus();
+    });
 
     const handleMathFieldChange = (target: MathField) => {
         if (target.latex() === '"') {
-            props.setState('', FieldType.Text);
+            props.setState(new MathNoteState('', FieldType.Text));
         } else {
-            props.setState(target.latex(), props.type);
+            props.setState(new MathNoteState(target.latex(), props.type));
         }
     }
 
     const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.setState(event.target.value, props.type);
+        props.setState(new MathNoteState(event.target.value, props.type));
     }
 
     return (
@@ -40,24 +56,36 @@ function MathNoteField(props: MathNoteFieldProps) {
             onChange={handleMathFieldChange}
             config={{ spaceBehavesLikeTab: true }}
             onFocus={props.onFocus}
-            mathquillDidMount={target => setField(target)}
+            mathquillDidMount={target => mathField.current = target}
         /> :
         <input
             className="text-note"
             onChange={handleTextNoteChange}
             value={props.value}
-            autoFocus={props.focused}
             onFocus={props.onFocus}
+            ref={textInput}
         />
     );
 }
 
-function App() {
-    const [lines, setLines] = useState([{ value: '', type: FieldType.Math }] as { value: string, type: FieldType }[]);
+interface TitleProps { value: string, setValue: (value: string) => void }
+function Title(props: TitleProps) {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {props.setValue(event.target.value)};
+
+    return (
+        <h1><input type="text" value={props.value} onChange={handleChange}/></h1>
+    )
+}
+
+interface NotesProps {lines: MathNoteState[], setLines: (lines: MathNoteState[]) => void}
+function Notes(props: NotesProps) {
+    const lines = props.lines;
+    const setLines = props.setLines;
     const [focusIndex, setFocusIndex] = useState(0);
+    const element = useRef<HTMLDivElement>(null);
 
     const makeSetState = (index: number) =>
-        (value: string, type: FieldType) => setLines(lines.map((e, i) => i === index ? { value: value, type: type } : e));
+        (state: {value: string, type: FieldType}) => setLines(lines.map((e, i) => i === index ? new MathNoteState(state.value, state.type) : e));
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
         switch (event.key) {
@@ -67,7 +95,7 @@ function App() {
             case "Enter":
                 if (focusIndex === lines.length - 1)
                     // Creating new lines
-                    setLines([...lines, { value: '', type: FieldType.Math }]);
+                    setLines([...lines, new MathNoteState('', FieldType.Math)]);
                 focusIndex < lines.length && setFocusIndex(focusIndex + 1);
                 break;
             case "ArrowDown":
@@ -87,18 +115,31 @@ function App() {
     }
 
     return (
-        <div className="App" onKeyDown={handleKeyDown}>
+        <div className="notes" onKeyDown={handleKeyDown} ref={element}>
             {lines.map((e, i) => 
                 <MathNoteField
                     key={i}
                     value={e.value}
                     type={e.type}
                     setState={makeSetState(i)}
-                    focused={focusIndex === i}
+                    focused={focusIndex === i && (element.current?.contains(document.activeElement) ?? false)}
                     onFocus={() => setFocusIndex(i)}
                 />)}
         </div>
     );
+}
+
+function App() {
+    const [lines, setLines] = useState([{ value: '', type: FieldType.Math }] as { value: string, type: FieldType }[]);
+    const [title, setTitle] = useState('Untitled Notes');
+
+    return (
+        <>
+            <Title value={title} setValue={setTitle} />
+            <Notes lines={lines} setLines={setLines} />
+        </>
+    );
+
 }
 
 export default App;
