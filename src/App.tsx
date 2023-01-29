@@ -34,7 +34,7 @@ function MathNoteField(props: MathNoteFieldProps) {
 
     useEffect(() => {
         if (props.focused)
-            props.type === FieldType.Math ? mathField.current?.focus() : textInput.current?.focus();
+            (props.type === FieldType.Math ? mathField : textInput).current?.focus();
     });
 
     const handleMathFieldChange = (target: MathField) => {
@@ -70,7 +70,10 @@ function MathNoteField(props: MathNoteFieldProps) {
 
 interface TitleProps { value: string, setValue: (value: string) => void }
 function Title(props: TitleProps) {
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {props.setValue(event.target.value)};
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.setValue(event.target.value);
+        document.title = event.target.value || 'Math Notes'; // If blank
+    };
 
     return (
         <h1><input type="text" value={props.value} onChange={handleChange}/></h1>
@@ -85,7 +88,7 @@ function Notes(props: NotesProps) {
     const element = useRef<HTMLDivElement>(null);
 
     const makeSetState = (index: number) =>
-        (state: {value: string, type: FieldType}) => setLines(lines.map((e, i) => i === index ? new MathNoteState(state.value, state.type) : e));
+        (state: MathNoteState) => setLines(lines.map((e, i) => i === index ? state : e));
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
         switch (event.key) {
