@@ -1,4 +1,5 @@
-span.mq-editable-field, .text-note {
+span.mq-editable-field,
+.text-note {
     display: block;
     padding: 5px;
     border: 1px solid gray;
@@ -10,10 +11,36 @@ span.mq-editable-field, .text-note {
 }
 
 .notes {
-    padding: 20px;
     display: flex;
     flex-flow: column nowrap;
-    max-width: 800px;
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
+}
+
+h1 {
+    text-align: center;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+h1 input {
+    font-size: inherit;
+    font-family: inherit;
+    text-align: center;
+    padding: 0;
+    border: none;
+}
+
+h1 input:focus {
+    outline: none;
+}
+
+h1 input.untitled {
+    color: gray;
+    font-style: italic;
+}
+
+.app {
+    margin: 50px;
 }
