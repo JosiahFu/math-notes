@@ -14,15 +14,10 @@ class MathNoteState {
     value: string;
     type: FieldType;
 
-    constructor(value: string, type: FieldType) {
+    constructor(value = '', type = FieldType.Math) {
         this.value = value;
         this.type = type;
     };
-    
-    // Todo convert this to default values in constructor
-    static blank(): MathNoteState {
-        return new this('', FieldType.Math);
-    }
 }
 
 interface MathNoteFieldProps {
@@ -73,7 +68,12 @@ function MathNoteField(props: MathNoteFieldProps) {
     );
 }
 
-interface TitleProps { value: string, setValue: (value: string) => void, defaultValue: string, onInput: (value: string) => void }
+interface TitleProps {
+    value: string,
+    setValue: (value: string) => void,
+    defaultValue: string,
+    onInput: (value: string) => void
+}
 function Title(props: TitleProps) {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.setValue(event.target.value);
@@ -123,10 +123,13 @@ function Notes(props: NotesProps) {
                 focusIndex > 0 && setFocusIndex(focusIndex - 1);
                 break;
             case "Enter":
-                if (focusIndex === lines.length - 1)
-                    // Creating new lines
-                    setLines([...lines, MathNoteState.blank()]);
-                focusIndex < lines.length && setFocusIndex(focusIndex + 1);
+                // Creating new lines
+                setLines([
+                    ...lines.slice(0, focusIndex + 1),
+                    new MathNoteState(),
+                    ...lines.slice(focusIndex + 1)
+                ]);
+                setFocusIndex(focusIndex + 1);
                 break;
             case "ArrowDown":
                 focusIndex + 1 < lines.length && setFocusIndex(focusIndex + 1);
@@ -160,7 +163,7 @@ function Notes(props: NotesProps) {
 }
 
 function App() {
-    const [lines, setLines] = useState([MathNoteState.blank()] as MathNoteState[]);
+    const [lines, setLines] = useState([new MathNoteState()] as MathNoteState[]);
     const [title, setTitle] = useState('');
     
     const setDocumentTitle = (documentTitle: string) => {
