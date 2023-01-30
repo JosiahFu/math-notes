@@ -52,6 +52,7 @@ function MathNoteField(props: MathNoteFieldProps) {
     return (
         props.type === FieldType.Math ?
             <EditableMathField
+                className="note-field"
                 latex={props.value}
                 onChange={handleMathFieldChange}
                 config={{ spaceBehavesLikeTab: true }}
@@ -59,7 +60,7 @@ function MathNoteField(props: MathNoteFieldProps) {
                 mathquillDidMount={target => mathField.current = target}
             /> :
             <input
-                className="text-note"
+                className="note-field text-note"
                 onChange={handleTextNoteChange}
                 value={props.value}
                 onFocus={props.onFocus}

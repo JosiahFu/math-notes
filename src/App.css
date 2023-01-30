@@ -1,8 +1,19 @@
-span.mq-editable-field,
-.text-note {
+.note-field.mq-editable-field,
+.note-field.text-note {
     display: block;
     padding: 5px;
-    border: 1px solid gray;
+    border-top: none;
+    border-bottom: none;
+    border-left: 2px solid gray;
+    border-right: 2px solid gray;
+}
+
+.note-field.mq-editable-field.mq-focused, .note-field.text-note:focus {
+    /* border-left-color: dodgerblue;
+    border-right-color: dodgerblue; */
+    background-color: #f0f0f0;
+    box-shadow: none;
+    outline: none;
 }
 
 .text-note {
@@ -16,6 +27,8 @@ span.mq-editable-field,
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
+    border-top: 2px solid gray;
+    border-bottom: 2px solid gray;
 }
 
 h1 {
