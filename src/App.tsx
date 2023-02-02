@@ -69,6 +69,14 @@ function MathNoteField(props: MathNoteFieldProps) {
     );
 }
 
+interface SectionBreakProps {addSection: () => void};
+function SectionBreak(props: SectionBreakProps) {
+    return (<div className="section-break">
+        <button onClick={props.addSection} className="section-button">+</button>
+    </div>);
+}
+
+
 interface TitleProps {
     value: string,
     setValue: (value: string) => void,
@@ -108,15 +116,32 @@ function Title(props: TitleProps) {
     )
 }
 
-interface NotesProps { lines: MathNoteState[], setLines: (lines: MathNoteState[]) => void }
+interface NotesProps {
+    lines: MathNoteState[],
+    setLines: (lines: MathNoteState[]) => void,
+    sectionBreaks: number[],
+    setSectionBreaks: (sectionBreaks: number[]) => void
+}
 function Notes(props: NotesProps) {
     const lines = props.lines;
     const setLines = props.setLines;
+    const sectionBreaks = props.sectionBreaks;
+    const setSectionBreaks = props.setSectionBreaks;
     const [focusIndex, setFocusIndex] = useState(0);
     const element = useRef<HTMLDivElement>(null);
 
     const makeSetState = (index: number) =>
         (state: MathNoteState) => setLines(lines.map((e, i) => i === index ? state : e));
+    
+    const makeAddSection = (index: number) =>
+        () => {
+            setLines([
+                ...lines.slice(0, focusIndex + 1),
+                new MathNoteState(),
+                ...lines.slice(focusIndex + 1)
+            ]);
+            setSectionBreaks([...sectionBreaks.map(e => e >= focusIndex ? e + 1 : e), index - 1]);
+        };
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
         switch (event.key) {
@@ -130,7 +155,9 @@ function Notes(props: NotesProps) {
                     new MathNoteState(),
                     ...lines.slice(focusIndex + 1)
                 ]);
+                setSectionBreaks(sectionBreaks.map(e => e >= focusIndex ? e + 1 : e))
                 setFocusIndex(focusIndex + 1);
+                console.log(sectionBreaks);
                 break;
             case "ArrowDown":
                 focusIndex + 1 < lines.length && setFocusIndex(focusIndex + 1);
@@ -150,7 +177,7 @@ function Notes(props: NotesProps) {
 
     return (
         <div className="notes" onKeyDown={handleKeyDown} ref={element}>
-            {lines.map((e, i) =>
+            {lines.map((e, i) => <>
                 <MathNoteField
                     key={i}
                     value={e.value}
@@ -158,7 +185,10 @@ function Notes(props: NotesProps) {
                     setState={makeSetState(i)}
                     focused={focusIndex === i && (element.current?.contains(document.activeElement) ?? false)}
                     onFocus={() => setFocusIndex(i)}
-                />)}
+                />
+                {i in sectionBreaks && <SectionBreak addSection={makeAddSection(i)}/>}
+            </>)}
+            <SectionBreak addSection={makeAddSection(lines.length)}/>
         </div>
     );
 }
@@ -166,6 +196,7 @@ function Notes(props: NotesProps) {
 function App() {
     const [lines, setLines] = useState([new MathNoteState()] as MathNoteState[]);
     const [title, setTitle] = useState('');
+    const [sectionBreaks , setSectionBreaks] = useState<number[]>([]);
     
     const setDocumentTitle = (documentTitle: string) => {
         document.title = title || 'Math Notes'; // If blank
@@ -174,7 +205,7 @@ function App() {
     return (
         <main className="app">
             <Title value={title} setValue={setTitle} defaultValue="Untitled Notes" onInput={setDocumentTitle} />
-            <Notes lines={lines} setLines={setLines} />
+            <Notes lines={lines} setLines={setLines} sectionBreaks={sectionBreaks} setSectionBreaks={setSectionBreaks} />
         </main>
     );
 
