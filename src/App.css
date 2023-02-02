@@ -1,13 +1,24 @@
-span.mq-editable-field,
-.text-note {
+.note-field.mq-editable-field, .note-field.text-note {
     display: block;
     padding: 5px;
-    border: 1px solid gray;
+    border: none;
+}
+
+.note-field.mq-editable-field.mq-focused, .note-field.text-note:focus {
+    /* border-left-color: dodgerblue;
+    border-right-color: dodgerblue; */
+    background-color: #f0f0f0;
+    box-shadow: none;
+    outline: none;
 }
 
 .text-note {
     font-size: inherit;
     font-family: inherit;
+}
+
+.section {
+    border: 2px solid gray;
 }
 
 .notes {
