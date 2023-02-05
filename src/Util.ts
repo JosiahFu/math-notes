@@ -1,12 +1,10 @@
-import React from 'react';
-
 class StateArray<T>{
     array: T[];
-    setArray: React.Dispatch<React.SetStateAction<T[]>>;
+    setArray;
     map;
     includes;
 
-    constructor(stateHook: [T[], React.Dispatch<React.SetStateAction<T[]>>]) {
+    constructor(stateHook: [T[], (state: T[]) => void]) {
         [this.array, this.setArray] = stateHook;
         this.map = this.array.map.bind(this.array);
         this.includes = this.array.includes.bind(this.array);
@@ -41,4 +39,19 @@ class StateArray<T>{
     }
 }
 
-export { StateArray };
+class NestedStateArray<T> extends StateArray<T[]> {
+    // constructor(stateHook: [T[][], (state: T[][]) => void]) {
+    //     super(stateHook);
+    // }
+
+    getStateArray(index: number) {
+        return new StateArray([this.get(index), (item: T[]) => this.set(item, index)]);
+    }
+
+    get mapStateArray() {
+        const mappedArray = this.array.map((e,i) => this.getStateArray(i));
+        return mappedArray.map.bind(mappedArray);
+    }
+}
+
+export { StateArray, NestedStateArray };

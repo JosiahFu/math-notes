@@ -19,11 +19,11 @@
 
 .section {
     border: 2px solid gray;
+    display: flex;
+    flex-flow: column nowrap;
 }
 
 .notes {
-    display: flex;
-    flex-flow: column nowrap;
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Notes, { MathNoteState } from './Notes';
-import { StateArray } from './Util';
+import { NestedStateArray } from './Util';
 import './App.css';
 
 interface TitleProps {
@@ -43,17 +43,17 @@ function Title(props: TitleProps) {
 }
 
 function App() {
-    const lines  = new StateArray(useState<MathNoteState[]>([new MathNoteState()]));
+    const sections  = new NestedStateArray(useState<MathNoteState[][]>([[new MathNoteState()]]));
     const [title, setTitle] = useState('');
     
     const setDocumentTitle = (documentTitle: string) => {
-        document.title = title || 'Math Notes'; // If blank
+        document.title = documentTitle || 'Math Notes'; // If blank
     }
 
     return (
         <main className="app">
             <Title value={title} setValue={setTitle} defaultValue="Untitled Notes" onInput={setDocumentTitle} />
-            <Notes lines={lines} />
+            <Notes sections={sections} />
         </main>
     );
 

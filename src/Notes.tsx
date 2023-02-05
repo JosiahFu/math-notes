@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StateArray } from './Util';
+import { NestedStateArray, StateArray } from './Util';
 import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
 addStyles();
 
@@ -67,15 +67,15 @@ function MathNoteField(props: MathNoteFieldProps) {
     );
 }
 
-interface NotesProps { lines: StateArray<MathNoteState> }
-function Notes(props: NotesProps) {
-    const lines = props.lines;
+interface NoteSectionProps {lines: StateArray<MathNoteState>};
+function NoteSection(props: NoteSectionProps) {
     const [focusIndex, setFocusIndex] = useState(0);
     const element = useRef<HTMLDivElement>(null);
-
+    
+    
     const makeSetState = (index: number) =>
-        (state: MathNoteState) => lines.set(state, index);
-
+        (state: MathNoteState) => props.lines.set(state, index);
+    
     const handleKeyDown = (event: React.KeyboardEvent) => {
         switch (event.key) {
             case "ArrowUp":
@@ -83,15 +83,15 @@ function Notes(props: NotesProps) {
                 break;
             case "Enter":
                 // Creating new lines
-                lines.insert(new MathNoteState(), focusIndex);
+                props.lines.insert(new MathNoteState(), focusIndex);
                 setFocusIndex(focusIndex + 1);
                 break;
             case "ArrowDown":
-                focusIndex + 1 < lines.length && setFocusIndex(focusIndex + 1);
+                focusIndex + 1 < props.lines.length && setFocusIndex(focusIndex + 1);
                 break;
             case "Backspace":
-                if (lines.get(focusIndex).value === '' && lines.length > 1) {
-                    lines.remove(focusIndex);
+                if (props.lines.get(focusIndex).value === '' && props.lines.length > 1) {
+                    props.lines.remove(focusIndex);
                     focusIndex !== 0 && setFocusIndex(focusIndex - 1);
                     break; // Only capture event if something happens
                 }
@@ -103,8 +103,8 @@ function Notes(props: NotesProps) {
     }
 
     return (
-        <div className="notes" onKeyDown={handleKeyDown} ref={element}>
-            {lines.map((e, i) =>
+        <div className="section" onKeyDown={handleKeyDown} ref={element}>
+            {props.lines.map((e, i) =>
                 <MathNoteField
                     key={i}
                     value={e.value}
@@ -115,6 +115,18 @@ function Notes(props: NotesProps) {
                 />)}
         </div>
     );
+}
+
+interface NotesProps { sections: NestedStateArray<MathNoteState> }
+function Notes(props: NotesProps) {
+    const sections = props.sections;
+
+    return <div className="notes">{sections.mapStateArray((e,i) => (
+        <React.Fragment key={i}>
+            <NoteSection lines={e} />
+            <div>a</div>
+        </React.Fragment>
+    ))}</div>;
 }
 
 export default Notes;
