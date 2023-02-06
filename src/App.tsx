@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Notes, { MathNoteState } from './Notes';
 import { NestedStateArray } from './Util';
 import './App.css';
@@ -6,7 +6,7 @@ import './App.css';
 interface TitleProps {
     value: string,
     setValue: (value: string) => void,
-    defaultValue: string,
+    placeholder: string,
     onInput: (value: string) => void
 }
 function Title(props: TitleProps) {
@@ -15,28 +15,17 @@ function Title(props: TitleProps) {
     };
     
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-        fixTitle();
         props.onInput(event.target.value);
     }
-    
-    const fixTitle = () => {
-        if (props.value === '') {
-            props.setValue(props.defaultValue);
-        }
-    }
-
-    // Title resetting should ONLY run during initial mount or when user unfocuses
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(fixTitle, []);
 
     return (
         <h1>
             <input
                 type="text"
-                value={props.value} // If blank
+                value={props.value}
+                placeholder={props.placeholder}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={props.value === props.defaultValue ? 'untitled' : ''}
             />
         </h1>
     )
@@ -52,7 +41,7 @@ function App() {
 
     return (
         <main className="app">
-            <Title value={title} setValue={setTitle} defaultValue="Untitled Notes" onInput={setDocumentTitle} />
+            <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
             <Notes sections={sections} />
         </main>
     );

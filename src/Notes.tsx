@@ -3,6 +3,8 @@ import { NestedStateArray, StateArray } from './Util';
 import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
 addStyles();
 
+// todo: destructuring
+
 enum FieldType {
     Math = 'MATH',
     Text = 'TEXT'
@@ -67,7 +69,7 @@ function MathNoteField(props: MathNoteFieldProps) {
     );
 }
 
-interface NoteSectionProps {lines: StateArray<MathNoteState>};
+interface NoteSectionProps {lines: StateArray<MathNoteState>, singleSection: boolean, deleteSection: () => void};
 function NoteSection(props: NoteSectionProps) {
     const [focusIndex, setFocusIndex] = useState(0);
     const element = useRef<HTMLDivElement>(null);
@@ -83,19 +85,27 @@ function NoteSection(props: NoteSectionProps) {
                 break;
             case "Enter":
                 // Creating new lines
-                props.lines.insert(new MathNoteState(), focusIndex);
+                props.lines.insert(new MathNoteState(), focusIndex + 1);
                 setFocusIndex(focusIndex + 1);
                 break;
             case "ArrowDown":
                 focusIndex + 1 < props.lines.length && setFocusIndex(focusIndex + 1);
                 break;
             case "Backspace":
-                if (props.lines.get(focusIndex).value === '' && props.lines.length > 1) {
+                if (props.lines.get(focusIndex).value !== '') {
+                    return; // Allow native handling
+                }
+                
+                if (props.lines.length !== 1) { // If there are multiple lines
                     props.lines.remove(focusIndex);
                     focusIndex !== 0 && setFocusIndex(focusIndex - 1);
-                    break; // Only capture event if something happens
+                    break;
                 }
-                return;
+                
+                if (!props.singleSection) { // If there is more than one section
+                    props.deleteSection();
+                }
+                break;
             default:
                 return;
         }
@@ -117,14 +127,15 @@ function NoteSection(props: NoteSectionProps) {
     );
 }
 
-interface NotesProps { sections: NestedStateArray<MathNoteState> }
+interface NotesProps { sections: NestedStateArray<MathNoteState>}
 function Notes(props: NotesProps) {
-    const sections = props.sections;
+    const makeHandleButtonClick = (index: number) =>
+        () => { props.sections.insert([new MathNoteState()], index); }
 
-    return <div className="notes">{sections.mapStateArray((e,i) => (
+    return <div className="notes">{props.sections.mapStateArray((e,i) => (
         <React.Fragment key={i}>
-            <NoteSection lines={e} />
-            <div>a</div>
+            <NoteSection lines={e} singleSection={props.sections.length === 1} deleteSection={() => props.sections.remove(i)} />
+            <div className="section-button-container"><button className="section-button" onClick={makeHandleButtonClick(i + 1)}></button></div>
         </React.Fragment>
     ))}</div>;
 }

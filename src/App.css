@@ -23,6 +23,48 @@
     flex-flow: column nowrap;
 }
 
+.section-button-container {
+    text-align: center;
+}
+
+.section-button {
+    background-color: #f0f0f0;
+    height: 30px;
+    width: 30px;
+    border: none;
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    transition: 0.1s;
+}
+
+.section-button:hover {
+    background-color: #ddd;
+}
+
+.section-button::after {
+    background-color: black;
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 14px;
+    left: 13px;
+    top: 8px;
+}
+
+.section-button::before {
+    background-color: black;
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 4px;
+    left: 8px;
+    top: 13px;
+}
+
 .notes {
     max-width: 1200px;
     margin-left: auto;
