@@ -3,8 +3,6 @@ import { NestedStateArray, StateArray } from './Util';
 import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
 addStyles();
 
-// todo: destructuring
-
 enum FieldType {
     Math = 'MATH',
     Text = 'TEXT'

@@ -3,6 +3,13 @@ import Notes, { MathNoteState } from './Notes';
 import { NestedStateArray } from './Util';
 import './App.css';
 
+// TODO: destructuring
+// TODO: Cross-section keybindings
+// TODO: Undoing
+// TODO: Section delete button
+// TODO: Optional section titles
+// TODO: Save to file
+
 interface TitleProps {
     value: string,
     setValue: (value: string) => void,

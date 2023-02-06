@@ -49,9 +49,9 @@
     background-color: black;
     content: '';
     position: absolute;
-    width: 4px;
+    width: 2px;
     height: 14px;
-    left: 13px;
+    left: 14px;
     top: 8px;
 }
 
@@ -60,9 +60,9 @@
     content: '';
     position: absolute;
     width: 14px;
-    height: 4px;
+    height: 2px;
     left: 8px;
-    top: 13px;
+    top: 14px;
 }
 
 .notes {
