@@ -18,63 +18,64 @@ class MathNoteState {
     };
 }
 
-interface MathNoteFieldProps {
+function MathNoteField({value, type, setState, focused, onFocus}: {
     value: string,
     type: FieldType,
     setState: (state: MathNoteState) => void,
     focused: boolean,
     onFocus: (event: React.FocusEvent) => void
-}
-
-function MathNoteField(props: MathNoteFieldProps) {
+}) {
     const textInput = useRef<HTMLInputElement>(null);
     const mathField = useRef<MathField>();
 
     useEffect(() => {
-        if (props.focused)
-            (props.type === FieldType.Math ? mathField : textInput).current?.focus();
+        if (focused)
+            (type === FieldType.Math ? mathField : textInput).current?.focus();
     });
 
     const handleMathFieldChange = (target: MathField) => {
         if (target.latex() === '"') {
-            props.setState(new MathNoteState('', FieldType.Text));
+            setState(new MathNoteState('', FieldType.Text));
         } else {
-            props.setState(new MathNoteState(target.latex(), props.type));
+            setState(new MathNoteState(target.latex(), type));
         }
     }
 
     const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.setState(new MathNoteState(event.target.value, props.type));
+        setState(new MathNoteState(event.target.value, type));
     }
 
     return (
-        props.type === FieldType.Math ?
+        type === FieldType.Math ?
             <EditableMathField
                 className="note-field"
-                latex={props.value}
+                latex={value}
                 onChange={handleMathFieldChange}
                 config={{ spaceBehavesLikeTab: true }}
-                onFocus={props.onFocus}
+                onFocus={onFocus}
                 mathquillDidMount={target => mathField.current = target}
             /> :
             <input
                 className="note-field text-note"
                 onChange={handleTextNoteChange}
-                value={props.value}
-                onFocus={props.onFocus}
+                value={value}
+                onFocus={onFocus}
                 ref={textInput}
             />
     );
 }
 
-interface NoteSectionProps {lines: StateArray<MathNoteState>, singleSection: boolean, deleteSection: () => void};
-function NoteSection(props: NoteSectionProps) {
+function NoteSection({lines, singleSection, deleteSection}: {
+    lines: StateArray<MathNoteState>,
+    singleSection: boolean,
+    deleteSection: () => void
+}) {
     const [focusIndex, setFocusIndex] = useState(0);
     const element = useRef<HTMLDivElement>(null);
     
     
     const makeSetState = (index: number) =>
-        (state: MathNoteState) => props.lines.set(state, index);
+        (state: MathNoteState) => lines.set(state, index);
     
     const handleKeyDown = (event: React.KeyboardEvent) => {
         switch (event.key) {
@@ -83,25 +84,25 @@ function NoteSection(props: NoteSectionProps) {
                 break;
             case "Enter":
                 // Creating new lines
-                props.lines.insert(new MathNoteState(), focusIndex + 1);
+                lines.insert(new MathNoteState(), focusIndex + 1);
                 setFocusIndex(focusIndex + 1);
                 break;
             case "ArrowDown":
-                focusIndex + 1 < props.lines.length && setFocusIndex(focusIndex + 1);
+                focusIndex + 1 < lines.length && setFocusIndex(focusIndex + 1);
                 break;
             case "Backspace":
-                if (props.lines.get(focusIndex).value !== '') {
+                if (lines.get(focusIndex).value !== '') {
                     return; // Allow native handling
                 }
                 
-                if (props.lines.length !== 1) { // If there are multiple lines
-                    props.lines.remove(focusIndex);
+                if (lines.length !== 1) { // If there are multiple lines
+                    lines.remove(focusIndex);
                     focusIndex !== 0 && setFocusIndex(focusIndex - 1);
                     break;
                 }
                 
-                if (!props.singleSection) { // If there is more than one section
-                    props.deleteSection();
+                if (!singleSection) { // If there is more than one section
+                    deleteSection();
                 }
                 break;
             default:
@@ -112,7 +113,7 @@ function NoteSection(props: NoteSectionProps) {
 
     return (
         <div className="section" onKeyDown={handleKeyDown} ref={element}>
-            {props.lines.map((e, i) =>
+            {lines.map((e, i) =>
                 <MathNoteField
                     key={i}
                     value={e.value}
@@ -125,14 +126,13 @@ function NoteSection(props: NoteSectionProps) {
     );
 }
 
-interface NotesProps { sections: NestedStateArray<MathNoteState>}
-function Notes(props: NotesProps) {
+function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
     const makeHandleButtonClick = (index: number) =>
-        () => { props.sections.insert([new MathNoteState()], index); }
+        () => { sections.insert([new MathNoteState()], index); }
 
-    return <div className="notes">{props.sections.mapStateArray((e,i) => (
+    return <div className="notes">{sections.mapStateArray((e,i) => (
         <React.Fragment key={i}>
-            <NoteSection lines={e} singleSection={props.sections.length === 1} deleteSection={() => props.sections.remove(i)} />
+            <NoteSection lines={e} singleSection={sections.length === 1} deleteSection={() => sections.remove(i)} />
             <div className="section-button-container"><button className="section-button" onClick={makeHandleButtonClick(i + 1)}></button></div>
         </React.Fragment>
     ))}</div>;
