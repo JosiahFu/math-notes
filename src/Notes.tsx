@@ -145,4 +145,4 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
 }
 
 export default Notes;
-export { MathNoteState };
+export { MathNoteState, FieldType };
