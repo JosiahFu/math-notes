@@ -3,11 +3,11 @@ import Notes, { MathNoteState } from './Notes';
 import { NestedStateArray } from './Util';
 import './App.css';
 
-// TODO: Cross-section keybindings
-// TODO: Undoing
 // TODO: Section delete button
 // TODO: Optional section titles
 // TODO: Save to file
+// TODO: Undoing (Edit History)
+// TODO: Cross-section keybindings
 
 function Title({value, setValue, placeholder, onInput}: {
     value: string,

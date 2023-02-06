@@ -132,8 +132,14 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
 
     return <div className="notes">{sections.mapStateArray((e,i) => (
         <React.Fragment key={i}>
-            <NoteSection lines={e} singleSection={sections.length === 1} deleteSection={() => sections.remove(i)} />
-            <div className="section-button-container"><button className="section-button" onClick={makeHandleButtonClick(i + 1)}></button></div>
+            <NoteSection
+                lines={e}
+                singleSection={sections.length === 1}
+                deleteSection={() => sections.remove(i)}
+            />
+            <div className="section-button-container">
+                <button className="section-button" onClick={makeHandleButtonClick(i + 1)}></button>
+            </div>
         </React.Fragment>
     ))}</div>;
 }
