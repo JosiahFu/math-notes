@@ -81,7 +81,6 @@ function App() {
             <LoadButton setSections={sections.setArray} setTitle={setTitle} />
         </main>
     );
-
 }
 
 export default App;

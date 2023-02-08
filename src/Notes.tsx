@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { NestedStateArray, StateArray } from './Util';
 import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
 addStyles();
+
+const SaveHistory = createContext<(() => void) | null>(null);
 
 enum FieldType {
     Math = 'MATH',
@@ -23,10 +25,11 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
     type: FieldType,
     setState: (state: MathNoteState) => void,
     focused: boolean,
-    onFocus: (event: React.FocusEvent) => void
+    onFocus: (event: React.FocusEvent) => void,
 }) {
     const textInput = useRef<HTMLInputElement>(null);
     const mathField = useRef<MathField>();
+    const saveHistory = useContext(SaveHistory);
 
     useEffect(() => {
         if (focused)
@@ -53,6 +56,7 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
                 onChange={handleMathFieldChange}
                 config={{ spaceBehavesLikeTab: true }}
                 onFocus={onFocus}
+                onBlur={saveHistory!}
                 mathquillDidMount={target => mathField.current = target}
             /> :
             <input
@@ -60,6 +64,7 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
                 onChange={handleTextNoteChange}
                 value={value}
                 onFocus={onFocus}
+                onBlur={saveHistory!}
                 ref={textInput}
             />
     );
@@ -127,11 +132,23 @@ function NoteSection({lines, singleSection, deleteSection}: {
 }
 
 function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
+    const history = useRef<NestedStateArray<MathNoteState>[]>([]);
+
     const makeHandleButtonClick = (index: number) =>
         () => { sections.insert([new MathNoteState()], index); }
+        
+    const updateHistory = () => {
+        history.current.push(sections);
+    }
+    
+    const undo = () => {
+        if (history.current.length > 0) {
+            sections.setArray(history.current.pop()!.array);
+        }
+    }
 
     return <div className="notes">{sections.mapStateArray((e,i) => (
-        <React.Fragment key={i}>
+        <SaveHistory.Provider key={i} value={updateHistory}>
             <NoteSection
                 lines={e}
                 singleSection={sections.length === 1}
@@ -140,8 +157,8 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
             <div className="section-button-container">
                 <button className="section-button" onClick={makeHandleButtonClick(i + 1)}></button>
             </div>
-        </React.Fragment>
-    ))}</div>;
+        </SaveHistory.Provider>
+    ))}<button onClick={undo}>undo</button></div>;
 }
 
 export default Notes;
