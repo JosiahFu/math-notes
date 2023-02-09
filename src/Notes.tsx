@@ -47,6 +47,12 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
     const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setState(new MathNoteState(event.target.value, type));
     }
+    
+    const handleFocus = (event: React.FocusEvent) => {
+        if (event.isTrusted) {
+            onFocus(event);
+        }
+    }
 
     return (
         type === FieldType.Math ?
@@ -55,7 +61,7 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
                 latex={value}
                 onChange={handleMathFieldChange}
                 config={{ spaceBehavesLikeTab: true }}
-                onFocus={onFocus}
+                onFocus={handleFocus}
                 onBlur={saveHistory!}
                 mathquillDidMount={target => mathField.current = target}
             /> :
@@ -63,68 +69,33 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
                 className="note-field text-note"
                 onChange={handleTextNoteChange}
                 value={value}
-                onFocus={onFocus}
+                onFocus={handleFocus}
                 onBlur={saveHistory!}
                 ref={textInput}
             />
     );
 }
 
-function NoteSection({lines, singleSection, deleteSection}: {
+function NoteSection({lines, focusIndex, setFocusIndex}: {
     lines: StateArray<MathNoteState>,
-    singleSection: boolean,
-    deleteSection: () => void
+    focusIndex: number | null,
+    setFocusIndex: (focusIndex: number) => void
 }) {
-    const [focusIndex, setFocusIndex] = useState(0);
     const element = useRef<HTMLDivElement>(null);
     
     
     const makeSetState = (index: number) =>
         (state: MathNoteState) => lines.set(state, index);
-    
-    const handleKeyDown = (event: React.KeyboardEvent) => {
-        switch (event.key) {
-            case "ArrowUp":
-                focusIndex > 0 && setFocusIndex(focusIndex - 1);
-                break;
-            case "Enter":
-                // Creating new lines
-                lines.insert(new MathNoteState(), focusIndex + 1);
-                setFocusIndex(focusIndex + 1);
-                break;
-            case "ArrowDown":
-                focusIndex + 1 < lines.length && setFocusIndex(focusIndex + 1);
-                break;
-            case "Backspace":
-                if (lines.get(focusIndex).value !== '') {
-                    return; // Allow native handling
-                }
-                
-                if (lines.length !== 1) { // If there are multiple lines
-                    lines.remove(focusIndex);
-                    focusIndex !== 0 && setFocusIndex(focusIndex - 1);
-                    break;
-                }
-                
-                if (!singleSection) { // If there is more than one section
-                    deleteSection();
-                }
-                break;
-            default:
-                return;
-        }
-        event.preventDefault();
-    }
 
     return (
-        <div className="section" onKeyDown={handleKeyDown} ref={element}>
+        <div className="section" ref={element}>
             {lines.map((e, i) =>
                 <MathNoteField
                     key={i}
                     value={e.value}
                     type={e.type}
                     setState={makeSetState(i)}
-                    focused={focusIndex === i && (element.current?.contains(document.activeElement) ?? false)}
+                    focused={focusIndex === i} // && (element.current?.contains(document.activeElement) ?? false)
                     onFocus={() => setFocusIndex(i)}
                 />)}
         </div>
@@ -132,10 +103,13 @@ function NoteSection({lines, singleSection, deleteSection}: {
 }
 
 function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
+    const [focusIndex, setFocusIndex] = useState<[number, number] | null>(null);
     const history = useRef<NestedStateArray<MathNoteState>[]>([]);
 
-    const makeHandleButtonClick = (index: number) =>
-        () => { sections.insert([new MathNoteState()], index); }
+    const addSection = (index: number) => {
+        sections.insert([new MathNoteState()], index);
+        setFocusIndex([index, 0]);
+    }
         
     const updateHistory = () => {
         history.current.push(sections);
@@ -146,19 +120,106 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
             sections.setArray(history.current.pop()!.array);
         }
     }
+    
+    const changeFocusIndex = (change: number, ignoreBounds = false) => {
+        if (focusIndex === null) {
+            return;
+        }
+        let newFocusIndex: [number, number] = [...focusIndex]; // Copy indices
+        newFocusIndex[1]+= change;
+        if (ignoreBounds) {
+            setFocusIndex(newFocusIndex);
+            return;
+        }
+        while (newFocusIndex[1] < 0) {
+            newFocusIndex[0]--;
+            if (newFocusIndex[0] < 0) {
+                setFocusIndex([0,0]);
+                return;
+            }
+            newFocusIndex[1] += sections.array[newFocusIndex[0]].length;
+        }
+        while (newFocusIndex[1] > sections.array[newFocusIndex[0]].length - 1) {
+            newFocusIndex[1] -= sections.array[newFocusIndex[0]].length;
+            newFocusIndex[0]++;
+            if (newFocusIndex[0] >= sections.length - 1) {
+                setFocusIndex([sections.length - 1, sections.array[sections.length - 1].length - 1]);
+                return;
+            }
+        }
+        setFocusIndex(newFocusIndex);
+    }
 
-    return <div className="notes">{sections.mapStateArray((e,i) => (
-        <SaveHistory.Provider key={i} value={updateHistory}>
-            <NoteSection
-                lines={e}
-                singleSection={sections.length === 1}
-                deleteSection={() => sections.remove(i)}
-            />
-            <div className="section-button-container">
-                <button className="section-button" onClick={makeHandleButtonClick(i + 1)}></button>
-            </div>
-        </SaveHistory.Provider>
-    ))}<button onClick={undo}>undo</button></div>;
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        if (focusIndex === null) {
+            return;
+        }
+        switch (event.key) {
+            case "ArrowUp":
+                if (!event.ctrlKey) {
+                    changeFocusIndex(-1);
+                    break;
+                }
+                if (focusIndex[0] > 0) {
+                    setFocusIndex([focusIndex[0] - 1, sections.get(focusIndex[0] - 1).length - 1])
+                }
+                break;
+            case "Enter":
+                // Creating new lines
+                if (event.ctrlKey) {
+                    addSection(focusIndex[0] + 1);
+                    break;
+                }
+                sections.getStateArray(focusIndex[0]).insert(new MathNoteState(), focusIndex[1] + 1);
+                changeFocusIndex(1, true);
+                break;
+            case "ArrowDown":
+                if (!event.ctrlKey) {
+                    changeFocusIndex(11);
+                    break;
+                }
+                if (focusIndex[0] < sections.length - 1) {
+                    setFocusIndex([focusIndex[0] + 1, 0])
+                }
+                break;
+            case "Backspace":
+                if (sections.get(focusIndex[0])[focusIndex[1]].value !== '') {
+                    return; // Allow native handling
+                }
+                
+                changeFocusIndex(-1);
+                
+                if (sections.get(focusIndex[0]).length > 1) { // If there are multiple lines
+                    sections.getStateArray(focusIndex[0]).remove(focusIndex[1]);
+                    (focusIndex[0] > 0 || focusIndex[1] > 0) && changeFocusIndex(-1);
+                    break;
+                }
+                
+                if (sections.length > 1) { // If there is more than one section
+                    sections.remove(focusIndex[0]);
+                }
+                break;
+            default:
+                return;
+        }
+        event.preventDefault();
+    }
+
+    return (<div className="notes" onKeyDown={handleKeyDown}>
+        {sections.mapStateArray((e,i) => (
+            <SaveHistory.Provider key={i} value={updateHistory}>
+                <NoteSection
+                    lines={e}
+                    focusIndex={focusIndex?.[0] === i ? focusIndex[1] : null}
+                    setFocusIndex={(focusIndex: number) => {setFocusIndex([i, focusIndex])}}
+                />
+                <div className="section-button-container">
+                    <button className="section-button" onClick={() => addSection(i + 1)}></button>
+                </div>
+            </SaveHistory.Provider>
+        ))}
+        <button onClick={undo}>undo</button>
+    </div>);
 }
 
 export default Notes;
