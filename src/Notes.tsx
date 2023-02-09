@@ -121,6 +121,10 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
         }
     }
     
+    const handleBlur = () => {
+        setFocusIndex(null);
+    }
+
     const changeFocusIndex = (change: number, ignoreBounds = false) => {
         if (focusIndex === null) {
             return;
@@ -175,7 +179,7 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
                 break;
             case "ArrowDown":
                 if (!event.ctrlKey) {
-                    changeFocusIndex(11);
+                    changeFocusIndex(1);
                     break;
                 }
                 if (focusIndex[0] < sections.length - 1) {
@@ -205,7 +209,7 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
         event.preventDefault();
     }
 
-    return (<div className="notes" onKeyDown={handleKeyDown}>
+    return (<div className="notes" onKeyDown={handleKeyDown} onBlur={handleBlur}>
         {sections.mapStateArray((e,i) => (
             <SaveHistory.Provider key={i} value={updateHistory}>
                 <NoteSection

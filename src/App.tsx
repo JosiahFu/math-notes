@@ -77,7 +77,7 @@ function App() {
         <main className="app">
             <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
             <Notes sections={sections} />
-            <DownloadButton sections={sections.array} title={title} />
+            <DownloadButton sections={sections.array} title={title || "Untitled Notes"} />
             <LoadButton setSections={sections.setArray} setTitle={setTitle} />
         </main>
     );
