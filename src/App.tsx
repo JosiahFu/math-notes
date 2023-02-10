@@ -33,7 +33,7 @@ function Title({value, setValue, placeholder, onInput}: {
                 onBlur={handleBlur}
             />
         </h1>
-    )
+    );
 }
 
 function DownloadButton({sections, title}: {sections: MathNoteState[][], title: string}) {
@@ -48,10 +48,17 @@ function DownloadButton({sections, title}: {sections: MathNoteState[][], title: 
         setFileContent(JSON.stringify({title: title, sections: sections}));
     }
 
-    return <a href={'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContent)} onClick={handleClick} download={title + '.json'}>Download</a>
+    return (<a
+        href={'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContent)}
+        onClick={handleClick}
+        download={title + '.json'}
+    >Download</a>);
 }
 
-function LoadButton({setSections, setTitle}: {setSections: (sections: MathNoteState[][]) => void, setTitle: (title: string) => void}) {
+function LoadButton({setSections, setTitle}: {
+    setSections: (sections: MathNoteState[][]) => void, 
+    setTitle: (title: string) => void
+}) {
     const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
         const reader = new FileReader();
         reader.onload = (event: ProgressEvent<FileReader>) => {

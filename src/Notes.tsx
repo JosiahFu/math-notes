@@ -95,7 +95,7 @@ function NoteSection({lines, focusIndex, setFocusIndex}: {
                     value={e.value}
                     type={e.type}
                     setState={makeSetState(i)}
-                    focused={focusIndex === i} // && (element.current?.contains(document.activeElement) ?? false)
+                    focused={focusIndex === i}
                     onFocus={() => setFocusIndex(i)}
                 />)}
         </div>
