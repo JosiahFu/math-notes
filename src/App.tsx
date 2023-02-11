@@ -9,7 +9,7 @@ import './App.css';
 // TODO: Undoing (Edit History)
 // TODO: Cross-section keybindings
 
-function Title({value, setValue, placeholder, onInput}: {
+function Title({ value, setValue, placeholder, onInput }: {
     value: string,
     setValue: (value: string) => void,
     placeholder: string,
@@ -18,7 +18,7 @@ function Title({value, setValue, placeholder, onInput}: {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
     };
-    
+
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
         onInput(event.target.value);
     }
@@ -36,16 +36,16 @@ function Title({value, setValue, placeholder, onInput}: {
     );
 }
 
-function DownloadButton({sections, title}: {sections: MathNoteState[][], title: string}) {
+function DownloadButton({ sections, title }: { sections: MathNoteState[][], title: string }) {
     const [fileContent, setFileContent] = useState('');
-    
+
     const handleClick = () => {
         // setFileContent(
         //     title + '\n' +
         //     '='.repeat(title.length) + '\n' +
         //     sections.map(section => section.map(line => (line.type === FieldType.Text ? '\\"' : '') + line.value + '\n').join('')).join('---\n') + '\n'
         // )
-        setFileContent(JSON.stringify({title: title, sections: sections}));
+        setFileContent(JSON.stringify({ title: title, sections: sections }));
     }
 
     return (<a
@@ -55,27 +55,27 @@ function DownloadButton({sections, title}: {sections: MathNoteState[][], title: 
     >Download</a>);
 }
 
-function LoadButton({setSections, setTitle}: {
-    setSections: (sections: MathNoteState[][]) => void, 
+function LoadButton({ setSections, setTitle }: {
+    setSections: (sections: MathNoteState[][]) => void,
     setTitle: (title: string) => void
 }) {
     const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
         const reader = new FileReader();
         reader.onload = (event: ProgressEvent<FileReader>) => {
-            const loaded = JSON.parse(event.target!.result as string) as {title: string, sections: MathNoteState[][]};
+            const loaded = JSON.parse(event.target!.result as string) as { title: string, sections: MathNoteState[][] };
             setTitle(loaded.title);
             setSections(loaded.sections);
         };
         reader.readAsText((event.target as HTMLInputElement).files![0])
     }
-    
+
     return <input type="file" onInput={handleInput} />
 }
 
 function App() {
     const sections = new NestedStateArray(useState<MathNoteState[][]>([[new MathNoteState()]]));
     const [title, setTitle] = useState('');
-    
+
     const setDocumentTitle = (documentTitle: string) => {
         document.title = documentTitle || 'Math Notes'; // If blank
     }

@@ -20,7 +20,7 @@ class MathNoteState {
     };
 }
 
-function MathNoteField({value, type, setState, focused, onFocus}: {
+function MathNoteField({ value, type, setState, focused, onFocus }: {
     value: string,
     type: FieldType,
     setState: (state: MathNoteState) => void,
@@ -47,7 +47,7 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
     const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setState(new MathNoteState(event.target.value, type));
     }
-    
+
     const handleFocus = (event: React.FocusEvent) => {
         if (event.isTrusted) {
             onFocus(event);
@@ -76,14 +76,14 @@ function MathNoteField({value, type, setState, focused, onFocus}: {
     );
 }
 
-function NoteSection({lines, focusIndex, setFocusIndex}: {
+function NoteSection({ lines, focusIndex, setFocusIndex }: {
     lines: StateArray<MathNoteState>,
     focusIndex: number | null,
     setFocusIndex: (focusIndex: number) => void
 }) {
     const element = useRef<HTMLDivElement>(null);
-    
-    
+
+
     const makeSetState = (index: number) =>
         (state: MathNoteState) => lines.set(state, index);
 
@@ -102,7 +102,7 @@ function NoteSection({lines, focusIndex, setFocusIndex}: {
     );
 }
 
-function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
+function Notes({ sections }: { sections: NestedStateArray<MathNoteState> }) {
     const [focusIndex, setFocusIndex] = useState<[number, number] | null>(null);
     const history = useRef<NestedStateArray<MathNoteState>[]>([]);
 
@@ -110,17 +110,17 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
         sections.insert([new MathNoteState()], index);
         setFocusIndex([index, 0]);
     }
-        
+
     const updateHistory = () => {
         history.current.push(sections);
     }
-    
+
     const undo = () => {
         if (history.current.length > 0) {
             sections.setArray(history.current.pop()!.array);
         }
     }
-    
+
     const handleBlur = () => {
         setFocusIndex(null);
     }
@@ -130,7 +130,7 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
             return;
         }
         let newFocusIndex: [number, number] = [...focusIndex]; // Copy indices
-        newFocusIndex[1]+= change;
+        newFocusIndex[1] += change;
         if (ignoreBounds) {
             setFocusIndex(newFocusIndex);
             return;
@@ -138,7 +138,7 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
         while (newFocusIndex[1] < 0) {
             newFocusIndex[0]--;
             if (newFocusIndex[0] < 0) {
-                setFocusIndex([0,0]);
+                setFocusIndex([0, 0]);
                 return;
             }
             newFocusIndex[1] += sections.array[newFocusIndex[0]].length;
@@ -190,15 +190,15 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
                 if (sections.get(focusIndex[0])[focusIndex[1]].value !== '') {
                     return; // Allow native handling
                 }
-                
+
                 changeFocusIndex(-1);
-                
+
                 if (sections.get(focusIndex[0]).length > 1) { // If there are multiple lines
                     sections.getStateArray(focusIndex[0]).remove(focusIndex[1]);
                     (focusIndex[0] > 0 || focusIndex[1] > 0) && changeFocusIndex(-1);
                     break;
                 }
-                
+
                 if (sections.length > 1) { // If there is more than one section
                     sections.remove(focusIndex[0]);
                 }
@@ -210,12 +210,12 @@ function Notes({sections}: {sections: NestedStateArray<MathNoteState>}) {
     }
 
     return (<div className="notes" onKeyDown={handleKeyDown} onBlur={handleBlur}>
-        {sections.mapStateArray((e,i) => (
+        {sections.mapStateArray((e, i) => (
             <SaveHistory.Provider key={i} value={updateHistory}>
                 <NoteSection
                     lines={e}
                     focusIndex={focusIndex?.[0] === i ? focusIndex[1] : null}
-                    setFocusIndex={(focusIndex: number) => {setFocusIndex([i, focusIndex])}}
+                    setFocusIndex={(focusIndex: number) => { setFocusIndex([i, focusIndex]) }}
                 />
                 <div className="section-button-container">
                     <button className="section-button" onClick={() => addSection(i + 1)}></button>
