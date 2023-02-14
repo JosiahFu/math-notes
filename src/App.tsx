@@ -5,9 +5,7 @@ import './App.css';
 
 // TODO: Section delete button
 // TODO: Optional section titles
-// TODO: Save to file
 // TODO: Undoing (Edit History)
-// TODO: Cross-section keybindings
 
 function Title({ value, setValue, placeholder, onInput }: {
     value: string,
@@ -40,11 +38,6 @@ function DownloadButton({ sections, title }: { sections: MathNoteState[][], titl
     const [fileContent, setFileContent] = useState('');
 
     const handleClick = () => {
-        // setFileContent(
-        //     title + '\n' +
-        //     '='.repeat(title.length) + '\n' +
-        //     sections.map(section => section.map(line => (line.type === FieldType.Text ? '\\"' : '') + line.value + '\n').join('')).join('---\n') + '\n'
-        // )
         setFileContent(JSON.stringify({ title: title, sections: sections }));
     }
 
