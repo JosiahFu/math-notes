@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Notes, { MathNoteState } from './Notes';
 import { NestedStateArray } from './Util';
 import './App.css';
+import { DownloadButton, LoadButton } from './Saving';
+import { DownloadIcon, UploadIcon } from './Icons';
 
 // TODO: Section delete button
 // TODO: Optional section titles
@@ -34,37 +36,6 @@ function Title({ value, setValue, placeholder, onInput }: {
     );
 }
 
-function DownloadButton({ sections, title }: { sections: MathNoteState[][], title: string }) {
-    const [fileContent, setFileContent] = useState('');
-
-    const handleClick = () => {
-        setFileContent(JSON.stringify({ title: title, sections: sections }));
-    }
-
-    return (<a
-        href={'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContent)}
-        onClick={handleClick}
-        download={title + '.json'}
-    >Download</a>);
-}
-
-function LoadButton({ setSections, setTitle }: {
-    setSections: (sections: MathNoteState[][]) => void,
-    setTitle: (title: string) => void
-}) {
-    const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
-        const reader = new FileReader();
-        reader.onload = (event: ProgressEvent<FileReader>) => {
-            const loaded = JSON.parse(event.target!.result as string) as { title: string, sections: MathNoteState[][] };
-            setTitle(loaded.title);
-            setSections(loaded.sections);
-        };
-        reader.readAsText((event.target as HTMLInputElement).files![0])
-    }
-
-    return <input type="file" onInput={handleInput} />
-}
-
 function App() {
     const sections = new NestedStateArray(useState<MathNoteState[][]>([[new MathNoteState()]]));
     const [title, setTitle] = useState('');
@@ -77,8 +48,13 @@ function App() {
         <main className="app">
             <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
             <Notes sections={sections} />
-            <DownloadButton sections={sections.array} title={title || "Untitled Notes"} />
-            <LoadButton setSections={sections.setArray} setTitle={setTitle} />
+            <DownloadButton sections={sections.array} title={title || "Untitled Notes"}>
+                {/* <img src={downloadIcon} alt="Download" className="download-button" /> */}
+                <DownloadIcon className="button load-button" />
+            </DownloadButton>
+            <LoadButton setSections={sections.setArray} setTitle={setTitle}>
+                <UploadIcon className="button load-button" />
+            </LoadButton>
         </main>
     );
 }

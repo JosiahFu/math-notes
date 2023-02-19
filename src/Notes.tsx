@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
-import { NestedStateArray, StateArray } from './Util';
+import { classList, NestedStateArray, StateArray } from './Util';
 import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
 addStyles();
 
@@ -13,16 +13,17 @@ enum FieldType {
 class MathNoteState {
     value: string;
     type: FieldType;
+    isAnswer: boolean;
 
-    constructor(value = '', type = FieldType.Math) {
+    constructor(value = '', type = FieldType.Math, isAnswer = false) {
         this.value = value;
         this.type = type;
+        this.isAnswer = isAnswer;
     };
 }
 
-function MathNoteField({ value, type, setState, focused, onFocus }: {
-    value: string,
-    type: FieldType,
+function MathNoteField({ state: {value, type, isAnswer}, setState, focused, onFocus }: {
+    state: MathNoteState,
     setState: (state: MathNoteState) => void,
     focused: boolean,
     onFocus: (event: React.FocusEvent) => void,
@@ -57,7 +58,7 @@ function MathNoteField({ value, type, setState, focused, onFocus }: {
     return (
         type === FieldType.Math ?
             <EditableMathField
-                className="note-field"
+                className={classList('note-field', ['answer', isAnswer])}
                 latex={value}
                 onChange={handleMathFieldChange}
                 config={{ spaceBehavesLikeTab: true }}
@@ -66,7 +67,7 @@ function MathNoteField({ value, type, setState, focused, onFocus }: {
                 mathquillDidMount={target => mathField.current = target}
             /> :
             <input
-                className="note-field text-note"
+                className={classList('note-field', 'text-note', ['answer', isAnswer])}
                 onChange={handleTextNoteChange}
                 value={value}
                 onFocus={handleFocus}
@@ -92,8 +93,7 @@ function NoteSection({ lines, focusIndex, setFocusIndex }: {
             {lines.map((e, i) =>
                 <MathNoteField
                     key={i}
-                    value={e.value}
-                    type={e.type}
+                    state={e}
                     setState={makeSetState(i)}
                     focused={focusIndex === i}
                     onFocus={() => setFocusIndex(i)}
@@ -218,7 +218,7 @@ function Notes({ sections }: { sections: NestedStateArray<MathNoteState> }) {
                     setFocusIndex={(focusIndex: number) => { setFocusIndex([i, focusIndex]) }}
                 />
                 <div className="section-button-container">
-                    <button className="section-button" onClick={() => addSection(i + 1)}></button>
+                    <button className="button section-button" onClick={() => addSection(i + 1)}></button>
                 </div>
             </SaveHistory.Provider>
         ))}

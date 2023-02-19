@@ -23,12 +23,21 @@
     flex-flow: column nowrap;
 }
 
+.button {
+    background-color: #f0f0f0;
+    transition: 0.1s;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #ddd;
+}
+
 .section-button-container {
     text-align: center;
 }
 
 .section-button {
-    background-color: #f0f0f0;
     height: 30px;
     width: 30px;
     border: none;
@@ -38,11 +47,6 @@
     margin-top: 10px;
     margin-bottom: 10px;
     position: relative;
-    transition: 0.1s;
-}
-
-.section-button:hover {
-    background-color: #ddd;
 }
 
 .section-button::after {
@@ -92,6 +96,20 @@ h1 input:focus {
 h1 input.untitled {
     color: gray;
     font-style: italic;
+}
+
+/* a.button {
+    display: inline-block;
+} */
+
+.load-button {
+    display: inline-block;
+    height: 1.5em;
+    width: 1.5em;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    position: relative;
+    color: black;
 }
 
 .app {

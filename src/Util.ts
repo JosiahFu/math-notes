@@ -54,4 +54,11 @@ class NestedStateArray<T> extends StateArray<T[]> {
     }
 }
 
-export { StateArray, NestedStateArray };
+function classList(...classes: (string | [className: string, isActivated: boolean])[]) {
+    return classes
+        .filter(e => typeof e === 'string' || e[1])
+        .map(e => typeof e === 'string' ? e : e[1])
+        .join(' ');
+}
+
+export { StateArray, NestedStateArray, classList };
