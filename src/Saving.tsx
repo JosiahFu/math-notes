@@ -22,7 +22,7 @@ interface currentFormat {
 function dataFixerUpper(jsonInput: any): currentFormat {
     let fixed = structuredClone(jsonInput);
 
-    switch(jsonInput.version) {
+    switch (jsonInput.version) {
         case 2:
             break;
         case 1:
@@ -33,15 +33,17 @@ function dataFixerUpper(jsonInput: any): currentFormat {
     return fixed;
 }
 
-function DownloadButton({ sections, title, children }: {
+function DownloadButton({ sections, title, onClick, children }: {
     sections: MathNoteState[][],
     title: string,
+    onClick: (event: React.MouseEvent) => void,
     children: ReactNode
 }) {
     const [fileContent, setFileContent] = useState('');
 
-    const handleClick = () => {
+    const handleClick = (event: React.MouseEvent) => {
         setFileContent(JSON.stringify({ title: title, sections: sections, version: 2 }));
+        onClick(event);
     }
 
     return (<a
@@ -69,9 +71,9 @@ function LoadButton({ setSections, setTitle, children }: {
 
     return (<label>
         {children}
-        <input type="file" onInput={handleInput} style={{display: 'none'}}/>
+        <input type="file" onInput={handleInput} style={{ display: 'none' }} />
     </label>);
 }
 
 
-export {dataFixerUpper, DownloadButton, LoadButton};
+export { dataFixerUpper, DownloadButton, LoadButton };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Notes, { MathNoteState } from './Notes';
 import { NestedStateArray } from './Util';
 import './App.css';
@@ -36,19 +36,41 @@ function Title({ value, setValue, placeholder, onInput }: {
     );
 }
 
+// TODO: Move local storage saving to Saving.tsx somehow?
 function App() {
     const sections = new NestedStateArray(useState<MathNoteState[][]>([[new MathNoteState()]]));
+    const changes = useRef(false);
     const [title, setTitle] = useState('');
 
     const setDocumentTitle = (documentTitle: string) => {
         document.title = documentTitle || 'Math Notes'; // If blank
     }
 
+    const updateLastSave = () => {
+        changes.current = true;
+    }
+
+    const saveLocalStorage = () => {
+        localStorage.setItem('data', JSON.stringify(sections.array));
+    }
+
+    useEffect(() => {
+        if (localStorage.getItem('data') === null)
+            return;
+        sections.setArray(JSON.parse(localStorage.getItem('data')!) as MathNoteState[][]);
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    // const handleUnload = (event: BeforeUnloadEvent) => {
+    //     if (changes.current) {
+    //         event.preventDefault();
+    //     }
+    // }
+
     return (
         <main className="app">
             <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
-            <Notes sections={sections} />
-            <DownloadButton sections={sections.array} title={title || "Untitled Notes"}>
+            <Notes sections={sections} saveLocalStorage={saveLocalStorage} />
+            <DownloadButton sections={sections.array} title={title || "Untitled Notes"} onClick={updateLastSave}>
                 {/* <img src={downloadIcon} alt="Download" className="download-button" /> */}
                 <DownloadIcon className="button load-button" />
             </DownloadButton>

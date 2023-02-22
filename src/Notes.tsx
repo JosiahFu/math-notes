@@ -1,9 +1,14 @@
 import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { classList, NestedStateArray, StateArray } from './Util';
-import { addStyles, MathField, EditableMathField } from '@numberworks/react-mathquill'
+import { addStyles, MathField, EditableMathField, MathFieldConfig } from '@numberworks/react-mathquill'
 addStyles();
 
 const SaveHistory = createContext<(() => void) | null>(null);
+
+const config: MathFieldConfig = {
+    spaceBehavesLikeTab: true,
+    autoCommands: 'sqrt pi'
+}
 
 enum FieldType {
     Math = 'MATH',
@@ -22,7 +27,7 @@ class MathNoteState {
     };
 }
 
-function MathNoteField({ state: {value, type, isAnswer}, setState, focused, onFocus }: {
+function MathNoteField({ state: { value, type, isAnswer }, setState, focused, onFocus }: {
     state: MathNoteState,
     setState: (state: MathNoteState) => void,
     focused: boolean,
@@ -61,7 +66,7 @@ function MathNoteField({ state: {value, type, isAnswer}, setState, focused, onFo
                 className={classList('note-field', ['answer', isAnswer])}
                 latex={value}
                 onChange={handleMathFieldChange}
-                config={{ spaceBehavesLikeTab: true }}
+                config={config}
                 onFocus={handleFocus}
                 onBlur={saveHistory!}
                 mathquillDidMount={target => mathField.current = target}
@@ -102,7 +107,7 @@ function NoteSection({ lines, focusIndex, setFocusIndex }: {
     );
 }
 
-function Notes({ sections }: { sections: NestedStateArray<MathNoteState> }) {
+function Notes({ sections, saveLocalStorage }: { sections: NestedStateArray<MathNoteState>, saveLocalStorage: () => void }) {
     const [focusIndex, setFocusIndex] = useState<[number, number] | null>(null);
     const history = useRef<NestedStateArray<MathNoteState>[]>([]);
 
@@ -113,6 +118,7 @@ function Notes({ sections }: { sections: NestedStateArray<MathNoteState> }) {
 
     const updateHistory = () => {
         history.current.push(sections);
+        saveLocalStorage();
     }
 
     const undo = () => {
