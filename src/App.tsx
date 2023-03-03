@@ -7,7 +7,13 @@ import { DownloadIcon, UploadIcon } from './Icons';
 
 // TODO: Section delete button
 // TODO: Optional section titles
-// TODO: Undoing (Edit History)
+// TODO: Indenting
+// TODO: Mark as answer
+// TODO: Finish Undoing (Edit History)
+// TODO: Duplicate button/key
+// TODO: Better recovery
+// TODO: Text then Math box
+// TODO: Confirm before unload
 
 function Title({ value, setValue, placeholder, onInput }: {
     value: string,
