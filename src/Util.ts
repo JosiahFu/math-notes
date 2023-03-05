@@ -9,7 +9,7 @@ class StateArray<T>{
         this.map = this.array.map.bind(this.array);
         this.includes = this.array.includes.bind(this.array);
     }
-    
+
     get(index: number) {
         return this.array[index];
     }
@@ -17,7 +17,7 @@ class StateArray<T>{
     add(item: T) {
         this.setArray([...this.array, item]);
     }
-    
+
     insert(item: T, index: number) {
         this.setArray([
             ...this.array.slice(0, index),
@@ -25,15 +25,15 @@ class StateArray<T>{
             ...this.array.slice(index)
         ]);
     }
-    
+
     set(item: T, index: number) {
-        this.setArray(this.array.map((e,i) => index === i ? item : e));
+        this.setArray(this.array.map((e, i) => index === i ? item : e));
     }
-    
+
     remove(index: number) {
-        this.setArray(this.array.filter((e,i) => i !== index));
+        this.setArray(this.array.filter((e, i) => i !== index));
     }
-    
+
     get length() {
         return this.array.length;
     }
@@ -49,8 +49,16 @@ class NestedStateArray<T> extends StateArray<T[]> {
     }
 
     get mapStateArray() {
-        const mappedArray = this.array.map((e,i) => this.getStateArray(i));
+        const mappedArray = this.array.map((e, i) => this.getStateArray(i));
         return mappedArray.map.bind(mappedArray);
+    }
+
+    setArrayArray(arrayArray: T[][]) {
+        this.array.forEach((e, i) => this.getStateArray(i).setArray(arrayArray[i]))
+    }
+
+    getArrayArray() {
+        return this.mapStateArray(e => e.array);
     }
 }
 

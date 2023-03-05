@@ -5,15 +5,14 @@ import './App.css';
 import { DownloadButton, LoadButton } from './Saving';
 import { DownloadIcon, UploadIcon } from './Icons';
 
-// TODO: Section delete button
-// TODO: Optional section titles
-// TODO: Indenting
 // TODO: Mark as answer
-// TODO: Finish Undoing (Edit History)
+// TODO: Confirm before unload
+// TODO: *Indenting
+// TODO: Section delete button
+// TODO: *Optional section titles
 // TODO: Duplicate button/key
 // TODO: Better recovery
-// TODO: Text then Math box
-// TODO: Confirm before unload
+// TODO: *Text then Math box
 
 function Title({ value, setValue, placeholder, onInput }: {
     value: string,
@@ -50,32 +49,37 @@ function App() {
 
     const setDocumentTitle = (documentTitle: string) => {
         document.title = documentTitle || 'Math Notes'; // If blank
-    }
+    };
 
     const updateLastSave = () => {
         changes.current = true;
-    }
+    };
 
-    const saveLocalStorage = () => {
+    const handleChange = () => {
+        changes.current = false;
         localStorage.setItem('data', JSON.stringify(sections.array));
-    }
+    };
 
     useEffect(() => {
         if (localStorage.getItem('data') === null)
             return;
         sections.setArray(JSON.parse(localStorage.getItem('data')!) as MathNoteState[][]);
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // const handleUnload = (event: BeforeUnloadEvent) => {
-    //     if (changes.current) {
-    //         event.preventDefault();
-    //     }
-    // }
+    const handleUnload = (event: BeforeUnloadEvent) => {
+        if (changes.current) {
+            event.preventDefault();
+        }
+    };
+
+    useEffect(() => {
+        window.onbeforeunload = handleUnload;
+    }, []);
 
     return (
         <main className="app">
             <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
-            <Notes sections={sections} saveLocalStorage={saveLocalStorage} />
+            <Notes sections={sections} onChange={handleChange} />
             <DownloadButton sections={sections.array} title={title || "Untitled Notes"} onClick={updateLastSave}>
                 {/* <img src={downloadIcon} alt="Download" className="download-button" /> */}
                 <DownloadIcon className="button load-button" />

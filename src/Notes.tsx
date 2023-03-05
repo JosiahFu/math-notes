@@ -3,7 +3,7 @@ import { classList, NestedStateArray, StateArray } from './Util';
 import { addStyles, MathField, EditableMathField, MathFieldConfig } from '@numberworks/react-mathquill'
 addStyles();
 
-const SaveHistory = createContext<(() => void) | null>(null);
+const OnChange = createContext<(() => void) | null>(null);
 
 const config: MathFieldConfig = {
     spaceBehavesLikeTab: true,
@@ -35,7 +35,7 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
 }) {
     const textInput = useRef<HTMLInputElement>(null);
     const mathField = useRef<MathField>();
-    const saveHistory = useContext(SaveHistory);
+    const saveHistory = useContext(OnChange);
 
     useEffect(() => {
         if (focused)
@@ -107,29 +107,46 @@ function NoteSection({ lines, focusIndex, setFocusIndex }: {
     );
 }
 
-function Notes({ sections, saveLocalStorage }: { sections: NestedStateArray<MathNoteState>, saveLocalStorage: () => void }) {
+function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteState>, onChange: () => void }) {
     const [focusIndex, setFocusIndex] = useState<[number, number] | null>(null);
-    const history = useRef<NestedStateArray<MathNoteState>[]>([]);
+    const undoHistory = useRef<MathNoteState[][][]>([]);
+    const redoHistory = useRef<MathNoteState[][][]>([]);
 
     const addSection = (index: number) => {
         sections.insert([new MathNoteState()], index);
         setFocusIndex([index, 0]);
     }
 
-    const updateHistory = () => {
-        history.current.push(sections);
-        saveLocalStorage();
-    }
-
     const undo = () => {
-        if (history.current.length > 0) {
-            sections.setArray(history.current.pop()!.array);
+        if (undoHistory.current.length === 0) return;
+        const newSections = undoHistory.current.pop()!;
+        redoHistory.current.push(sections.getArrayArray());
+        sections.setArrayArray(newSections);
+        if (focusIndex !== null && focusIndex[1] > newSections[focusIndex[0]].length - 1) {
+            changeFocusIndex(-1);
         }
     }
 
+    const redo = () => {
+        if (redoHistory.current.length === 0) return;
+        const newSections = redoHistory.current.pop()!;
+        undoHistory.current.push(sections.getArrayArray());
+        sections.setArrayArray(newSections);
+        if (focusIndex !== null && focusIndex[1] > newSections[focusIndex[0]].length - 1) {
+            changeFocusIndex(-1);
+        }
+    }
+
+    const handleChange = () => {
+        if (sections.getArrayArray() === undoHistory.current.at(-1)) return;
+        undoHistory.current.push(sections.getArrayArray());
+        redoHistory.current = [];
+        onChange();
+    };
+
     const handleBlur = () => {
         setFocusIndex(null);
-    }
+    };
 
     const changeFocusIndex = (change: number, ignoreBounds = false) => {
         if (focusIndex === null) {
@@ -197,17 +214,26 @@ function Notes({ sections, saveLocalStorage }: { sections: NestedStateArray<Math
                     return; // Allow native handling
                 }
 
-                changeFocusIndex(-1);
+                // changeFocusIndex(-1);
 
                 if (sections.get(focusIndex[0]).length > 1) { // If there are multiple lines
                     sections.getStateArray(focusIndex[0]).remove(focusIndex[1]);
                     (focusIndex[0] > 0 || focusIndex[1] > 0) && changeFocusIndex(-1);
+                    handleChange();
                     break;
                 }
 
                 if (sections.length > 1) { // If there is more than one section
                     sections.remove(focusIndex[0]);
                 }
+                break;
+            case "z":
+                if (!event.ctrlKey) return;
+                undo();
+                break;
+            case "y":
+                if (!event.ctrlKey) return;
+                redo();
                 break;
             default:
                 return;
@@ -217,7 +243,7 @@ function Notes({ sections, saveLocalStorage }: { sections: NestedStateArray<Math
 
     return (<div className="notes" onKeyDown={handleKeyDown} onBlur={handleBlur}>
         {sections.mapStateArray((e, i) => (
-            <SaveHistory.Provider key={i} value={updateHistory}>
+            <OnChange.Provider key={i} value={handleChange}>
                 <NoteSection
                     lines={e}
                     focusIndex={focusIndex?.[0] === i ? focusIndex[1] : null}
@@ -226,9 +252,9 @@ function Notes({ sections, saveLocalStorage }: { sections: NestedStateArray<Math
                 <div className="section-button-container">
                     <button className="button section-button" onClick={() => addSection(i + 1)}></button>
                 </div>
-            </SaveHistory.Provider>
+            </OnChange.Provider>
         ))}
-        <button onClick={undo}>undo</button>
+        {/* <button onClick={undo}>undo</button> */}
     </div>);
 }
 
