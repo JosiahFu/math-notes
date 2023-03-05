@@ -31,16 +31,18 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
     state: MathNoteState,
     setState: (state: MathNoteState) => void,
     focused: boolean,
-    onFocus: (event: React.FocusEvent) => void,
+    onFocus: (event?: React.FocusEvent) => void,
 }) {
     const textInput = useRef<HTMLInputElement>(null);
     const mathField = useRef<MathField>();
     const saveHistory = useContext(OnChange);
 
-    useEffect(() => {
+    const focus = () => {
         if (focused)
             (type === FieldType.Math ? mathField : textInput).current?.focus();
-    });
+    };
+
+    useEffect(focus, [focused, type]);
 
     const handleMathFieldChange = (target: MathField) => {
         if (target.latex() === '"') {
@@ -60,25 +62,44 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
         }
     }
 
+    const toggleAnswer = () => {
+        setState(new MathNoteState(value, type, !isAnswer));
+        onFocus();
+    };
+
+    const handleKeyPress = (event: React.KeyboardEvent) => {
+        switch (event.key) {
+            case 'm':
+                if (!event.ctrlKey) return;
+                toggleAnswer();
+                break;
+            default:
+                return;
+        }
+        event.preventDefault();
+    }
+
     return (
-        type === FieldType.Math ?
-            <EditableMathField
-                className={classList('note-field', ['answer', isAnswer])}
-                latex={value}
-                onChange={handleMathFieldChange}
-                config={config}
-                onFocus={handleFocus}
-                onBlur={saveHistory!}
-                mathquillDidMount={target => mathField.current = target}
-            /> :
-            <input
-                className={classList('note-field', 'text-note', ['answer', isAnswer])}
-                onChange={handleTextNoteChange}
-                value={value}
-                onFocus={handleFocus}
-                onBlur={saveHistory!}
-                ref={textInput}
-            />
+        <div className={classList('note-field', ['answer', isAnswer])} onKeyDown={handleKeyPress}>
+            {type === FieldType.Math ?
+                <EditableMathField
+                    latex={value}
+                    onChange={handleMathFieldChange}
+                    config={config}
+                    onFocus={handleFocus}
+                    onBlur={saveHistory!}
+                    mathquillDidMount={target => mathField.current = target}
+                /> :
+                <input
+                    className="text-note"
+                    onChange={handleTextNoteChange}
+                    value={value}
+                    onFocus={handleFocus}
+                    onBlur={saveHistory!}
+                    ref={textInput}
+                />}
+            <button className="button answer-button" onClick={toggleAnswer}>&#11088;</button> {/* Star emoji */}
+        </div>
     );
 }
 
@@ -108,7 +129,7 @@ function NoteSection({ lines, focusIndex, setFocusIndex }: {
 }
 
 function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteState>, onChange: () => void }) {
-    const [focusIndex, setFocusIndex] = useState<[number, number] | null>(null);
+    const [focusIndex, setFocusIndex] = useState<[section: number, field: number] | null>(null);
     const undoHistory = useRef<MathNoteState[][][]>([]);
     const redoHistory = useRef<MathNoteState[][][]>([]);
 
@@ -152,7 +173,7 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
         if (focusIndex === null) {
             return;
         }
-        let newFocusIndex: [number, number] = [...focusIndex]; // Copy indices
+        let newFocusIndex: typeof focusIndex = [...focusIndex]; // Copy indices
         newFocusIndex[1] += change;
         if (ignoreBounds) {
             setFocusIndex(newFocusIndex);
@@ -169,7 +190,7 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
         while (newFocusIndex[1] > sections.array[newFocusIndex[0]].length - 1) {
             newFocusIndex[1] -= sections.array[newFocusIndex[0]].length;
             newFocusIndex[0]++;
-            if (newFocusIndex[0] >= sections.length - 1) {
+            if (newFocusIndex[0] > sections.length - 1) {
                 setFocusIndex([sections.length - 1, sections.array[sections.length - 1].length - 1]);
                 return;
             }

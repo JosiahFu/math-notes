@@ -65,7 +65,7 @@ class NestedStateArray<T> extends StateArray<T[]> {
 function classList(...classes: (string | [className: string, isActivated: boolean])[]) {
     return classes
         .filter(e => typeof e === 'string' || e[1])
-        .map(e => typeof e === 'string' ? e : e[1])
+        .map(e => typeof e === 'string' ? e : e[0])
         .join(' ');
 }
 

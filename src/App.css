@@ -1,15 +1,49 @@
-.note-field.mq-editable-field, .note-field.text-note {
-    display: block;
-    padding: 5px;
-    border: none;
+.note-field {
+    display: flex;
+    flex-direction: row nowrap;
 }
 
-.note-field.mq-editable-field.mq-focused, .note-field.text-note:focus {
+.note-field.answer {
+    background-color: #beffc5;
+}
+
+.note-field:focus-within {
+    background-color: #f0f0f0;
+}
+
+.note-field.answer:focus-within {
+    background-color: #b0f0b7;
+}
+
+.note-field .mq-editable-field,
+.note-field .text-note {
+    /* display: block; */
+    padding: 5px;
+    border: none;
+    flex-grow: 1;
+}
+
+.note-field .mq-editable-field.mq-focused,
+.note-field .text-note:focus {
     /* border-left-color: dodgerblue;
     border-right-color: dodgerblue; */
-    background-color: #f0f0f0;
+    /* background-color: #00000010; */
     box-shadow: none;
     outline: none;
+}
+
+.answer-button {
+    display: none;
+    align-self: center;
+    height: 30px;
+    width: 30px;
+    margin: 0 10px;
+    padding: 0;
+    border-radius: 10px;
+}
+
+.note-field:hover .answer-button {
+    display: inline-block;
 }
 
 .text-note {
@@ -27,6 +61,7 @@
     background-color: #f0f0f0;
     transition: 0.1s;
     cursor: pointer;
+    border: none;
 }
 
 .button:hover {
@@ -40,7 +75,6 @@
 .section-button {
     height: 30px;
     width: 30px;
-    border: none;
     padding: 5px;
     font-weight: bold;
     border-radius: 10px;
