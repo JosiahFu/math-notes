@@ -1,18 +1,54 @@
+:root {
+    --bg-color: white;
+    --fg-color: black;
+    --faded-fg-color: gray;
+    --border-color: gray;
+    --button-color: #f0f0f0;
+    --active-button-color: #ddd;
+    --focus-bg-color: #f0f0f0;
+    --hl-color: #beffc5;
+    --focus-hl-color: #b0f0b7;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #222;
+        --fg-color: #eee;
+        --faded-fg-color: #ccc;
+        --border-color: #777;
+        --button-color: #444;
+        --active-button-color: #555;
+        --focus-bg-color: #444;
+        --hl-color: #6b956f;
+        --focus-hl-color: #557d59;
+    }
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--fg-color);
+}
+
 .note-field {
     display: flex;
     flex-direction: row nowrap;
 }
 
 .note-field.answer {
-    background-color: #beffc5;
+    background-color: var(--hl-color);
 }
 
 .note-field:focus-within {
-    background-color: #f0f0f0;
+    background-color: var(--focus-bg-color);
 }
 
 .note-field.answer:focus-within {
-    background-color: #b0f0b7;
+    background-color: var(--focus-hl-color);
+}
+
+.note-field .mq-cursor {
+    border-color: var(--fg-color);
+
 }
 
 .note-field .mq-editable-field,
@@ -49,23 +85,25 @@
 .text-note {
     font-size: inherit;
     font-family: inherit;
+    background-color: transparent;
+    color: inherit;
 }
 
 .section {
-    border: 2px solid gray;
+    border: 2px solid var(--border-color);
     display: flex;
     flex-flow: column nowrap;
 }
 
 .button {
-    background-color: #f0f0f0;
+    background-color: var(--button-color);
     transition: 0.1s;
     cursor: pointer;
     border: none;
 }
 
 .button:hover {
-    background-color: #ddd;
+    background-color: var(--active-button-color);
 }
 
 .section-button-container {
@@ -84,7 +122,7 @@
 }
 
 .section-button::after {
-    background-color: black;
+    background-color: var(--fg-color);
     content: '';
     position: absolute;
     width: 2px;
@@ -94,7 +132,7 @@
 }
 
 .section-button::before {
-    background-color: black;
+    background-color: var(--fg-color);
     content: '';
     position: absolute;
     width: 14px;
@@ -121,6 +159,8 @@ h1 input {
     text-align: center;
     padding: 0;
     border: none;
+    background-color: transparent;
+    color: inherit;
 }
 
 h1 input:focus {
@@ -128,7 +168,7 @@ h1 input:focus {
 }
 
 h1 input.untitled {
-    color: gray;
+    color: var(--faded-fg-color);
     font-style: italic;
 }
 
@@ -143,7 +183,7 @@ h1 input.untitled {
     padding: 0.5em;
     border-radius: 0.5em;
     position: relative;
-    color: black;
+    color: var(--fg-color);
 }
 
 .app {

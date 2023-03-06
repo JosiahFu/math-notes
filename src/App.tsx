@@ -5,14 +5,15 @@ import './App.css';
 import { DownloadButton, LoadButton } from './Saving';
 import { DownloadIcon, UploadIcon } from './Icons';
 
-// TODO: Mark as answer
 // TODO: Confirm before unload
+// TODO: Dark Mode
 // TODO: *Indenting
 // TODO: Section delete button
 // TODO: *Optional section titles
 // TODO: Duplicate button/key
 // TODO: Better recovery
 // TODO: *Text then Math box
+// * Requires storage format changes
 
 function Title({ value, setValue, placeholder, onInput }: {
     value: string,
