@@ -12,18 +12,33 @@ import { MathNoteState } from "./Notes";
 //     version: 2
 // }
 
+// V3 {
+//     title: string,
+//     sections: {
+//         title: string,
+//         lines: {
+//             value: string,
+//             type: FieldType,
+//             isAnswer: boolean
+//         }[]
+//     }[]
+//     version: 3
+// }
+
 interface currentFormat {
     title: string,
-    sections: MathNoteState[][],
-    // sections: {title: string, lines: MathNoteState[]}[],
-    version: 2
+    sections: { title: string, lines: MathNoteState[] }[],
+    version: 3
 }
 
 function dataFixerUpper(jsonInput: any): currentFormat {
     let fixed = structuredClone(jsonInput);
 
     switch (jsonInput.version) {
+        case 3:
+            break;
         case 2:
+            fixed.sections.forEach((e: any, i: number) => fixed.sections[i] = { title: '', lines: e });
             break;
         case 1:
         default:
