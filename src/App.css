@@ -1,5 +1,6 @@
 :root {
-    --bg-color: white;
+    --bg-bg-color: white;
+    --bg-color: #eee;
     --fg-color: black;
     --faded-fg-color: gray;
     --border-color: gray;
@@ -12,20 +13,21 @@
 
 @media screen and (prefers-color-scheme: dark) {
     :root {
-        --bg-color: #222;
+        --bg-bg-color: #171717;
+        --bg-color: #272727;
         --fg-color: #eee;
         --faded-fg-color: #ccc;
         --border-color: #777;
         --button-color: #444;
         --active-button-color: #555;
         --focus-bg-color: #444;
-        --hl-color: #6b956f;
-        --focus-hl-color: #557d59;
+        --hl-color: #456849;
+        --focus-hl-color: #5f8c64;
     }
 }
 
 body {
-    background-color: var(--bg-color);
+    background-color: var(--bg-bg-color);
     color: var(--fg-color);
 }
 
@@ -90,7 +92,10 @@ body {
 }
 
 .section {
-    border: 2px solid var(--border-color);
+    /* border: 2px solid var(--border-color); */
+    background-color: var(--bg-color);
+    border-radius: 10px;
+    overflow: hidden;
     display: flex;
     flex-flow: column nowrap;
 }
@@ -151,6 +156,7 @@ h1 {
     text-align: center;
     display: flex;
     flex-flow: column nowrap;
+    font-weight: 600;
 }
 
 h1 input {
@@ -161,6 +167,7 @@ h1 input {
     border: none;
     background-color: transparent;
     color: inherit;
+    font-weight: inherit;
 }
 
 h1 input:focus {
