@@ -11,7 +11,7 @@
     --focus-hl-color: #b0f0b7;
 }
 
-@media screen and (prefers-color-scheme: dark) {
+/*@media screen and (prefers-color-scheme: dark) {
     :root {
         --bg-bg-color: #171717;
         --bg-color: #272727;
@@ -24,7 +24,7 @@
         --hl-color: #456849;
         --focus-hl-color: #5f8c64;
     }
-}
+}*/
 
 body {
     background-color: var(--bg-bg-color);
@@ -50,7 +50,6 @@ body {
 
 .note-field .mq-cursor {
     border-color: var(--fg-color);
-
 }
 
 .note-field .mq-editable-field,
