@@ -53,11 +53,11 @@ function App() {
     };
 
     const updateLastSave = () => {
-        changes.current = true;
+        changes.current = false;
     };
 
     const handleChange = () => {
-        changes.current = false;
+        changes.current = true;
         localStorage.setItem('data', JSON.stringify(sections.array));
     };
 
@@ -67,15 +67,14 @@ function App() {
         sections.setArray(JSON.parse(localStorage.getItem('data')!) as MathNoteState[][]);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const handleUnload = (event: BeforeUnloadEvent) => {
-        if (changes.current) {
-            event.preventDefault();
-        }
-    };
+    const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
 
     useEffect(() => {
-        window.onbeforeunload = handleUnload;
-    }, []);
+        if (changes.current) {
+            window.addEventListener('beforeunload', preventUnload);
+            return () => window.removeEventListener('beforeunload', preventUnload);
+        }
+    }, [changes]);
 
     return (
         <main className="app">
