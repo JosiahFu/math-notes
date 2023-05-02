@@ -11,8 +11,11 @@ import { DownloadIcon, UploadIcon } from './Icons';
 // TODO: Section delete button
 // TODO: *Optional section titles
 // TODO: Duplicate button/key
-// TODO: Better recovery
+// TODO: Confirm recovery
+// TODO: Clear button
 // TODO: *Text then Math box
+// TODO: *Math Tables
+// TODO: Fix arrow key navigation
 // * Requires storage format changes
 
 function Title({ value, setValue, placeholder, onInput }: {
