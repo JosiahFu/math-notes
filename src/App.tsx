@@ -4,13 +4,14 @@ import './App.css';
 import { DownloadButton, LoadButton } from './Saving';
 import { DownloadIcon, UploadIcon } from './Icons';
 
+// TODO: Search and Replace
 // TODO: Confirm before unload
 // TODO: Dark Mode
 // TODO: *Indenting
 // TODO: Section delete button
 // TODO: *Optional section titles
 // TODO: Duplicate button/key
-// TODO: Confirm recovery
+// TODO: Multiple Recovery, store title
 // TODO: Clear button
 // TODO: *Text then Math box
 // TODO: *Math Tables
