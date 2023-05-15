@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Notes, { MathNoteState } from './Notes';
-import { NestedStateArray } from './Util';
 import './App.css';
 import { DownloadButton, LoadButton } from './Saving';
 import { DownloadIcon, UploadIcon } from './Icons';
@@ -47,7 +46,7 @@ function Title({ value, setValue, placeholder, onInput }: {
 
 // TODO: Move local storage saving to Saving.tsx somehow?
 function App() {
-    const sections = new NestedStateArray(useState<MathNoteState[][]>([[new MathNoteState()]]));
+    const [sections, setSections] = useState<MathNoteState[][]>([[new MathNoteState()]]);
     const changes = useRef(false);
     const [title, setTitle] = useState('');
 
@@ -61,13 +60,13 @@ function App() {
 
     const handleChange = () => {
         changes.current = true;
-        localStorage.setItem('data', JSON.stringify(sections.array));
+        localStorage.setItem('data', JSON.stringify(sections));
     };
 
     useEffect(() => {
         if (localStorage.getItem('data') === null)
             return;
-        sections.setArray(JSON.parse(localStorage.getItem('data')!) as MathNoteState[][]);
+        setSections(JSON.parse(localStorage.getItem('data')!) as MathNoteState[][]);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
@@ -82,12 +81,12 @@ function App() {
     return (
         <main className="app">
             <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
-            <Notes sections={sections} onChange={handleChange} />
-            <DownloadButton sections={sections.array} title={title || "Untitled Notes"} onClick={updateLastSave}>
+            <Notes sections={sections} setSections={setSections} onChange={handleChange} />
+            <DownloadButton sections={sections} title={title || "Untitled Notes"} onClick={updateLastSave}>
                 {/* <img src={downloadIcon} alt="Download" className="download-button" /> */}
                 <DownloadIcon className="button load-button" />
             </DownloadButton>
-            <LoadButton setSections={sections.setArray} setTitle={setTitle}>
+            <LoadButton setSections={setSections} setTitle={setTitle}>
                 <UploadIcon className="button load-button" />
             </LoadButton>
         </main>

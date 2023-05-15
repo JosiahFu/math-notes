@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
-import { classList, NestedStateArray, StateArray } from './Util';
+import { classList } from './Util';
 import { addStyles, MathField, EditableMathField, MathFieldConfig } from '@numberworks/react-mathquill'
+import { produce } from 'immer';
 addStyles();
 
 const OnChange = createContext<(() => void) | null>(null);
 
 const config: MathFieldConfig = {
     spaceBehavesLikeTab: true,
-    autoCommands: 'sqrt pi'
+    autoCommands: 'sqrt pi tau theta langle rangle in union intersection and or'
 }
 
 enum FieldType {
@@ -103,8 +104,9 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
     );
 }
 
-function NoteSection({ lines, focusIndex, setFocusIndex }: {
-    lines: StateArray<MathNoteState>,
+function NoteSection({ lines, setLines, focusIndex, setFocusIndex }: {
+    lines: MathNoteState[],
+    setLines: (lines: MathNoteState[]) => void
     focusIndex: number | null,
     setFocusIndex: (focusIndex: number) => void
 }) {
@@ -112,7 +114,9 @@ function NoteSection({ lines, focusIndex, setFocusIndex }: {
 
 
     const makeSetState = (index: number) =>
-        (state: MathNoteState) => lines.set(state, index);
+        (state: MathNoteState) => setLines(produce(lines, draft => {
+            draft[index] = state;
+        }));
 
     return (
         <div className="section" ref={element}>
@@ -128,21 +132,27 @@ function NoteSection({ lines, focusIndex, setFocusIndex }: {
     );
 }
 
-function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteState>, onChange: () => void }) {
+function Notes({ sections, setSections, onChange }: { sections: MathNoteState[][], setSections: (sections: MathNoteState[][]) => void, onChange: () => void }) {
     const [focusIndex, setFocusIndex] = useState<[section: number, field: number] | null>(null);
     const undoHistory = useRef<MathNoteState[][][]>([]);
     const redoHistory = useRef<MathNoteState[][][]>([]);
 
     const addSection = (index: number) => {
-        sections.insert([new MathNoteState()], index);
+        setSections(produce(sections, draft => { draft.splice(index, 0, [new MathNoteState()]) }))
         setFocusIndex([index, 0]);
     }
+
+    const makeSetSection = (index: number) =>
+        (section: MathNoteState[]) =>
+            setSections(produce(sections, draft => {
+                draft[index] = section;
+            }));
 
     const undo = () => {
         if (undoHistory.current.length === 0) return;
         const newSections = undoHistory.current.pop()!;
-        redoHistory.current.push(sections.getArrayArray());
-        sections.setArrayArray(newSections);
+        redoHistory.current.push(sections);
+        setSections(newSections);
         if (focusIndex !== null && focusIndex[1] > newSections[focusIndex[0]].length - 1) {
             changeFocusIndex(-1);
         }
@@ -151,16 +161,16 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
     const redo = () => {
         if (redoHistory.current.length === 0) return;
         const newSections = redoHistory.current.pop()!;
-        undoHistory.current.push(sections.getArrayArray());
-        sections.setArrayArray(newSections);
+        undoHistory.current.push(sections);
+        setSections(newSections);
         if (focusIndex !== null && focusIndex[1] > newSections[focusIndex[0]].length - 1) {
             changeFocusIndex(-1);
         }
     }
 
     const handleChange = () => {
-        if (sections.getArrayArray() === undoHistory.current.at(-1)) return;
-        undoHistory.current.push(sections.getArrayArray());
+        if (sections === undoHistory.current.at(-1)) return;
+        undoHistory.current.push(sections);
         redoHistory.current = [];
         onChange();
     };
@@ -185,13 +195,13 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
                 setFocusIndex([0, 0]);
                 return;
             }
-            newFocusIndex[1] += sections.array[newFocusIndex[0]].length;
+            newFocusIndex[1] += sections[newFocusIndex[0]].length;
         }
-        while (newFocusIndex[1] > sections.array[newFocusIndex[0]].length - 1) {
-            newFocusIndex[1] -= sections.array[newFocusIndex[0]].length;
+        while (newFocusIndex[1] > sections[newFocusIndex[0]].length - 1) {
+            newFocusIndex[1] -= sections[newFocusIndex[0]].length;
             newFocusIndex[0]++;
             if (newFocusIndex[0] > sections.length - 1) {
-                setFocusIndex([sections.length - 1, sections.array[sections.length - 1].length - 1]);
+                setFocusIndex([sections.length - 1, sections[sections.length - 1].length - 1]);
                 return;
             }
         }
@@ -209,7 +219,7 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
                     break;
                 }
                 if (focusIndex[0] > 0) {
-                    setFocusIndex([focusIndex[0] - 1, sections.get(focusIndex[0] - 1).length - 1])
+                    setFocusIndex([focusIndex[0] - 1, sections[focusIndex[0] - 1].length - 1])
                 }
                 break;
             case "Enter":
@@ -218,7 +228,9 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
                     addSection(focusIndex[0] + 1);
                     break;
                 }
-                sections.getStateArray(focusIndex[0]).insert(new MathNoteState(), focusIndex[1] + 1);
+                setSections(produce(sections, draft => {
+                    draft[focusIndex[0]].splice(focusIndex[1] + 1, 0, new MathNoteState());
+                }))
                 changeFocusIndex(1, true);
                 break;
             case "ArrowDown":
@@ -231,21 +243,25 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
                 }
                 break;
             case "Backspace":
-                if (sections.get(focusIndex[0])[focusIndex[1]].value !== '') {
+                if (sections[focusIndex[0]][focusIndex[1]].value !== '') {
                     return; // Allow native handling
                 }
 
                 // changeFocusIndex(-1);
 
-                if (sections.get(focusIndex[0]).length > 1) { // If there are multiple lines
-                    sections.getStateArray(focusIndex[0]).remove(focusIndex[1]);
+                if (sections[focusIndex[0]].length > 1) { // If there are multiple lines
+                    setSections(produce(sections, draft => {
+                        draft[focusIndex[0]].splice(focusIndex[1], 1);
+                    }));
                     (focusIndex[0] > 0 || focusIndex[1] > 0) && changeFocusIndex(-1);
                     handleChange();
                     break;
                 }
 
                 if (sections.length > 1) { // If there is more than one section
-                    sections.remove(focusIndex[0]);
+                    setSections(produce(sections, draft => {
+                        draft.splice(focusIndex[0], 1);
+                    }))
                 }
                 break;
             case "z":
@@ -263,10 +279,11 @@ function Notes({ sections, onChange }: { sections: NestedStateArray<MathNoteStat
     }
 
     return (<div className="notes" onKeyDown={handleKeyDown} onBlur={handleBlur}>
-        {sections.mapStateArray((e, i) => (
+        {sections.map((e, i) => (
             <OnChange.Provider key={i} value={handleChange}>
                 <NoteSection
                     lines={e}
+                    setLines={makeSetSection(i)}
                     focusIndex={focusIndex?.[0] === i ? focusIndex[1] : null}
                     setFocusIndex={(focusIndex: number) => { setFocusIndex([i, focusIndex]) }}
                 />
