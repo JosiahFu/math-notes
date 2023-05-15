@@ -18,19 +18,14 @@ import { DownloadIcon, UploadIcon } from './Icons';
 // TODO: Fix arrow key navigation
 // * Requires storage format changes
 
-function Title({ value, setValue, placeholder, onInput }: {
+function Title({ value, setValue, placeholder }: {
     value: string,
     setValue: (value: string) => void,
     placeholder: string,
-    onInput: (value: string) => void
 }) {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
     };
-
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-        onInput(event.target.value);
-    }
 
     return (
         <h1>
@@ -39,7 +34,6 @@ function Title({ value, setValue, placeholder, onInput }: {
                 value={value}
                 placeholder={placeholder}
                 onChange={handleChange}
-                onBlur={handleBlur}
             />
         </h1>
     );
@@ -51,9 +45,9 @@ function App() {
     const changes = useRef(false);
     const [title, setTitle] = useState('');
 
-    const setDocumentTitle = (documentTitle: string) => {
-        document.title = documentTitle || 'Math Notes'; // If blank
-    };
+    useEffect(() => {
+        document.title = title || 'Math Notes'; // If blank
+    }, [title]);
 
     const updateLastSave = () => {
         changes.current = false;
@@ -81,7 +75,7 @@ function App() {
 
     return (
         <main className="app">
-            <Title value={title} setValue={setTitle} placeholder="Untitled Notes" onInput={setDocumentTitle} />
+            <Title value={title} setValue={setTitle} placeholder="Untitled Notes" />
             <Notes sections={sections} setSections={setSections} onChange={handleChange} />
             <DownloadButton sections={sections} title={title || "Untitled Notes"} onClick={updateLastSave}>
                 {/* <img src={downloadIcon} alt="Download" className="download-button" /> */}
