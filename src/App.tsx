@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import Notes, { MathNoteState } from './Notes';
 import './App.css';
 import { DownloadButton, LoadButton, RecoveryButton } from './Saving';
@@ -12,7 +12,6 @@ import 'react-material-symbols/dist/rounded.css';
 // TODO: Section delete button
 // TODO: *Optional section titles
 // TODO: Duplicate button/key
-// TODO: Multiple Recovery, store title
 // TODO: Clear button
 // TODO: *Text then Math box
 // TODO: *Math Tables
@@ -43,7 +42,7 @@ function Title({ value, setValue, placeholder }: {
 // TODO: Move local storage saving to Saving.tsx somehow?
 function App() {
     const [sections, setSections] = useState<MathNoteState[][]>([[new MathNoteState()]]);
-    const [recoveryOptions, setRecoveryOptions] = useState(Object.keys(JSON.parse(localStorage.getItem('recovery') ?? '{}')))
+    const recoveryOptions = useMemo(() => Object.keys(JSON.parse(localStorage.getItem('recovery') ?? '{}')), []); // Only refresh on reload
     const changes = useRef(false);
     const [title, setTitle] = useState('');
 
