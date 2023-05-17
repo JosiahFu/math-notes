@@ -104,6 +104,7 @@ body {
     transition: 0.1s;
     cursor: pointer;
     border: none;
+    font-size: inherit;
 }
 
 .button:hover {
@@ -149,6 +150,7 @@ body {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 50px;
 }
 
 h1 {
@@ -184,9 +186,7 @@ h1 input.untitled {
 
 .load-button {
     display: inline-block;
-    height: 1.5em;
-    width: 1.5em;
-    padding: 0.5em;
+    padding: 0.3em;
     border-radius: 0.5em;
     position: relative;
     color: var(--fg-color);
@@ -194,4 +194,35 @@ h1 input.untitled {
 
 .app {
     margin: 50px;
+}
+
+.control-buttons {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    margin: 30px;
+    padding: 20px;
+    background-color: var(--bg-bg-color);
+    border-radius: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.recovery-options {
+    position: absolute;
+    left: 0;
+    bottom: 70px;
+    display: flex;
+    gap: 3px;
+    flex-flow: column;
+    background-color: var(--bg-bg-color);
+    padding: 5px;
+}
+
+.recovery-container {
+    position: relative;
+}
+
+.recovery-button {
+    border-radius: 5px;
 }

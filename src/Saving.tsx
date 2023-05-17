@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 import { MathNoteState } from "./Notes";
 
 // V1 {
@@ -33,12 +33,11 @@ function dataFixerUpper(jsonInput: any): currentFormat {
     return fixed;
 }
 
-function DownloadButton({ sections, title, onClick, children }: {
+function DownloadButton({ sections, title, onClick, children }: PropsWithChildren<{
     sections: MathNoteState[][],
     title: string,
     onClick: (event: React.MouseEvent) => void,
-    children: ReactNode
-}) {
+}>) {
     const [fileContent, setFileContent] = useState('');
 
     const handleClick = (event: React.MouseEvent) => {
@@ -53,11 +52,10 @@ function DownloadButton({ sections, title, onClick, children }: {
     >{children}</a>);
 }
 
-function LoadButton({ setSections, setTitle, children }: {
+function LoadButton({ setSections, setTitle, children }: PropsWithChildren<{
     setSections: (sections: MathNoteState[][]) => void,
     setTitle: (title: string) => void,
-    children: ReactNode
-}) {
+}>) {
     const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
         const reader = new FileReader();
         reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -75,5 +73,21 @@ function LoadButton({ setSections, setTitle, children }: {
     </label>);
 }
 
+function RecoveryButton({ recoveryOptions, loadRecovery, children }: PropsWithChildren<{
+    recoveryOptions: string[],
+    loadRecovery: (title: string) => void
+}>) {
+    const [opened, setOpened] = useState(false);
+    return (<div className="recovery-container">
+        {recoveryOptions.length > 0 && <label>
+            {children}
+            <input type="button" style={{ display: 'none' }} onClick={() => setOpened(!opened)} />
+        </label>}
+        {opened && <div className="recovery-options">
+            {recoveryOptions.map(e => <button className="button recovery-button" onClick={() => { setOpened(false); loadRecovery(e); }}>{e || <em>Untitled</em>}</button>)}
+        </div>}
+    </div>);
+}
 
-export { dataFixerUpper, DownloadButton, LoadButton };
+
+export { dataFixerUpper, DownloadButton, LoadButton, RecoveryButton };
