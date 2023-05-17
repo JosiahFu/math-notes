@@ -84,7 +84,7 @@ function RecoveryButton({ recoveryOptions, loadRecovery, children }: PropsWithCh
             <input type="button" style={{ display: 'none' }} onClick={() => setOpened(!opened)} />
         </label>}
         {opened && <div className="recovery-options">
-            {recoveryOptions.map(e => <button className="button recovery-button" onClick={() => { setOpened(false); loadRecovery(e); }}>{e || <em>Untitled</em>}</button>)}
+            {recoveryOptions.map((e, i) => <button key={i} className="button recovery-button" onClick={() => { setOpened(false); loadRecovery(e); }}>{e || <em>Untitled</em>}</button>)}
         </div>}
     </div>);
 }
