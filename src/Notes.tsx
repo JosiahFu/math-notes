@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { classList } from './Util';
-import { addStyles, MathField, EditableMathField, MathFieldConfig } from '@numberworks/react-mathquill'
+import { addStyles, MathField, EditableMathField, MathFieldConfig } from 'react-mathquill'
 import { produce } from 'immer';
 addStyles();
 
