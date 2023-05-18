@@ -48,14 +48,14 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
 
     const handleMathFieldChange = (target: MathField) => {
         if (target.latex() === '"') {
-            setState(new MathNoteState('', FieldType.Text));
+            setState(new MathNoteState('', FieldType.Text, isAnswer));
         } else {
-            setState(new MathNoteState(target.latex(), type));
+            setState(new MathNoteState(target.latex(), type, isAnswer));
         }
     }
 
     const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setState(new MathNoteState(event.target.value, type));
+        setState(new MathNoteState(event.target.value, type, isAnswer));
     }
 
     const handleFocus = (event: React.FocusEvent) => {
