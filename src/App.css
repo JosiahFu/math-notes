@@ -211,12 +211,15 @@ h1 input.untitled {
 .recovery-options {
     position: absolute;
     left: 0;
-    bottom: 70px;
+    bottom: 100%;
     display: flex;
     gap: 3px;
     flex-flow: column;
     background-color: var(--bg-bg-color);
     padding: 5px;
+    width: max-content;
+    max-width: 500px;
+    border-radius: 10px;
 }
 
 .recovery-container {

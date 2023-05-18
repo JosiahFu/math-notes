@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Notes, { MathNoteState } from './Notes';
 import './App.css';
-import { DownloadButton, LoadButton, RecoveryButton } from './Saving';
+import { DownloadButton, LoadButton, RecoveryButton, deleteRecovery, setRecovery } from './Saving';
 import { MaterialSymbol } from 'react-material-symbols';
 import 'react-material-symbols/dist/rounded.css';
 
@@ -42,7 +42,6 @@ function Title({ value, setValue, placeholder }: {
 // TODO: Move local storage saving to Saving.tsx somehow?
 function App() {
     const [sections, setSections] = useState<MathNoteState[][]>([[new MathNoteState()]]);
-    const recoveryOptions = useMemo(() => Object.keys(JSON.parse(localStorage.getItem('recovery') ?? '{}')), []); // Only refresh on reload
     const changes = useRef(false);
     const [title, setTitle] = useState('');
 
@@ -52,29 +51,13 @@ function App() {
 
     const updateLastSave = () => {
         changes.current = false;
-        const recovery = JSON.parse(localStorage.getItem('recovery') ?? '{}');
-        if (title in recovery) {
-            delete recovery[title];
-            localStorage.setItem('recovery', JSON.stringify(recovery));
-        }
-        console.log(recovery);
+        deleteRecovery(title)
     };
 
     const handleChange = () => {
         changes.current = true;
-        const recovery = JSON.parse(localStorage.getItem('recovery') ?? '{}');
-        recovery[title] = sections;
-        localStorage.setItem('recovery', JSON.stringify(recovery));
+        setRecovery(title, sections);
     };
-
-    const loadRecovery = (title: string) => {
-        const recovery = JSON.parse(localStorage.getItem('recovery') ?? '{}');
-        if (title in recovery) {
-            setSections(recovery[title]);
-            setTitle(title);
-            changes.current = true;
-        }
-    }
 
     const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
 
@@ -96,7 +79,7 @@ function App() {
                 <LoadButton setSections={setSections} setTitle={setTitle}>
                     <MaterialSymbol icon="upload" fill className="button load-button" size={40} grade={100} />
                 </LoadButton>
-                <RecoveryButton recoveryOptions={recoveryOptions} loadRecovery={loadRecovery}>
+                <RecoveryButton onLoadRecovery={(title, sections) => { setTitle(title); setSections(sections); }}>
                     <MaterialSymbol icon="history" fill className="button load-button" size={40} grade={100} />
                 </RecoveryButton>
             </div>

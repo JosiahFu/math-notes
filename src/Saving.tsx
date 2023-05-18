@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useState } from "react";
 import { MathNoteState } from "./Notes";
+import { MaterialSymbol } from "react-material-symbols";
 
 // V1 {
 //     title: string,
@@ -73,21 +74,68 @@ function LoadButton({ setSections, setTitle, children }: PropsWithChildren<{
     </label>);
 }
 
-function RecoveryButton({ recoveryOptions, loadRecovery, children }: PropsWithChildren<{
-    recoveryOptions: string[],
-    loadRecovery: (title: string) => void
+function getRecovery(): Record<string, MathNoteState[][]> {
+    return JSON.parse(localStorage.getItem('recovery') ?? '{}');
+}
+
+function setRecovery(title: string, sections: MathNoteState[][]) {
+    const recovery = getRecovery();
+    recovery[title] = sections;
+    localStorage.setItem('recovery', JSON.stringify(recovery));
+}
+
+function deleteRecovery(title: string) {
+    const recovery = getRecovery();
+    if (title in recovery) {
+        delete recovery[title];
+        localStorage.setItem('recovery', JSON.stringify(recovery));
+    }
+}
+
+function clearRecovery() {
+    localStorage.removeItem('recovery');
+}
+
+function RecoveryButton({ onLoadRecovery, children }: PropsWithChildren<{
+    onLoadRecovery: (title: string, sections: MathNoteState[][]) => void
 }>) {
     const [opened, setOpened] = useState(false);
+    const [recoveryState, setRecoveryState] = useState<Record<string, MathNoteState[][]>>(getRecovery());
+
+    const updateRecovery = () => setRecoveryState(getRecovery());
+
+    const handleClear = () => {
+        setOpened(false);
+        clearRecovery();
+        updateRecovery();
+    }
+
+    const handleOpen = () => {
+        if (!opened)
+            updateRecovery();
+        setOpened(!opened);
+    }
+
     return (<div className="recovery-container">
-        {recoveryOptions.length > 0 && <label>
+        {Object.keys(recoveryState).length > 0 && <label>
             {children}
-            <input type="button" style={{ display: 'none' }} onClick={() => setOpened(!opened)} />
+            <input type="button" style={{ display: 'none' }} onClick={handleOpen} />
         </label>}
         {opened && <div className="recovery-options">
-            {recoveryOptions.map((e, i) => <button key={i} className="button recovery-button" onClick={() => { setOpened(false); loadRecovery(e); }}>{e || <em>Untitled</em>}</button>)}
+            <button className="button" onClick={handleClear}>
+                <MaterialSymbol icon="delete_forever" fill size={20} grade={100} />
+            </button>
+            {Object.entries(recoveryState).map(([title, sections], i) => (
+                <button key={i} className="button recovery-button" onClick={() => {
+                    setOpened(false);
+                    onLoadRecovery(title, sections as MathNoteState[][]);
+                }}>
+                    {title || <em>Untitled</em>}
+                </button>
+            ))}
         </div>}
     </div>);
 }
 
 
-export { dataFixerUpper, DownloadButton, LoadButton, RecoveryButton };
+export { dataFixerUpper, DownloadButton, LoadButton, RecoveryButton, getRecovery as getRecoveryOptions, setRecovery, deleteRecovery, clearRecovery };
