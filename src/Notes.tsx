@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, createContext, useContext } from 'r
 import { classList } from './Util';
 import { addStyles, MathField, EditableMathField, MathFieldConfig } from 'react-mathquill'
 import { produce } from 'immer';
+import { MaterialSymbol } from 'react-material-symbols';
 addStyles();
 
 const OnChange = createContext<(() => void) | null>(null);
@@ -99,7 +100,9 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
                     onBlur={saveHistory!}
                     ref={textInput}
                 />}
-            <button className="button answer-button" onClick={toggleAnswer}>&#11088;</button> {/* Star emoji */}
+            <button className="button answer-button" onClick={toggleAnswer}>
+                <MaterialSymbol icon="star" fill size={20} grade={100} />
+            </button>
         </div>
     );
 }
