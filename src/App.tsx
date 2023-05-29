@@ -7,8 +7,6 @@ import { MaterialSymbol } from 'react-material-symbols';
 import 'react-material-symbols/dist/rounded.css';
 
 // TODO: Confirm before unload
-// TODO: Dark Mode
-// TODO: Fix arrow key navigation
 // TODO: Duplicate button/key
 // TODO: Link Embed
 // TODO: Search and Replace
