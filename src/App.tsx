@@ -1,22 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Notes, { MathNoteState } from './Notes';
+import Notes from './notes/Notes';
+import { MathNoteState } from './notes/MathNoteField';
 import './App.css';
 import { DownloadButton, LoadButton, RecoveryButton, deleteRecovery, setRecovery } from './Saving';
 import { MaterialSymbol } from 'react-material-symbols';
 import 'react-material-symbols/dist/rounded.css';
 
-// TODO: Search and Replace
 // TODO: Confirm before unload
 // TODO: Dark Mode
+// TODO: Fix arrow key navigation
+// TODO: Duplicate button/key
+// TODO: Link Embed
+// TODO: Search and Replace
+// TODO: *Optional section titles
 // TODO: *Indenting
 // TODO: Section delete button
-// TODO: *Optional section titles
-// TODO: Duplicate button/key
-// TODO: Clear button
 // TODO: *Text then Math box
 // TODO: *Math Tables
-// TODO: Fix arrow key navigation
-// TODO: Link Embed
+// TODO: Clear button
 // * Requires storage format changes
 
 function Title({ value, setValue, placeholder }: {

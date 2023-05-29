@@ -1,139 +1,9 @@
-import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
-import { classList } from './Util';
-import { addStyles, MathField, EditableMathField, MathFieldConfig } from 'react-mathquill'
+import React, { useState, useRef, createContext } from 'react';
 import { produce } from 'immer';
-import { MaterialSymbol } from 'react-material-symbols';
-addStyles();
+import { MathNoteState } from './MathNoteField';
+import NoteSection from './NoteSection';
 
 const OnChange = createContext<(() => void) | null>(null);
-
-const config: MathFieldConfig = {
-    spaceBehavesLikeTab: true,
-    autoCommands: 'sqrt pi tau theta langle rangle in union intersection and or'
-}
-
-enum FieldType {
-    Math = 'MATH',
-    Text = 'TEXT'
-}
-
-class MathNoteState {
-    value: string;
-    type: FieldType;
-    isAnswer: boolean;
-
-    constructor(value = '', type = FieldType.Math, isAnswer = false) {
-        this.value = value;
-        this.type = type;
-        this.isAnswer = isAnswer;
-    };
-}
-
-function MathNoteField({ state: { value, type, isAnswer }, setState, focused, onFocus }: {
-    state: MathNoteState,
-    setState: (state: MathNoteState) => void,
-    focused: boolean,
-    onFocus: (event?: React.FocusEvent) => void,
-}) {
-    const textInput = useRef<HTMLInputElement>(null);
-    const mathField = useRef<MathField>();
-    const saveHistory = useContext(OnChange);
-
-    const focus = () => {
-        if (focused)
-            (type === FieldType.Math ? mathField : textInput).current?.focus();
-    };
-
-    useEffect(focus, [focused, type]);
-
-    const handleMathFieldChange = (target: MathField) => {
-        if (target.latex() === '"') {
-            setState(new MathNoteState('', FieldType.Text, isAnswer));
-        } else {
-            setState(new MathNoteState(target.latex(), type, isAnswer));
-        }
-    }
-
-    const handleTextNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setState(new MathNoteState(event.target.value, type, isAnswer));
-    }
-
-    const handleFocus = (event: React.FocusEvent) => {
-        if (event.isTrusted) {
-            onFocus(event);
-        }
-    }
-
-    const toggleAnswer = () => {
-        setState(new MathNoteState(value, type, !isAnswer));
-        onFocus();
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent) => {
-        switch (event.key) {
-            case 'm':
-                if (!event.ctrlKey) return;
-                toggleAnswer();
-                break;
-            default:
-                return;
-        }
-        event.preventDefault();
-    }
-
-    return (
-        <div className={classList('note-field', ['answer', isAnswer])} onKeyDown={handleKeyPress}>
-            {type === FieldType.Math ?
-                <EditableMathField
-                    latex={value}
-                    onChange={handleMathFieldChange}
-                    config={config}
-                    onFocus={handleFocus}
-                    onBlur={saveHistory!}
-                    mathquillDidMount={target => mathField.current = target}
-                /> :
-                <input
-                    className="text-note"
-                    onChange={handleTextNoteChange}
-                    value={value}
-                    onFocus={handleFocus}
-                    onBlur={saveHistory!}
-                    ref={textInput}
-                />}
-            <button className="button answer-button" onClick={toggleAnswer}>
-                <MaterialSymbol icon="star" fill size={20} grade={100} />
-            </button>
-        </div>
-    );
-}
-
-function NoteSection({ lines, setLines, focusIndex, setFocusIndex }: {
-    lines: MathNoteState[],
-    setLines: (lines: MathNoteState[]) => void
-    focusIndex: number | null,
-    setFocusIndex: (focusIndex: number) => void
-}) {
-    const element = useRef<HTMLDivElement>(null);
-
-
-    const makeSetState = (index: number) =>
-        (state: MathNoteState) => setLines(produce(lines, draft => {
-            draft[index] = state;
-        }));
-
-    return (
-        <div className="section" ref={element}>
-            {lines.map((e, i) =>
-                <MathNoteField
-                    key={i}
-                    state={e}
-                    setState={makeSetState(i)}
-                    focused={focusIndex === i}
-                    onFocus={() => setFocusIndex(i)}
-                />)}
-        </div>
-    );
-}
 
 function Notes({ sections, setSections, onChange }: { sections: MathNoteState[][], setSections: (sections: MathNoteState[][]) => void, onChange: () => void }) {
     const [focusIndex, setFocusIndex] = useState<[section: number, field: number] | null>(null);
@@ -303,4 +173,4 @@ function Notes({ sections, setSections, onChange }: { sections: MathNoteState[][
 }
 
 export default Notes;
-export { MathNoteState, FieldType };
+export { OnChange };
