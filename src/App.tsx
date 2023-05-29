@@ -16,6 +16,7 @@ import 'react-material-symbols/dist/rounded.css';
 // TODO: *Text then Math box
 // TODO: *Math Tables
 // TODO: Fix arrow key navigation
+// TODO: Link Embed
 // * Requires storage format changes
 
 function Title({ value, setValue, placeholder }: {

@@ -282,6 +282,9 @@ function Notes({ sections, setSections, onChange }: { sections: MathNoteState[][
     }
 
     return (<div className="notes" onKeyDown={handleKeyDown} onBlur={handleBlur}>
+        {/* <div className="section-button-container">
+            <button className="button section-button" onClick={() => addSection(0)}></button>
+        </div> */}
         {sections.map((e, i) => (
             <OnChange.Provider key={i} value={handleChange}>
                 <NoteSection
