@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext } from 'react';
-import { classList } from '../Util';
+import { classList as cl } from '../Util';
 import { addStyles, MathField, EditableMathField, MathFieldConfig } from 'react-mathquill'
 import { MaterialSymbol } from 'react-material-symbols';
 import { OnChange } from './Notes';
@@ -80,7 +80,7 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
     }
 
     return (
-        <div className={classList('note-field', ['answer', isAnswer])} onKeyDown={handleKeyPress}>
+        <div className={cl('note-field', isAnswer && 'answer')} onKeyDown={handleKeyPress}>
             {type === FieldType.Math ?
                 <EditableMathField
                     latex={value}
