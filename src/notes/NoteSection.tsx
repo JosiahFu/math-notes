@@ -2,11 +2,12 @@ import { useRef } from 'react';
 import { produce } from 'immer';
 import MathNoteField, { MathNoteState } from './MathNoteField';
 
-function NoteSection({ lines, setLines, focusIndex, setFocusIndex }: {
+function NoteSection({ lines, setLines, focusIndex, setFocusIndex, keyboardHandlers }: {
     lines: MathNoteState[],
     setLines: (lines: MathNoteState[]) => void
     focusIndex: number | null,
-    setFocusIndex: (focusIndex: number) => void
+    setFocusIndex: (focusIndex: number) => void,
+    keyboardHandlers: Record<'up' | 'down' | 'add' | 'delete', () => void>
 }) {
     const element = useRef<HTMLDivElement>(null);
 
@@ -25,6 +26,7 @@ function NoteSection({ lines, setLines, focusIndex, setFocusIndex }: {
                     setState={makeSetState(i)}
                     focused={focusIndex === i}
                     onFocus={() => setFocusIndex(i)}
+                    keyboardHandlers={keyboardHandlers}
                 />)}
         </div>
     );
