@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useState } from "react";
-import { MathNoteState } from "./Notes";
+import { MathNoteState } from "./notes/MathNoteField";
 import { MaterialSymbol } from "react-material-symbols";
 
 // V1 {
