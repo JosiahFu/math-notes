@@ -44,19 +44,19 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
 
     const handlerRef = useRef<Exclude<MathFieldConfig['handlers'], undefined>>({});
 
-    let deleted = false;
+    const deleted = useRef(false);
 
     useEffect(() => {
         console.log('update');
         handlerRef.current.downOutOf = keyboardHandlers.down;
         handlerRef.current.upOutOf = keyboardHandlers.up;
         handlerRef.current.enter = keyboardHandlers.add;
+        handlerRef.current.deleteOutOf = () => {
+            keyboardHandlers.delete();
+            deleted.current = true;
+        }
     }, [keyboardHandlers])
 
-    handlerRef.current.deleteOutOf = () => {
-        keyboardHandlers.delete();
-        deleted = true;
-    }
 
     const configWithHandlers: MathFieldConfig = {
         ...config,
@@ -75,7 +75,7 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
     const handleMathFieldChange = useCallback((target: MathField) => {
         console.log('change', target?.latex());
         if (target === undefined) return; // With handlers target may be undefined for a frame
-        if (deleted) return;
+        if (deleted.current) return;
 
         if (target.latex() === '"') {
             setState(new MathNoteState('', FieldType.Text, isAnswer));
