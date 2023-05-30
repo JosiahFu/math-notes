@@ -42,17 +42,19 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
     const textInput = useRef<HTMLInputElement>(null);
     const mathField = useRef<MathField>();
 
+    // The config is not updated live so a ref is needed to store them all
     const handlerRef = useRef<Exclude<MathFieldConfig['handlers'], undefined>>({});
 
+    // The edit event fires when deleteOutOf is also triggered so this keeps track of if the element was deleted
     const deleted = useRef(false);
 
     useEffect(() => {
-        console.log('update');
         handlerRef.current.downOutOf = keyboardHandlers.down;
         handlerRef.current.upOutOf = keyboardHandlers.up;
         handlerRef.current.enter = keyboardHandlers.add;
         handlerRef.current.deleteOutOf = () => {
             keyboardHandlers.delete();
+            // The edit event fires when deleteOutOf is also triggered so this keeps track of if the element was deleted
             deleted.current = true;
         }
     }, [keyboardHandlers])
@@ -73,9 +75,9 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
     useEffect(focus, [focused, type]);
 
     const handleMathFieldChange = useCallback((target: MathField) => {
-        console.log('change', target?.latex());
         if (target === undefined) return; // With handlers target may be undefined for a frame
-        if (deleted.current) return;
+        // The edit event fires when deleteOutOf is also triggered so this event is canceled if the component was deleted already
+        if (deleted.current) return; 
 
         if (target.latex() === '"') {
             setState(new MathNoteState('', FieldType.Text, isAnswer));
