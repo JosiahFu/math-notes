@@ -31,6 +31,10 @@ body {
     color: var(--fg-color);
 }
 
+button {
+    color: inherit;
+}
+
 .note-field {
     display: flex;
     flex-direction: row nowrap;
