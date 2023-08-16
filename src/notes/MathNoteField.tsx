@@ -79,7 +79,7 @@ function MathNoteField({ state: { value, type, isAnswer }, setState, focused, on
         // The edit event fires when deleteOutOf is also triggered so this event is canceled if the component was deleted already
         if (deleted.current) return; 
 
-        if (target.latex() === '"') {
+        if (target.latex() === '"' || target.latex() === '\u201c' || target.latex() === '\u201d') {
             setState(new MathNoteState('', FieldType.Text, isAnswer));
         } else {
             setState(new MathNoteState(target.latex(), type, isAnswer));
