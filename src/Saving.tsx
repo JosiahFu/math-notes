@@ -42,7 +42,7 @@ function DownloadButton({ sections, title, onClick, children }: PropsWithChildre
     const [fileContent, setFileContent] = useState('');
 
     const handleClick = (event: React.MouseEvent) => {
-        setFileContent(JSON.stringify({ title: title, sections: sections, version: 2 }));
+        setFileContent(JSON.stringify({ title: title, sections: sections, version: 2, comment: `Open this graph at ${window.location.href}` }));
         onClick(event);
     }
 
