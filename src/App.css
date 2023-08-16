@@ -48,7 +48,7 @@ body {
     background-color: var(--focus-hl-color);
 }
 
-.note-field .mq-cursor {
+.note-field .mq-editable-field .mq-cursor {
     border-color: var(--fg-color);
 }
 
