@@ -117,6 +117,8 @@ function Notes({ sections, setSections, onChange }: { sections: MathNoteState[][
         add: () => {
             if (focusIndex === null) return;
 
+            handleChange();
+
             setSections(produce(sections, draft => {
                 draft[focusIndex[0]].splice(focusIndex[1] + 1, 0, new MathNoteState());
             }));
@@ -249,7 +251,7 @@ function Notes({ sections, setSections, onChange }: { sections: MathNoteState[][
                     keyboardHandlers={keyboardHandlers}
                 />
                 <div className="section-button-container">
-                    <button className="button section-button" onClick={() => addSection(i + 1)}></button>
+                    <button className="button section-button" onClick={() => {addSection(i + 1); handleChange();}}></button>
                 </div>
             </React.Fragment>))}
         </OnChange.Provider>

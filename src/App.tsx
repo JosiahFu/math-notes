@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Notes from './notes/Notes';
 import { MathNoteState } from './notes/MathNoteField';
 import './App.css';
@@ -6,7 +6,6 @@ import { DownloadButton, LoadButton, RecoveryButton, deleteRecovery, setRecovery
 import { MaterialSymbol } from 'react-material-symbols';
 import 'react-material-symbols/dist/rounded.css';
 
-// TODO: Confirm before unload
 // TODO: Duplicate button/key
 // TODO: Link Embed
 // TODO: Search and Replace
@@ -42,7 +41,7 @@ function Title({ value, setValue, placeholder }: {
 // TODO: Move local storage saving to Saving.tsx somehow?
 function App() {
     const [sections, setSections] = useState<MathNoteState[][]>([[new MathNoteState()]]);
-    const changes = useRef(false);
+    const [changes, setChanges] = useState(false);
     const [title, setTitle] = useState('');
 
     useEffect(() => {
@@ -50,19 +49,18 @@ function App() {
     }, [title]);
 
     const updateLastSave = () => {
-        changes.current = false;
-        deleteRecovery(title)
+        setChanges(false);
+        deleteRecovery(title);
     };
 
     const handleChange = () => {
-        changes.current = true;
+        setChanges(true);
         setRecovery(title, sections);
     };
 
-    const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
-
     useEffect(() => {
-        if (changes.current) {
+        const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
+        if (changes) {
             window.addEventListener('beforeunload', preventUnload);
             return () => window.removeEventListener('beforeunload', preventUnload);
         }
