@@ -24,7 +24,7 @@ class MathNoteState {
 
 const config: MathFieldConfig = {
     spaceBehavesLikeTab: true,
-    autoCommands: 'sqrt pi tau theta langle rangle in union intersection and or'
+    autoCommands: 'sqrt pi tau theta langle rangle union intersection and or infinity'
 }
 
 function MathNoteField({ state: { value, type, isAnswer }, setState, focused, onFocus, keyboardHandlers }: {
