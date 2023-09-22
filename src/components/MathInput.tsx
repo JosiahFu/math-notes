@@ -29,6 +29,7 @@ function MathInput({
     onChange,
     focused,
     focusSide,
+    onFocus,
     onDownOut,
     onLeftOut,
     onRightOut,
@@ -94,6 +95,7 @@ function MathInput({
                 latex={value}
                 onChange={handleChange}
                 config={mathquillConfigOptions}
+                onFocus={onFocus}
             />
         );
     }

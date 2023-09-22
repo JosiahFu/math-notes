@@ -62,9 +62,9 @@ const MQDir = {
 };
 
 interface FocusProps {
-    focused?: boolean;
-    focusSide?: Direction | undefined;
-    onFocus?: () => void;
+    focused: boolean;
+    focusSide: Direction | undefined;
+    onFocus: () => void;
 }
 
 export { MQDir };

@@ -11,12 +11,14 @@ import {
     FocusProps,
     TextSegmentData,
 } from '../data';
+import { useDebouncedState } from '@tater-archives/react-use-debounce';
 
 function TextSegment<T extends TextSegmentData>({
     value,
     onChange,
     focused,
     focusSide,
+    onFocus,
     onDownOut,
     onUpOut,
     onLeftOut,
@@ -71,6 +73,19 @@ function TextSegment<T extends TextSegmentData>({
         [onDelete, onDownOut, onInsertAfter, onLeftOut, onRightOut, onUpOut]
     );
 
+    const setContent = useCallback(
+        (content: string) => {
+            onChange({ ...value, content });
+        },
+        [onChange, value]
+    );
+
+    const [dContent, setDContent] = useDebouncedState(
+        value.content,
+        setContent,
+        500
+    );
+
     const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
         event => {
             const newContent = event.target.value;
@@ -82,9 +97,9 @@ function TextSegment<T extends TextSegmentData>({
                 );
                 return;
             }
-            onChange({ ...value, content: newContent });
+            setDContent(newContent);
         },
-        [onChange, onInsertMath, value]
+        [onInsertMath, setDContent]
     );
 
     const setCursorPosition = (position: number) => {
@@ -107,9 +122,10 @@ function TextSegment<T extends TextSegmentData>({
     return (
         <input
             ref={inputRef}
-            value={value.content}
+            value={dContent}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onFocus={onFocus}
             placeholder='Type $$ to insert math'
         />
     );
