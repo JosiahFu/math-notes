@@ -74,6 +74,7 @@ export type {
     Segment,
     NoteBlockData,
     TableBlockData,
+    EmbedBlockData,
     Block,
     DocumentData,
     ControlledComponentProps,
