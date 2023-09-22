@@ -4,6 +4,7 @@ import {
     Direction,
     NavigationHandlers,
     NoteBlockData,
+    addKey,
 } from '../data';
 import { useOptimizedDestructure } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
@@ -31,7 +32,7 @@ function NoteBlock({
     return (
         <div>
             <ArrayMap array={content} setArray={setContent} keyProp='key'>
-                {(segment, { set }, index) => {
+                {(segment, { set, replace }, index) => {
                     const props = {
                         onLeftOut: () => setFocused([index - 1, 'right']),
                         onRightOut: () => setFocused([index + 1, 'left']),
@@ -51,6 +52,14 @@ function NoteBlock({
                         <TextSegment
                             value={segment}
                             onChange={set}
+                            onInsertMath={(before, after) => {
+                                replace(
+                                    addKey({ type: 'TEXT', content: before }),
+                                    addKey({ type: 'MATH', content: '' }),
+                                    addKey({ type: 'TEXT', content: after })
+                                );
+                                setFocused([index + 1, undefined]);
+                            }}
                             {...props}
                         />
                     );

@@ -1,6 +1,13 @@
 import { Direction as MQDirection } from 'react-mathquill';
 
-type KeyedArray<T extends object> = (T & { key: string | number })[];
+type WithKey<T extends object> = T & { key: string | number };
+
+type KeyedArray<T extends object> = (WithKey<T>)[];
+
+function addKey<T extends object>(object: T): WithKey<T> {
+    (object as WithKey<T>).key = crypto.randomUUID();
+    return object as WithKey<T>;
+}
 
 interface TextSegmentData {
     type: 'TEXT';
@@ -67,8 +74,10 @@ interface FocusProps {
     onFocus: () => void;
 }
 
-export { MQDir };
+export { addKey, MQDir };
 export type {
+    WithKey,
+    KeyedArray,
     MathSegmentData,
     TextSegmentData,
     Segment,
@@ -79,7 +88,6 @@ export type {
     DocumentData,
     ControlledComponentProps,
     NavigationHandlers,
-    KeyedArray,
     FocusProps,
     Direction,
 };

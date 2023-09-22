@@ -93,7 +93,7 @@ function TextSegment<T extends TextSegmentData>({
                 const split = newContent.indexOf('$$');
                 onInsertMath(
                     newContent.slice(0, split),
-                    newContent.slice(split + 2, -1)
+                    newContent.slice(split + 2)
                 );
                 return;
             }
