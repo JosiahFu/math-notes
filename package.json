@@ -13,7 +13,8 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
-    "preact": "^10.16.0"
+    "preact": "^10.16.0",
+    "react-mathquill": "^1.0.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",
