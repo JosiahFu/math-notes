@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { ControlledComponentProps, NavigationHandlers } from '../data';
+import {
+    ControlledComponentProps,
+    MQDir,
+    NavigationHandlers,
+    FocusProps,
+} from '../data';
 import '../fixGlobal';
 import {
-    Direction,
     EditableMathField,
+    addStyles,
     MathField,
     MathFieldConfig,
-    addStyles,
 } from 'react-mathquill';
 
 addStyles();
@@ -23,59 +27,75 @@ const mathquillConfigOptions: MathFieldConfig = {
 function MathInput({
     value,
     onChange,
+    focused,
+    focusSide,
     onDownOut,
     onLeftOut,
     onRightOut,
     onUpOut,
     onInsertAfter,
     onDelete,
-}: ControlledComponentProps<string> & Partial<NavigationHandlers>) {
-    const mathFieldRef = useRef<MathField>();
+}: ControlledComponentProps<string> &
+    Partial<NavigationHandlers> &
+    FocusProps) {
+        const mathFieldRef = useRef<MathField>();
 
-    const handleChange = useCallback(
-        (mathfield: MathField) => {
-            onChange(mathfield.latex());
-        },
-        [onChange]
-    );
-
-    // Update mathquill config
-    useEffect(() => {
-        mathFieldRef.current?.config({
-            ...mathquillConfigOptions,
-            handlers: {
-                downOutOf: onDownOut,
-                upOutOf: onUpOut,
-                moveOutOf: direction => {
-                    (direction === Direction.R ? onRightOut : onLeftOut)?.();
-                },
-                edit: handleChange,
-                enter: onInsertAfter,
-                deleteOutOf: onDelete,
+        const handleChange = useCallback(
+            (mathfield: MathField) => {
+                onChange(mathfield.latex());
             },
-        });
-    }, [
-        handleChange,
-        onDelete,
-        onDownOut,
-        onInsertAfter,
-        onLeftOut,
-        onRightOut,
-        onUpOut,
-    ]);
+            [onChange]
+        );
 
-    const handleMount = useCallback((mathfield: MathField) => {
-        mathFieldRef.current = mathfield;
-    }, []);
+        // Update mathquill config
+        useEffect(() => {
+            mathFieldRef.current?.config({
+                ...mathquillConfigOptions,
+                handlers: {
+                    downOutOf: onDownOut,
+                    upOutOf: onUpOut,
+                    moveOutOf: direction => {
+                        (direction === MQDir.right
+                            ? onRightOut
+                            : onLeftOut)?.();
+                    },
+                    edit: handleChange,
+                    enter: onInsertAfter,
+                    deleteOutOf: onDelete,
+                },
+            });
+        }, [
+            handleChange,
+            onDelete,
+            onDownOut,
+            onInsertAfter,
+            onLeftOut,
+            onRightOut,
+            onUpOut,
+        ]);
 
-    return (
-        <EditableMathField
-            mathquillDidMount={handleMount}
-            latex={value}
-            onChange={handleChange}
-            config={mathquillConfigOptions}
-        />
-    );
-}
+        const handleMount = useCallback((mathfield: MathField) => {
+            mathFieldRef.current = mathfield;
+        }, []);
+
+        // Handle focusing
+        useEffect(() => {
+            if (focused) {
+                mathFieldRef.current?.focus();
+                if (focusSide === 'left') mathFieldRef.current?.moveToLeftEnd();
+                if (focusSide === 'right')
+                    mathFieldRef.current?.moveToRightEnd();
+            }
+        }, [focusSide, focused]);
+
+        return (
+            <EditableMathField
+                mathquillDidMount={handleMount}
+                latex={value}
+                onChange={handleChange}
+                config={mathquillConfigOptions}
+            />
+        );
+    }
 
 export default MathInput;

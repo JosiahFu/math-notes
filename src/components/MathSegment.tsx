@@ -3,6 +3,7 @@ import {
     ControlledComponentProps,
     MathSegmentData,
     NavigationHandlers,
+    FocusProps,
 } from '../data';
 import MathInput from './MathInput';
 
@@ -10,7 +11,7 @@ function MathSegment<T extends MathSegmentData>({
     value,
     onChange,
     ...otherProps
-}: ControlledComponentProps<T> & Partial<NavigationHandlers>) {
+}: ControlledComponentProps<T> & Partial<NavigationHandlers> & FocusProps) {
     const handleChange = useCallback(
         (newValue: string) => {
             onChange({ ...value, content: newValue });

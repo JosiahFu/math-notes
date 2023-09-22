@@ -1,34 +1,23 @@
 import { useState } from 'react';
-import MathSegment from './components/MathSegment';
-import { MathSegmentData, TextSegmentData } from './data';
-import TextSegment from './components/TextSegment';
+import { KeyedArray, NoteBlockData, Segment } from './data';
+import NoteBlock from './components/NoteBlock';
 
 function App() {
-    const [math, setMath] = useState<MathSegmentData>({
-        type: 'MATH',
-        content: '',
-    });
+    const [segments, setSegments] = useState<KeyedArray<Segment>>(() => [
+        { type: 'TEXT', content: 'HELLO ', key: crypto.randomUUID() },
+        { type: 'MATH', content: 'x=5', key: crypto.randomUUID() },
+        { type: 'TEXT', content: ' WORLD', key: crypto.randomUUID() },
+    ]);
 
-    const [text, setText] = useState<TextSegmentData>({
-        type: 'TEXT',
-        content: '',
-    });
+    const handleSetBlock = ({ content }: NoteBlockData) => {
+        setSegments(content);
+    };
 
     return (
         <>
-            <MathSegment
-                value={math}
-                onChange={setMath}
-                onInsertAfter={() => console.log('insert')}
-                onDelete={() => console.log('delete')}
-            />
-            <TextSegment
-                value={text}
-                onChange={setText}
-                onLeftOut={() => console.log('left')}
-                onRightOut={() => console.log('right')}
-                onUpOut={() => console.log('up')}
-                onDownOut={() => console.log('down')}
+            <NoteBlock
+                value={{ content: segments, type: 'NOTE', isAnswer: false }}
+                onChange={handleSetBlock}
             />
         </>
     );

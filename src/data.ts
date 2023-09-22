@@ -1,3 +1,4 @@
+import { Direction as MQDirection } from 'react-mathquill';
 
 type KeyedArray<T extends object> = (T & { key: string | number })[];
 
@@ -15,13 +16,15 @@ type Segment = TextSegmentData | MathSegmentData;
 
 interface NoteBlockData {
     content: KeyedArray<Segment>;
-    children: KeyedArray<Block>;
+    children?: KeyedArray<Block>;
     type: 'NOTE';
     isAnswer: boolean;
 }
 
 interface TableBlockData {
-    content: KeyedArray<{ columns: KeyedArray<TextSegmentData | MathSegmentData> }>;
+    content: KeyedArray<{
+        columns: KeyedArray<TextSegmentData | MathSegmentData>;
+    }>;
     type: 'TABLE';
 }
 
@@ -43,12 +46,39 @@ interface ControlledComponentProps<T> {
 }
 
 interface NavigationHandlers {
-    onUpOut: () => void;
-    onDownOut: () => void;
-    onLeftOut: () => void;
-    onRightOut: () => void;
-    onInsertAfter: () => void;
-    onDelete: () => void;
+    onUpOut?: () => void;
+    onDownOut?: () => void;
+    onLeftOut?: () => void;
+    onRightOut?: () => void;
+    onInsertAfter?: () => void;
+    onDelete?: () => void;
 }
 
-export type { MathSegmentData, TextSegmentData, NoteBlockData, TableBlockData, Block, DocumentData, ControlledComponentProps, NavigationHandlers };
+type Direction = 'left' | 'right' | 'top' | 'bottom';
+
+const MQDir = {
+    left: -1 as MQDirection,
+    right: 1 as MQDirection,
+};
+
+interface FocusProps {
+    focused?: boolean;
+    focusSide?: Direction | undefined;
+    onFocus?: () => void;
+}
+
+export { MQDir };
+export type {
+    MathSegmentData,
+    TextSegmentData,
+    Segment,
+    NoteBlockData,
+    TableBlockData,
+    Block,
+    DocumentData,
+    ControlledComponentProps,
+    NavigationHandlers,
+    KeyedArray,
+    FocusProps,
+    Direction,
+};
