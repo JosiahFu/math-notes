@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'preact/hooks';
+import { useCallback, useEffect, useRef } from 'react';
 import { ControlledComponentProps, NavigationHandlers } from '../data';
 import '../fixGlobal';
 import {
@@ -8,6 +8,7 @@ import {
     MathFieldConfig,
     addStyles,
 } from 'react-mathquill';
+import { useDebouncedState } from '@tater-archives/react-use-debounce';
 
 addStyles();
 
@@ -30,11 +31,13 @@ function MathInput({
 }: ControlledComponentProps<string> & Partial<NavigationHandlers>) {
     const mathFieldRef = useRef<MathField>();
 
+    const [latex, setLatex] = useDebouncedState(value, onChange, 500);
+
     const handleChange = useCallback(
         (mathfield: MathField) => {
-            onChange(mathfield.latex());
+            setLatex(mathfield.latex());
         },
-        [onChange]
+        [setLatex]
     );
 
     // Update mathquill config
@@ -59,7 +62,7 @@ function MathInput({
     return (
         <EditableMathField
             mathquillDidMount={handleMount}
-            latex={value}
+            latex={latex}
             onChange={handleChange}
             config={mathquillConfigOptions}
         />

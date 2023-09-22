@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useState } from 'react';
 import MathSegment from './components/MathSegment';
 import { MathSegmentData } from './data';
 
@@ -11,4 +11,4 @@ function App() {
     return <MathSegment value={value} onChange={setValue} />;
 }
 
-export { App };
+export default App;
