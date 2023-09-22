@@ -1,14 +1,37 @@
 import { useState } from 'react';
 import MathSegment from './components/MathSegment';
-import { MathSegmentData } from './data';
+import { MathSegmentData, TextSegmentData } from './data';
+import TextSegment from './components/TextSegment';
 
 function App() {
-    const [value, setValue] = useState<MathSegmentData>({
+    const [math, setMath] = useState<MathSegmentData>({
         type: 'MATH',
         content: '',
     });
 
-    return <MathSegment value={value} onChange={setValue} />;
+    const [text, setText] = useState<TextSegmentData>({
+        type: 'TEXT',
+        content: '',
+    });
+
+    return (
+        <>
+            <MathSegment
+                value={math}
+                onChange={setMath}
+                onInsertAfter={() => console.log('insert')}
+                onDelete={() => console.log('delete')}
+            />
+            <TextSegment
+                value={text}
+                onChange={setText}
+                onLeftOut={() => console.log('left')}
+                onRightOut={() => console.log('right')}
+                onUpOut={() => console.log('up')}
+                onDownOut={() => console.log('down')}
+            />
+        </>
+    );
 }
 
 export default App;

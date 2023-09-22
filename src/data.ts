@@ -1,5 +1,5 @@
 
-type ArrayWithKeys<T extends object> = (T & { key: string | number })[];
+type KeyedArray<T extends object> = (T & { key: string | number })[];
 
 interface TextSegmentData {
     type: 'TEXT';
@@ -14,14 +14,14 @@ interface MathSegmentData {
 type Segment = TextSegmentData | MathSegmentData;
 
 interface NoteBlockData {
-    content: Segment[];
-    children: ArrayWithKeys<Block>
+    content: KeyedArray<Segment>;
+    children: KeyedArray<Block>;
     type: 'NOTE';
     isAnswer: boolean;
 }
 
 interface TableBlockData {
-    content: ArrayWithKeys<{ columns: ArrayWithKeys<TextSegmentData | MathSegmentData> }>;
+    content: KeyedArray<{ columns: KeyedArray<TextSegmentData | MathSegmentData> }>;
     type: 'TABLE';
 }
 
@@ -47,6 +47,8 @@ interface NavigationHandlers {
     onDownOut: () => void;
     onLeftOut: () => void;
     onRightOut: () => void;
+    onInsertAfter: () => void;
+    onDelete: () => void;
 }
 
 export type { MathSegmentData, TextSegmentData, NoteBlockData, TableBlockData, Block, DocumentData, ControlledComponentProps, NavigationHandlers };

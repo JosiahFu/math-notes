@@ -8,7 +8,6 @@ import {
     MathFieldConfig,
     addStyles,
 } from 'react-mathquill';
-import { useDebouncedState } from '@tater-archives/react-use-debounce';
 
 addStyles();
 
@@ -28,16 +27,16 @@ function MathInput({
     onLeftOut,
     onRightOut,
     onUpOut,
+    onInsertAfter,
+    onDelete,
 }: ControlledComponentProps<string> & Partial<NavigationHandlers>) {
     const mathFieldRef = useRef<MathField>();
 
-    const [latex, setLatex] = useDebouncedState(value, onChange, 500);
-
     const handleChange = useCallback(
         (mathfield: MathField) => {
-            setLatex(mathfield.latex());
+            onChange(mathfield.latex());
         },
-        [setLatex]
+        [onChange]
     );
 
     // Update mathquill config
@@ -51,9 +50,19 @@ function MathInput({
                     (direction === Direction.R ? onRightOut : onLeftOut)?.();
                 },
                 edit: handleChange,
+                enter: onInsertAfter,
+                deleteOutOf: onDelete,
             },
         });
-    }, [handleChange, onDownOut, onLeftOut, onRightOut, onUpOut]);
+    }, [
+        handleChange,
+        onDelete,
+        onDownOut,
+        onInsertAfter,
+        onLeftOut,
+        onRightOut,
+        onUpOut,
+    ]);
 
     const handleMount = useCallback((mathfield: MathField) => {
         mathFieldRef.current = mathfield;
@@ -62,7 +71,7 @@ function MathInput({
     return (
         <EditableMathField
             mathquillDidMount={handleMount}
-            latex={latex}
+            latex={value}
             onChange={handleChange}
             config={mathquillConfigOptions}
         />

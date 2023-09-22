@@ -6,19 +6,25 @@ import {
 } from '../data';
 import MathInput from './MathInput';
 
-function MathSegment({
-    value: { content: value },
+function MathSegment<T extends MathSegmentData>({
+    value,
     onChange,
     ...otherProps
-}: ControlledComponentProps<MathSegmentData> & Partial<NavigationHandlers>) {
+}: ControlledComponentProps<T> & Partial<NavigationHandlers>) {
     const handleChange = useCallback(
-        (value: string) => {
-            onChange({ type: 'MATH', content: value });
+        (newValue: string) => {
+            onChange({ ...value, content: newValue });
         },
-        [onChange]
+        [onChange, value]
     );
 
-    return <MathInput value={value} onChange={handleChange} {...otherProps} />;
+    return (
+        <MathInput
+            value={value.content}
+            onChange={handleChange}
+            {...otherProps}
+        />
+    );
 }
 
 export default MathSegment;
