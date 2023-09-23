@@ -75,9 +75,9 @@ function MathInput({
             onUpOut,
         ]);
 
-        const handleMount = useCallback((mathfield: MathField) => {
+        const handleMount = (mathfield: MathField) => {
             mathFieldRef.current = mathfield;
-        }, []);
+        };
 
         // Handle focusing
         useEffect(() => {

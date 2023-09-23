@@ -1,10 +1,4 @@
-import {
-    ChangeEventHandler,
-    KeyboardEventHandler,
-    useCallback,
-    useEffect,
-    useRef,
-} from 'react';
+import { KeyboardEventHandler, useEffect, useRef } from 'react';
 import {
     ControlledComponentProps,
     NavigationHandlers,
@@ -12,6 +6,7 @@ import {
     TextSegmentData,
 } from '../data';
 import { useDebouncedState } from '@tater-archives/react-use-debounce';
+import AutosizeInput from './AutosizeInput';
 
 function TextSegment<T extends TextSegmentData>({
     value,
@@ -32,53 +27,47 @@ function TextSegment<T extends TextSegmentData>({
     } & FocusProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleKeyDown: KeyboardEventHandler = useCallback(
-        event => {
-            const target = event.target as HTMLInputElement;
+    const handleKeyDown: KeyboardEventHandler = event => {
+        const target = event.target as HTMLInputElement;
 
-            switch (event.key) {
-                case 'ArrowLeft':
-                    if (target.selectionStart === 0) {
-                        onLeftOut?.();
-                        break;
-                    }
-                    return;
-                case 'ArrowRight':
-                    if (target.selectionEnd === target.value.length) {
-                        onRightOut?.();
-                        break;
-                    }
-                    return;
-                case 'ArrowUp':
-                    onUpOut?.();
+        switch (event.key) {
+            case 'ArrowLeft':
+                if (target.selectionStart === 0) {
+                    onLeftOut?.();
                     break;
-                case 'ArrowDown':
-                    onDownOut?.();
+                }
+                return;
+            case 'ArrowRight':
+                if (target.selectionEnd === target.value.length) {
+                    onRightOut?.();
                     break;
-                case 'Enter':
-                    onInsertAfter?.();
+                }
+                return;
+            case 'ArrowUp':
+                onUpOut?.();
+                break;
+            case 'ArrowDown':
+                onDownOut?.();
+                break;
+            case 'Enter':
+                onInsertAfter?.();
+                break;
+            case 'Backspace':
+                if (target.value === '') {
+                    onDelete?.();
                     break;
-                case 'Backspace':
-                    if (target.value === '') {
-                        onDelete?.();
-                        break;
-                    }
-                    return;
-                default:
-                    return;
-            }
+                }
+                return;
+            default:
+                return;
+        }
 
-            event.preventDefault();
-        },
-        [onDelete, onDownOut, onInsertAfter, onLeftOut, onRightOut, onUpOut]
-    );
+        event.preventDefault();
+    };
 
-    const setContent = useCallback(
-        (content: string) => {
-            onChange({ ...value, content });
-        },
-        [onChange, value]
-    );
+    const setContent = (content: string) => {
+        onChange({ ...value, content });
+    };
 
     const [dContent, setDContent] = useDebouncedState(
         value.content,
@@ -86,21 +75,14 @@ function TextSegment<T extends TextSegmentData>({
         500
     );
 
-    const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-        event => {
-            const newContent = event.target.value;
-            if (onInsertMath && newContent.includes('$$')) {
-                const split = newContent.indexOf('$$');
-                onInsertMath(
-                    newContent.slice(0, split),
-                    newContent.slice(split + 2)
-                );
-                return;
-            }
-            setDContent(newContent);
-        },
-        [onInsertMath, setDContent]
-    );
+    const handleChange = (value: string) => {
+        if (onInsertMath && value.includes('$$')) {
+            const split = value.indexOf('$$');
+            onInsertMath(value.slice(0, split), value.slice(split + 2));
+            return;
+        }
+        setDContent(value);
+    };
 
     const setCursorPosition = (position: number) => {
         if (inputRef.current) {
@@ -120,7 +102,7 @@ function TextSegment<T extends TextSegmentData>({
     }, [focusSide, focused]);
 
     return (
-        <input
+        <AutosizeInput
             ref={inputRef}
             value={dContent}
             onChange={handleChange}
