@@ -39,65 +39,62 @@ function MathInput({
 }: ControlledComponentProps<string> &
     Partial<NavigationHandlers> &
     FocusProps) {
-        const mathFieldRef = useRef<MathField>();
+    const mathFieldRef = useRef<MathField>();
 
-        const handleChange = useCallback(
-            (mathfield: MathField) => {
-                onChange(mathfield.latex());
-            },
-            [onChange]
-        );
+    const handleChange = useCallback(
+        (mathfield: MathField) => {
+            onChange(mathfield.latex());
+        },
+        [onChange]
+    );
 
-        // Update mathquill config
-        useEffect(() => {
-            mathFieldRef.current?.config({
-                ...mathquillConfigOptions,
-                handlers: {
-                    downOutOf: onDownOut,
-                    upOutOf: onUpOut,
-                    moveOutOf: direction => {
-                        (direction === MQDir.right
-                            ? onRightOut
-                            : onLeftOut)?.();
-                    },
-                    edit: handleChange,
-                    enter: onInsertAfter,
-                    deleteOutOf: onDelete,
+    // Update mathquill config
+    useEffect(() => {
+        mathFieldRef.current?.config({
+            ...mathquillConfigOptions,
+            handlers: {
+                downOutOf: onDownOut,
+                upOutOf: onUpOut,
+                moveOutOf: direction => {
+                    (direction === MQDir.right ? onRightOut : onLeftOut)?.();
                 },
-            });
-        }, [
-            handleChange,
-            onDelete,
-            onDownOut,
-            onInsertAfter,
-            onLeftOut,
-            onRightOut,
-            onUpOut,
-        ]);
+                edit: handleChange,
+                enter: onInsertAfter,
+                deleteOutOf: onDelete,
+            },
+        });
+    }, [
+        handleChange,
+        onDelete,
+        onDownOut,
+        onInsertAfter,
+        onLeftOut,
+        onRightOut,
+        onUpOut,
+    ]);
 
-        const handleMount = (mathfield: MathField) => {
-            mathFieldRef.current = mathfield;
-        };
+    const handleMount = (mathfield: MathField) => {
+        mathFieldRef.current = mathfield;
+    };
 
-        // Handle focusing
-        useEffect(() => {
-            if (focused) {
-                mathFieldRef.current?.focus();
-                if (focusSide === 'left') mathFieldRef.current?.moveToLeftEnd();
-                if (focusSide === 'right')
-                    mathFieldRef.current?.moveToRightEnd();
-            }
-        }, [focusSide, focused]);
+    // Handle focusing
+    useEffect(() => {
+        if (focused) {
+            mathFieldRef.current?.focus();
+            if (focusSide === 'left') mathFieldRef.current?.moveToLeftEnd();
+            if (focusSide === 'right') mathFieldRef.current?.moveToRightEnd();
+        }
+    }, [focusSide, focused]);
 
-        return (
-            <EditableMathField
-                mathquillDidMount={handleMount}
-                latex={value}
-                onChange={handleChange}
-                config={mathquillConfigOptions}
-                onFocus={onFocus}
-            />
-        );
-    }
+    return (
+        <EditableMathField
+            mathquillDidMount={handleMount}
+            latex={value}
+            onChange={handleChange}
+            config={mathquillConfigOptions}
+            onFocus={onFocus}
+        />
+    );
+}
 
 export default MathInput;

@@ -2,7 +2,7 @@ import { Direction as MQDirection } from 'react-mathquill';
 
 type WithKey<T extends object> = T & { key: string | number };
 
-type KeyedArray<T extends object> = (WithKey<T>)[];
+type KeyedArray<T extends object> = WithKey<T>[];
 
 function addKey<T extends object>(object: T): WithKey<T> {
     (object as WithKey<T>).key = crypto.randomUUID();
@@ -43,7 +43,7 @@ interface EmbedBlockData {
 type Block = NoteBlockData | TableBlockData | EmbedBlockData;
 
 interface DocumentData {
-    content: Block[];
+    content: KeyedArray<Block>;
     title: string;
 }
 
