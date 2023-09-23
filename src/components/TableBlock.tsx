@@ -7,6 +7,6 @@ import {
 function TableBlock({
     value,
     onChange,
-}: ControlledComponentProps<TableBlockData> & Partial<NavigationHandlers>) {}
+}: ControlledComponentProps<TableBlockData> & NavigationHandlers) {}
 
 export default TableBlock;

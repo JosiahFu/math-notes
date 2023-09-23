@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .flex-grow-last > :last-child {
+        flex-grow: 1
+    }
+}

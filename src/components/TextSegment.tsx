@@ -23,9 +23,11 @@ function TextSegment({
     onInsertAfter,
     onDelete,
     onInsertMath,
+    last = false,
 }: ControlledComponentProps<WithKey<TextSegmentData>> &
-    Partial<NavigationHandlers> & {
+    NavigationHandlers & {
         onInsertMath?: (before: string, after: string) => void;
+        last?: boolean;
     } & FocusProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -104,7 +106,8 @@ function TextSegment({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onFocus={onFocus}
-            placeholder='Type $$ to insert math'
+            disableSizing={last}
+            className={last ? 'flex-grow' : ''}
         />
     );
 }

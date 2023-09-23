@@ -13,7 +13,7 @@ function MathSegment({
     onChange,
     ...otherProps
 }: ControlledComponentProps<WithKey<MathSegmentData>> &
-    Partial<NavigationHandlers> &
+    NavigationHandlers &
     FocusProps) {
     const [content, setContent] = usePropState(value, onChange, 'content');
 

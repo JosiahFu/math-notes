@@ -7,6 +7,6 @@ import {
 function EmbedBlock({
     value,
     onChange,
-}: ControlledComponentProps<EmbedBlockData> & Partial<NavigationHandlers>) {}
+}: ControlledComponentProps<EmbedBlockData> & NavigationHandlers) {}
 
 export default EmbedBlock;

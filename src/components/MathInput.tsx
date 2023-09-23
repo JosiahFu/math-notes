@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
     ControlledComponentProps,
     MQDir,
     NavigationHandlers,
     FocusProps,
 } from '../data';
-import '../fixGlobal';
+import '../fixGlobal'; // Must be called before react-mathquill
 import {
     EditableMathField,
     addStyles,
@@ -36,17 +36,10 @@ function MathInput({
     onUpOut,
     onInsertAfter,
     onDelete,
-}: ControlledComponentProps<string> &
-    Partial<NavigationHandlers> &
-    FocusProps) {
+}: ControlledComponentProps<string> & NavigationHandlers & FocusProps) {
     const mathFieldRef = useRef<MathField>();
 
-    const handleChange = useCallback(
-        (mathfield: MathField) => {
-            onChange(mathfield.latex());
-        },
-        [onChange]
-    );
+    const supressEditEvent = useRef(2);
 
     // Update mathquill config
     useEffect(() => {
@@ -58,13 +51,23 @@ function MathInput({
                 moveOutOf: direction => {
                     (direction === MQDir.right ? onRightOut : onLeftOut)?.();
                 },
-                edit: handleChange,
+                edit: (mathfield: MathField) => {
+                    if (supressEditEvent.current > 0) {
+                        supressEditEvent.current--;
+                    } else {
+                        console.log('EDIT');
+                        onChange(mathfield.latex());
+                    }
+                },
                 enter: onInsertAfter,
-                deleteOutOf: onDelete,
+                deleteOutOf: () => {
+                    supressEditEvent.current = 1;
+                    onDelete?.();
+                },
             },
         });
     }, [
-        handleChange,
+        onChange,
         onDelete,
         onDownOut,
         onInsertAfter,
@@ -90,7 +93,6 @@ function MathInput({
         <EditableMathField
             mathquillDidMount={handleMount}
             latex={value}
-            onChange={handleChange}
             config={mathquillConfigOptions}
             onFocus={onFocus}
         />

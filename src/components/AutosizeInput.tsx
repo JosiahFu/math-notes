@@ -2,6 +2,7 @@ import {
     ChangeEventHandler,
     HTMLAttributes,
     forwardRef,
+    useEffect,
     useLayoutEffect,
     useRef,
 } from 'react';
@@ -12,10 +13,12 @@ const AutosizeInput = forwardRef(
             value,
             onChange,
             minWidth,
+            disableSizing,
             ...otherProps
         }: {
             value: string;
             onChange: (value: string) => void;
+            disableSizing: boolean;
             minWidth?: number;
         } & Omit<HTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>,
         forwardedRef: React.ForwardedRef<HTMLInputElement>
@@ -38,13 +41,18 @@ const AutosizeInput = forwardRef(
         };
 
         useLayoutEffect(() => {
-            if (!inputRef.current) return;
+            if (disableSizing || !inputRef.current) return;
             inputRef.current.style.width = '0';
             inputRef.current.style.width = `${Math.max(
                 inputRef.current.scrollWidth,
                 minWidth ?? 0
             )}px`;
         });
+
+        useEffect(() => {
+            if (!disableSizing || !inputRef.current) return;
+            inputRef.current.style.width = '';
+        }, [disableSizing]);
 
         return (
             <input

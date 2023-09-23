@@ -13,31 +13,66 @@ interface TextSegmentData {
     type: 'TEXT';
     content: string;
 }
+function TextSegmentData(content: string): TextSegmentData {
+    return { type: 'TEXT', content };
+}
 
 interface MathSegmentData {
     type: 'MATH';
     content: string;
 }
+function MathSegmentData(content: string): MathSegmentData {
+    return { type: 'MATH', content };
+}
 
 type Segment = TextSegmentData | MathSegmentData;
 
 interface NoteBlockData {
-    content: KeyedArray<Segment>;
-    children?: KeyedArray<Block>;
     type: 'NOTE';
+    content: KeyedArray<Segment>;
+    indent: number;
     isAnswer: boolean;
+}
+function NoteBlockData(
+    content: string | KeyedArray<Segment>,
+    indent = 0,
+    isAnswer = false
+): NoteBlockData {
+    return {
+        type: 'NOTE',
+        content:
+            typeof content === 'string'
+                ? [addKey(TextSegmentData(content))]
+                : content,
+        indent,
+        isAnswer,
+    };
 }
 
 interface TableBlockData {
-    content: KeyedArray<{
-        columns: KeyedArray<TextSegmentData | MathSegmentData>;
-    }>;
     type: 'TABLE';
+    content: KeyedArray<{
+        columns: KeyedArray<MathSegmentData>;
+    }>;
+    indent: number;
+}
+function TableBlockData(content: string[][], indent = 0): TableBlockData {
+    return {
+        type: 'TABLE',
+        content: content.map(e =>
+            addKey({ columns: e.map(MathSegmentData).map(addKey) })
+        ),
+        indent,
+    };
 }
 
 interface EmbedBlockData {
-    url: string;
     type: 'EMBED';
+    url: string;
+    indent: number;
+}
+function EmbedBlockData(url: string, indent = 0): EmbedBlockData {
+    return { type: 'EMBED', url, indent };
 }
 
 type Block = NoteBlockData | TableBlockData | EmbedBlockData;
@@ -74,16 +109,19 @@ interface FocusProps {
     onFocus: () => void;
 }
 
-export { addKey, MQDir };
-export type {
-    WithKey,
-    KeyedArray,
-    MathSegmentData,
+export {
+    addKey,
+    MQDir,
     TextSegmentData,
-    Segment,
+    MathSegmentData,
     NoteBlockData,
     TableBlockData,
     EmbedBlockData,
+};
+export type {
+    WithKey,
+    KeyedArray,
+    Segment,
     Block,
     DocumentData,
     ControlledComponentProps,
