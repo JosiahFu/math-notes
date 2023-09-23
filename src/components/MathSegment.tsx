@@ -1,31 +1,23 @@
-import { useCallback } from 'react';
 import {
     ControlledComponentProps,
     MathSegmentData,
     NavigationHandlers,
     FocusProps,
+    WithKey,
 } from '../data';
 import MathInput from './MathInput';
+import { usePropState } from '@tater-archives/react-use-destructure';
 
-function MathSegment<T extends MathSegmentData>({
+function MathSegment({
     value,
     onChange,
     ...otherProps
-}: ControlledComponentProps<T> & Partial<NavigationHandlers> & FocusProps) {
-    const handleChange = useCallback(
-        (newValue: string) => {
-            onChange({ ...value, content: newValue });
-        },
-        [onChange, value]
-    );
+}: ControlledComponentProps<WithKey<MathSegmentData>> &
+    Partial<NavigationHandlers> &
+    FocusProps) {
+    const [content, setContent] = usePropState(value, onChange, 'content');
 
-    return (
-        <MathInput
-            value={value.content}
-            onChange={handleChange}
-            {...otherProps}
-        />
-    );
+    return <MathInput value={content} onChange={setContent} {...otherProps} />;
 }
 
 export default MathSegment;

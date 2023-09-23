@@ -4,11 +4,13 @@ import {
     NavigationHandlers,
     FocusProps,
     TextSegmentData,
+    WithKey,
 } from '../data';
 import { useDebouncedState } from '@tater-archives/react-use-debounce';
 import AutosizeInput from './AutosizeInput';
+import { usePropState } from '@tater-archives/react-use-destructure';
 
-function TextSegment<T extends TextSegmentData>({
+function TextSegment({
     value,
     onChange,
     focused,
@@ -21,7 +23,7 @@ function TextSegment<T extends TextSegmentData>({
     onInsertAfter,
     onDelete,
     onInsertMath,
-}: ControlledComponentProps<T> &
+}: ControlledComponentProps<WithKey<TextSegmentData>> &
     Partial<NavigationHandlers> & {
         onInsertMath?: (before: string, after: string) => void;
     } & FocusProps) {
@@ -65,15 +67,9 @@ function TextSegment<T extends TextSegmentData>({
         event.preventDefault();
     };
 
-    const setContent = (content: string) => {
-        onChange({ ...value, content });
-    };
+    const [content, setContent] = usePropState(value, onChange, 'content');
 
-    const [dContent, setDContent] = useDebouncedState(
-        value.content,
-        setContent,
-        500
-    );
+    const [dContent, setDContent] = useDebouncedState(content, setContent, 500);
 
     const handleChange = (value: string) => {
         if (onInsertMath && value.includes('$$')) {

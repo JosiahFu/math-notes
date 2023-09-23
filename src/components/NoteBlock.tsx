@@ -6,7 +6,7 @@ import {
     NoteBlockData,
     addKey,
 } from '../data';
-import { useOptimizedDestructure } from '@tater-archives/react-use-destructure';
+import { usePropState } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
 import TextSegment from './TextSegment';
 import { useState } from 'react';
@@ -15,15 +15,8 @@ function NoteBlock({
     value,
     onChange,
 }: ControlledComponentProps<NoteBlockData> & Partial<NavigationHandlers>) {
-    const {
-        content: [content, setContent],
-        // children: [children, setChildren],
-    } = useOptimizedDestructure(value, onChange, [
-        'type',
-        'children',
-        'content',
-        'isAnswer',
-    ]);
+    const [content, setContent] = usePropState(value, onChange, 'content');
+    // const [children, setChildren] = usePropState(value, onChange, 'children');
 
     const [focused, setFocused] = useState<
         [index: number, side: Direction | undefined] | undefined

@@ -4,9 +4,9 @@ import {
     TableBlockData,
 } from '../data';
 
-function EmbedBlock({
+function TableBlock({
     value,
     onChange,
 }: ControlledComponentProps<TableBlockData> & Partial<NavigationHandlers>) {}
 
-export default EmbedBlock;
+export default TableBlock;
