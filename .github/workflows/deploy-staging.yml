@@ -48,13 +48,14 @@ jobs:
     needs: build
       
     steps:
-      - name: Download main
+      - name: Download main build
         uses: actions/download-artifact@v3
         with:
           name: build-main
           path: build
       
-      - uses: actions/download-artifact@v3
+      - name: Download staging build
+        uses: actions/download-artifact@v3
         with:
           name: build-${{github.event.inputs.stagingBranch}}
           path: build/staging
