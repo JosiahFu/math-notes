@@ -74,8 +74,8 @@ function TextSegment({
     const [dContent, setDContent] = useDebouncedState(content, setContent, 500);
 
     const handleChange = (value: string) => {
-        if (onInsertMath && value.includes('$$')) {
-            const split = value.indexOf('$$');
+        if (onInsertMath && (value.includes('<<') || value.includes('$$'))) {
+            const split = Math.max(value.indexOf('<<'), value.indexOf('$$')); // TODO this is hacky plz fix thx
             onInsertMath(value.slice(0, split), value.slice(split + 2));
             return;
         }
