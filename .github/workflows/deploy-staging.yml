@@ -5,10 +5,6 @@ on:
     branches: [ "main", "rewrite" ]
   
   workflow_dispatch:
-    inputs:
-      stagingBranch:
-        description: 'Staging Branch'
-        default: 'rewrite'
 
 jobs:
   build-main:
@@ -39,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.stagingBranch }}
+          ref: rewrite
       
       - uses: actions/setup-node@v3
         with:
