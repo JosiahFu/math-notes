@@ -1,12 +1,12 @@
-import {
-    ControlledComponentProps,
-    NavigationHandlers,
-    TableBlockData,
-} from '../data';
+// import {
+//     ControlledComponentProps,
+//     NavigationHandlers,
+//     TableBlockData,
+// } from '../data';
 
-function TableBlock({
-    value,
-    onChange,
-}: ControlledComponentProps<TableBlockData> & NavigationHandlers) {}
+// function TableBlock({
+//     value,
+//     onChange,
+// }: ControlledComponentProps<TableBlockData> & NavigationHandlers) {}
 
-export default TableBlock;
+// export default TableBlock;
