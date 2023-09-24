@@ -1,8 +1,8 @@
 name: Deploy React to gh-pages
 
 on:
-  push:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
 
   workflow_dispatch:
 
