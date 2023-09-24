@@ -32,8 +32,10 @@ function Document({
                         insertAfter(addKey(NoteBlockData('')));
                         setFocused([index + 1, 'top']);
                     },
-                    onDelete: remove,
-
+                    onDelete: () => {
+                        remove();
+                        setFocused([index - 1, 'bottom']);
+                    },
                     focused: index === focused?.[0],
                     focusSide: index === focused?.[0] ? focused[1] : undefined,
                     onFocus: () => setFocused([index, undefined]),
