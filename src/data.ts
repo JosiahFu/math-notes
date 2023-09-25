@@ -4,8 +4,11 @@ type WithKey<T extends object> = T & { key: string | number };
 
 type KeyedArray<T extends object> = WithKey<T>[];
 
+let currentKey = 0;
+
 function addKey<T extends object>(object: T): WithKey<T> {
-    (object as WithKey<T>).key = crypto.randomUUID();
+    (object as WithKey<T>).key = currentKey;
+    currentKey++;
     return object as WithKey<T>;
 }
 
@@ -105,6 +108,15 @@ interface NavigationProps {
     onInsertAfter?: () => void;
     onDelete?: () => void;
 }
+
+// function omit<T extends object, K extends keyof T>(object: T, prop: K): Omit<T, K> {
+//     const result: Partial<T> = {};
+//     (Object.keys(object) as (keyof T)[]).forEach(e => {
+//         if (e === prop) return;
+//         result[e] = object[e];
+//     });
+//     return result as Omit<T, K>;
+// }
 
 export {
     addKey,

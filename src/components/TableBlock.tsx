@@ -11,6 +11,8 @@ import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import MathInput from './MathInput';
 
+// Table still has weird navigation behavior, revert necessary?
+
 // This code is going to be absolutely horrible to debug later
 function TableBlock({
     value,
@@ -53,14 +55,30 @@ function TableBlock({
                                         focusedRow === rowIndex &&
                                         focusedColumn === columnIndex;
 
+                                    const focusUp = () => {
+                                        setFocusedRow(rowIndex - 1);
+                                        setFocusedDirection('bottom');
+                                    };
+                                    const focusDown = () => {
+                                        setFocusedRow(rowIndex + 1);
+                                        setFocusedDirection('top');
+                                    };
+                                    const focusLeft = () => {
+                                        setFocusedColumn(columnIndex - 1);
+                                        setFocusedDirection('right');
+                                    };
+                                    const focusRight = () => {
+                                        setFocusedColumn(columnIndex + 1);
+                                        setFocusedDirection('left');
+                                    };
+
                                     const navigationHandlers = {
                                         onUpOut() {
                                             if (onUpOut && rowIndex <= 0) {
                                                 onUpOut();
                                                 return;
                                             }
-                                            setFocusedRow(rowIndex - 1);
-                                            setFocusedDirection('bottom');
+                                            focusUp();
                                         },
                                         onDownOut() {
                                             if (
@@ -70,12 +88,11 @@ function TableBlock({
                                                 onDownOut();
                                                 return;
                                             }
-                                            setFocusedRow(rowIndex + 1);
-                                            setFocusedDirection('top');
+                                            focusDown();
                                         },
                                         onLeftOut() {
-                                            setFocusedColumn(columnIndex - 1);
-                                            setFocusedDirection('right');
+                                            if (focusedColumn <= 0) return;
+                                            focusLeft();
                                         },
                                         onRightOut() {
                                             if (
@@ -94,8 +111,7 @@ function TableBlock({
                                                     }))
                                                 );
                                             }
-                                            setFocusedColumn(columnIndex + 1);
-                                            setFocusedDirection('left');
+                                            focusRight();
                                         },
                                         onDelete() {
                                             if (
@@ -111,12 +127,15 @@ function TableBlock({
                                                     return;
                                                 }
                                                 remove();
+                                                // Go to start of previous row
+                                                setFocusedColumn(
+                                                    row.cells.length - 1
+                                                );
                                                 setFocusedRow(rowIndex - 1);
-                                                setFocusedDirection('bottom');
+                                                setFocusedDirection('right');
                                                 return;
                                             }
-                                            setFocusedColumn(columnIndex - 1);
-                                            setFocusedDirection('right');
+                                            focusLeft();
                                         },
                                         onInsertAfter() {
                                             insertAfter(
@@ -131,8 +150,7 @@ function TableBlock({
                                                     ),
                                                 })
                                             );
-                                            setFocusedRow(rowIndex + 1);
-                                            setFocusedDirection('top');
+                                            focusDown();
                                         },
                                     };
 
