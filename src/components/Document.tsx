@@ -11,6 +11,7 @@ import {
 } from '../data';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import NoteBlock from './NoteBlock';
+import TableBlock from './TableBlock';
 
 function Block() {}
 
@@ -45,6 +46,14 @@ function Document({
                     case 'NOTE':
                         return (
                             <NoteBlock
+                                value={value}
+                                onChange={set}
+                                {...props}
+                            />
+                        );
+                    case 'TABLE':
+                        return (
+                            <TableBlock
                                 value={value}
                                 onChange={set}
                                 {...props}

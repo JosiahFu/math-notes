@@ -52,7 +52,7 @@ function NoteBlockData(
 interface TableBlockData {
     type: 'TABLE';
     content: KeyedArray<{
-        columns: KeyedArray<MathSegmentData>;
+        columns: KeyedArray<{ content: string }>;
     }>;
     indent: number;
 }
@@ -60,7 +60,7 @@ function TableBlockData(content: string[][], indent = 0): TableBlockData {
     return {
         type: 'TABLE',
         content: content.map(e =>
-            addKey({ columns: e.map(MathSegmentData).map(addKey) })
+            addKey({ columns: e.map(e => addKey({ content: e })) })
         ),
         indent,
     };

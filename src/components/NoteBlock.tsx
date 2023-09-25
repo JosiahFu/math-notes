@@ -35,8 +35,9 @@ function NoteBlock({
     >();
 
     useEffect(() => {
-        if (focusedSegment) return;
-        setFocusedSegment(focused ? [0, undefined] : undefined);
+        if (focused && focusedSegment === undefined) {
+            setFocusedSegment([0, undefined]);
+        }
     }, [focused, focusedSegment]);
 
     return (
