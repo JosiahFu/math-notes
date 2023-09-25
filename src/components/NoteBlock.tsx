@@ -16,7 +16,7 @@ import {
 import { usePropState } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
 import TextSegment from './TextSegment';
-import { useEffect, useState } from 'react';
+import { KeyboardEventHandler, useEffect, useState } from 'react';
 
 function NoteBlock({
     value,
@@ -33,7 +33,7 @@ function NoteBlock({
         onReplace?: (...blocks: KeyedArray<Block>) => void;
     }) {
     const [content, setContent] = usePropState(value, onChange, 'content');
-    // const [children, setChildren] = usePropState(value, onChange, 'children');
+    const [indent, setIndent] = usePropState(value, onChange, 'indent');
 
     const [focusedSegment, setFocusedSegment] = useState<
         [index: number, side: Direction | undefined] | undefined
@@ -53,10 +53,13 @@ function NoteBlock({
         ) {
             onReplace(
                 addKey(
-                    TableBlockData([
-                        ['', ''],
-                        ['', ''],
-                    ])
+                    TableBlockData(
+                        [
+                            ['', ''],
+                            ['', ''],
+                        ],
+                        value.indent
+                    )
                 )
             );
             return;
@@ -64,8 +67,22 @@ function NoteBlock({
         setContent(newContent);
     };
 
+    const handleKeyDown: KeyboardEventHandler = event => {
+        if (event.key !== 'Tab') return;
+        if (event.shiftKey) {
+            if (indent === 0) return;
+            setIndent(indent - 1);
+        } else {
+            setIndent(indent + 1);
+        }
+        event.preventDefault();
+    };
+
     return (
-        <div className='flex flex-row flex-wrap'>
+        <div
+            className='flex flex-row flex-wrap'
+            onKeyDown={handleKeyDown}
+            style={{ marginLeft: `${indent * 2}em` }}>
             <ArrayMap array={content} setArray={handleChange} keyProp='key'>
                 {(segment, { set, replace }, index, { splice }) => {
                     const props = {

@@ -54,17 +54,13 @@ function NoteBlockData(
 
 interface TableBlockData {
     type: 'TABLE';
-    rows: KeyedArray<{
-        cells: KeyedArray<{ content: string }>;
-    }>;
+    cells: string[][];
     indent: number;
 }
 function TableBlockData(cells: string[][], indent = 0): TableBlockData {
     return {
         type: 'TABLE',
-        rows: cells.map(e =>
-            addKey({ cells: e.map(e => addKey({ content: e })) })
-        ),
+        cells,
         indent,
     };
 }
@@ -108,15 +104,6 @@ interface NavigationProps {
     onInsertAfter?: () => void;
     onDelete?: () => void;
 }
-
-// function omit<T extends object, K extends keyof T>(object: T, prop: K): Omit<T, K> {
-//     const result: Partial<T> = {};
-//     (Object.keys(object) as (keyof T)[]).forEach(e => {
-//         if (e === prop) return;
-//         result[e] = object[e];
-//     });
-//     return result as Omit<T, K>;
-// }
 
 export {
     addKey,

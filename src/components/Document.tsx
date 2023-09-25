@@ -32,7 +32,7 @@ function Document({
                     onUpOut: () =>
                         index > 0 && setFocused([index - 1, 'bottom']),
                     onInsertAfter: () => {
-                        insertAfter(addKey(NoteBlockData('')));
+                        insertAfter(addKey(NoteBlockData('', block.indent)));
                         setFocused([index + 1, 'top']);
                     },
                     onDelete: () => {

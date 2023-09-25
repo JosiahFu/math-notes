@@ -5,7 +5,6 @@ import {
     NavigationProps,
     TableBlockData,
     WithKey,
-    addKey,
 } from '../data';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
@@ -24,7 +23,7 @@ function TableBlock({
     onUpOut,
     onDelete,
 }: ControlledComponentProps<WithKey<TableBlockData>> & NavigationProps) {
-    const [rows, setRows] = usePropState(value, onChange, 'rows');
+    const [cells, setCells] = usePropState(value, onChange, 'cells');
 
     const [focusedRow, setFocusedRow] = useState<number>(0);
     const [focusedColumn, setFocusedColumn] = useState<number>(0);
@@ -34,21 +33,18 @@ function TableBlock({
 
     useEffect(() => {
         if (focused) {
-            if (focusSide === 'bottom') setFocusedRow(rows.length - 1);
+            if (focusSide === 'bottom') setFocusedRow(cells.length - 1);
             if (focusSide === 'top') setFocusedRow(0);
         }
-    }, [focusSide, focused, rows.length]);
+    }, [focusSide, focused, cells.length]);
 
     return (
         <table>
             <tbody>
-                <ArrayMap array={rows} setArray={setRows} keyProp='key'>
+                <ArrayMap array={cells} setArray={setCells}>
                     {(row, { set: setRow, insertAfter, remove }, rowIndex) => (
                         <tr>
-                            <ArrayMap
-                                array={row.cells}
-                                setArray={cells => setRow({ ...row, cells })}
-                                keyProp='key'>
+                            <ArrayMap array={row} setArray={setRow}>
                                 {(cell, { set }, columnIndex) => {
                                     const cellFocused =
                                         focused &&
@@ -83,7 +79,7 @@ function TableBlock({
                                         onDownOut() {
                                             if (
                                                 onDownOut &&
-                                                rowIndex >= rows.length - 1
+                                                rowIndex >= cells.length - 1
                                             ) {
                                                 onDownOut();
                                                 return;
@@ -95,33 +91,18 @@ function TableBlock({
                                             focusLeft();
                                         },
                                         onRightOut() {
-                                            if (
-                                                columnIndex >=
-                                                row.cells.length - 1
-                                            ) {
-                                                setRows(
-                                                    rows.map(e => ({
-                                                        ...e,
-                                                        cells: [
-                                                            ...e.cells,
-                                                            addKey({
-                                                                content: '',
-                                                            }),
-                                                        ],
-                                                    }))
+                                            if (columnIndex >= row.length - 1) {
+                                                setCells(
+                                                    cells.map(e => [...e, ''])
                                                 );
                                             }
                                             focusRight();
                                         },
                                         onDelete() {
-                                            if (
-                                                row.cells.every(
-                                                    e => e.content === ''
-                                                )
-                                            ) {
+                                            if (row.every(e => e === '')) {
                                                 if (
                                                     onDelete &&
-                                                    rows.length === 1
+                                                    cells.length === 1
                                                 ) {
                                                     onDelete();
                                                     return;
@@ -129,7 +110,7 @@ function TableBlock({
                                                 remove();
                                                 // Go to start of previous row
                                                 setFocusedColumn(
-                                                    row.cells.length - 1
+                                                    row.length - 1
                                                 );
                                                 setFocusedRow(rowIndex - 1);
                                                 setFocusedDirection('right');
@@ -138,18 +119,7 @@ function TableBlock({
                                             focusLeft();
                                         },
                                         onInsertAfter() {
-                                            insertAfter(
-                                                addKey({
-                                                    // Create a new empty row
-                                                    cells: [
-                                                        ...row.cells.keys(),
-                                                    ].map(() =>
-                                                        addKey({
-                                                            content: '',
-                                                        })
-                                                    ),
-                                                })
-                                            );
+                                            insertAfter(row.map(() => ''));
                                             focusDown();
                                         },
                                     };
@@ -157,13 +127,8 @@ function TableBlock({
                                     return (
                                         <td>
                                             <MathInput
-                                                value={cell.content}
-                                                onChange={newValue =>
-                                                    set({
-                                                        ...cell,
-                                                        content: newValue,
-                                                    })
-                                                }
+                                                value={cell}
+                                                onChange={set}
                                                 focused={cellFocused}
                                                 focusSide={
                                                     cellFocused

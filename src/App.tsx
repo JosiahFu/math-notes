@@ -7,6 +7,7 @@ import {
     addKey,
 } from './data';
 import Document from './components/Document';
+import { documentToMarkdown } from './serialize';
 
 function App() {
     const [blocks, setBlocks] = useState<KeyedArray<Block>>(() => [
@@ -23,6 +24,7 @@ function App() {
     return (
         <>
             <Document value={blocks} onChange={setBlocks} />
+            <pre>{documentToMarkdown(blocks)}</pre>
         </>
     );
 }
