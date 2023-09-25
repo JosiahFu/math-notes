@@ -3,10 +3,9 @@ import {
     Block,
     ControlledComponentProps,
     Direction,
-    FocusProps,
     KeyedArray,
     MathSegmentData,
-    NavigationHandlers,
+    NavigationProps,
     NoteBlockData,
     Segment,
     TableBlockData,
@@ -30,8 +29,7 @@ function NoteBlock({
     onDelete,
     onReplace,
 }: ControlledComponentProps<WithKey<NoteBlockData>> &
-    NavigationHandlers &
-    FocusProps & {
+    NavigationProps & {
         onReplace?: (...blocks: KeyedArray<Block>) => void;
     }) {
     const [content, setContent] = usePropState(value, onChange, 'content');

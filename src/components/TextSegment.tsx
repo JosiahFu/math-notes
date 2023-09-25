@@ -1,10 +1,9 @@
 import { KeyboardEventHandler, useEffect, useRef } from 'react';
 import {
     ControlledComponentProps,
-    NavigationHandlers,
-    FocusProps,
     TextSegmentData,
     WithKey,
+    NavigationProps,
 } from '../data';
 import { useDebouncedState } from '@tater-archives/react-use-debounce';
 import AutosizeInput from './AutosizeInput';
@@ -25,10 +24,10 @@ function TextSegment({
     onInsertMath,
     last = false,
 }: ControlledComponentProps<WithKey<TextSegmentData>> &
-    NavigationHandlers & {
+    NavigationProps & {
         onInsertMath?: (before: string, after: string) => void;
         last?: boolean;
-    } & FocusProps) {
+    }) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleKeyDown: KeyboardEventHandler = event => {

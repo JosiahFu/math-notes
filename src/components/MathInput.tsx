@@ -1,10 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
-    ControlledComponentProps,
-    MQDir,
-    NavigationHandlers,
-    FocusProps,
-} from '../data';
+import { ControlledComponentProps, MQDir, NavigationProps } from '../data';
 import '../fixGlobal'; // Must be called before react-mathquill
 import {
     EditableMathField,
@@ -36,7 +31,7 @@ function MathInput({
     onUpOut,
     onInsertAfter,
     onDelete,
-}: ControlledComponentProps<string> & NavigationHandlers & FocusProps) {
+}: ControlledComponentProps<string> & NavigationProps) {
     const mathFieldRef = useRef<MathField>();
 
     const supressEditEvent = useRef(2);

@@ -3,9 +3,8 @@ import {
     Block,
     ControlledComponentProps,
     Direction,
-    FocusProps,
     KeyedArray,
-    NavigationHandlers,
+    NavigationProps,
     NoteBlockData,
     addKey,
 } from '../data';
@@ -26,7 +25,7 @@ function Document({
     return (
         <ArrayMap array={value} setArray={onChange} keyProp='key'>
             {(block, { set, insertAfter, remove, replace }, index) => {
-                const props: NavigationHandlers & FocusProps = {
+                const props: NavigationProps = {
                     onDownOut: () =>
                         index < value.length - 1 &&
                         setFocused([index + 1, 'top']),

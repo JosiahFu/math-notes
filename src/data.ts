@@ -87,15 +87,6 @@ interface ControlledComponentProps<T> {
     onChange: (value: T) => void;
 }
 
-interface NavigationHandlers {
-    onUpOut?: () => void;
-    onDownOut?: () => void;
-    onLeftOut?: () => void;
-    onRightOut?: () => void;
-    onInsertAfter?: () => void;
-    onDelete?: () => void;
-}
-
 type Direction = 'left' | 'right' | 'top' | 'bottom';
 
 const MQDir = {
@@ -103,10 +94,16 @@ const MQDir = {
     right: 1 as MQDirection,
 };
 
-interface FocusProps {
+interface NavigationProps {
     focused: boolean;
     focusSide: Direction | undefined;
     onFocus: () => void;
+    onUpOut?: () => void;
+    onDownOut?: () => void;
+    onLeftOut?: () => void;
+    onRightOut?: () => void;
+    onInsertAfter?: () => void;
+    onDelete?: () => void;
 }
 
 export {
@@ -125,7 +122,6 @@ export type {
     Block,
     DocumentData,
     ControlledComponentProps,
-    NavigationHandlers,
-    FocusProps,
+    NavigationProps,
     Direction,
 };

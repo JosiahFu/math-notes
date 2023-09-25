@@ -1,8 +1,7 @@
 import {
     ControlledComponentProps,
     MathSegmentData,
-    NavigationHandlers,
-    FocusProps,
+    NavigationProps,
     WithKey,
 } from '../data';
 import MathInput from './MathInput';
@@ -12,9 +11,7 @@ function MathSegment({
     value,
     onChange,
     ...otherProps
-}: ControlledComponentProps<WithKey<MathSegmentData>> &
-    NavigationHandlers &
-    FocusProps) {
+}: ControlledComponentProps<WithKey<MathSegmentData>> & NavigationProps) {
     const [content, setContent] = usePropState(value, onChange, 'content');
 
     const handleChange = (value: string) => {
