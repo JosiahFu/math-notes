@@ -51,16 +51,16 @@ function NoteBlockData(
 
 interface TableBlockData {
     type: 'TABLE';
-    content: KeyedArray<{
-        columns: KeyedArray<{ content: string }>;
+    rows: KeyedArray<{
+        cells: KeyedArray<{ content: string }>;
     }>;
     indent: number;
 }
-function TableBlockData(content: string[][], indent = 0): TableBlockData {
+function TableBlockData(cells: string[][], indent = 0): TableBlockData {
     return {
         type: 'TABLE',
-        content: content.map(e =>
-            addKey({ columns: e.map(e => addKey({ content: e })) })
+        rows: cells.map(e =>
+            addKey({ cells: e.map(e => addKey({ content: e })) })
         ),
         indent,
     };

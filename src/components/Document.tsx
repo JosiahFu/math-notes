@@ -25,10 +25,13 @@ function Document({
 
     return (
         <ArrayMap array={value} setArray={onChange} keyProp='key'>
-            {(value, { set, insertAfter, remove }, index) => {
+            {(block, { set, insertAfter, remove, replace }, index) => {
                 const props: NavigationHandlers & FocusProps = {
-                    onDownOut: () => setFocused([index + 1, 'top']),
-                    onUpOut: () => setFocused([index - 1, 'bottom']),
+                    onDownOut: () =>
+                        index < value.length - 1 &&
+                        setFocused([index + 1, 'top']),
+                    onUpOut: () =>
+                        index > 0 && setFocused([index - 1, 'bottom']),
                     onInsertAfter: () => {
                         insertAfter(addKey(NoteBlockData('')));
                         setFocused([index + 1, 'top']);
@@ -42,19 +45,20 @@ function Document({
                     onFocus: () => setFocused([index, undefined]),
                 };
 
-                switch (value.type) {
+                switch (block.type) {
                     case 'NOTE':
                         return (
                             <NoteBlock
-                                value={value}
+                                value={block}
                                 onChange={set}
+                                onReplace={replace}
                                 {...props}
                             />
                         );
                     case 'TABLE':
                         return (
                             <TableBlock
-                                value={value}
+                                value={block}
                                 onChange={set}
                                 {...props}
                             />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ControlledComponentProps,
     Direction,
@@ -16,22 +16,34 @@ import MathInput from './MathInput';
 function TableBlock({
     value,
     onChange,
+    focused,
+    focusSide,
+    onFocus,
+    onDownOut,
+    onUpOut,
+    onDelete,
 }: ControlledComponentProps<WithKey<TableBlockData>> &
     NavigationHandlers &
     FocusProps) {
-        const [content, setContent] = usePropState(value, onChange, 'content');
+        const [rows, setRows] = usePropState(value, onChange, 'rows');
 
-        const [focusedCell, setFocusedCell] = useState<
-            [row: number, column: number, Direction | undefined] | undefined
+        const [focusedRow, setFocusedRow] = useState<number>(0);
+        const [focusedColumn, setFocusedColumn] = useState<number>(0);
+        const [focusedDirection, setFocusedDirection] = useState<
+            Direction | undefined
         >();
+
+        useEffect(() => {
+            if (focused) {
+                if (focusSide === 'bottom') setFocusedRow(rows.length - 1);
+                if (focusSide === 'top') setFocusedRow(0);
+            }
+        }, [focusSide, focused, rows.length]);
 
         return (
             <table>
                 <tbody>
-                    <ArrayMap
-                        array={content}
-                        setArray={setContent}
-                        keyProp='key'>
+                    <ArrayMap array={rows} setArray={setRows} keyProp='key'>
                         {(
                             row,
                             { set: setRow, insertAfter, remove },
@@ -39,66 +51,96 @@ function TableBlock({
                         ) => (
                             <tr>
                                 <ArrayMap
-                                    array={row.columns}
-                                    setArray={columns =>
-                                        setRow({ ...row, columns })
+                                    array={row.cells}
+                                    setArray={cells =>
+                                        setRow({ ...row, cells })
                                     }
                                     keyProp='key'>
                                     {(cell, { set }, columnIndex) => {
-                                        const focused =
-                                            focusedCell?.[0] === rowIndex &&
-                                            focusedCell?.[1] === columnIndex;
+                                        const cellFocused =
+                                            focused &&
+                                            focusedRow === rowIndex &&
+                                            focusedColumn === columnIndex;
 
                                         const navigationHandlers = {
                                             onUpOut() {
-                                                setFocusedCell([
-                                                    rowIndex - 1,
-                                                    columnIndex,
-                                                    'bottom',
-                                                ]);
+                                                if (onUpOut && rowIndex <= 0) {
+                                                    onUpOut();
+                                                    return;
+                                                }
+                                                setFocusedRow(rowIndex - 1);
+                                                setFocusedDirection('bottom');
                                             },
                                             onDownOut() {
-                                                setFocusedCell([
-                                                    rowIndex + 1,
-                                                    columnIndex,
-                                                    'top',
-                                                ]);
+                                                if (
+                                                    onDownOut &&
+                                                    rowIndex >= rows.length - 1
+                                                ) {
+                                                    onDownOut();
+                                                    return;
+                                                }
+                                                setFocusedRow(rowIndex + 1);
+                                                setFocusedDirection('top');
                                             },
                                             onLeftOut() {
-                                                setFocusedCell([
-                                                    rowIndex,
-                                                    columnIndex - 1,
-                                                    'right',
-                                                ]);
+                                                setFocusedColumn(
+                                                    columnIndex - 1
+                                                );
+                                                setFocusedDirection('right');
                                             },
                                             onRightOut() {
-                                                setFocusedCell([
-                                                    rowIndex,
-                                                    columnIndex + 1,
-                                                    'left',
-                                                ]);
+                                                if (
+                                                    columnIndex >=
+                                                    row.cells.length - 1
+                                                ) {
+                                                    setRows(
+                                                        rows.map(e => ({
+                                                            ...e,
+                                                            cells: [
+                                                                ...e.cells,
+                                                                addKey({
+                                                                    content: '',
+                                                                }),
+                                                            ],
+                                                        }))
+                                                    );
+                                                }
+                                                setFocusedColumn(
+                                                    columnIndex + 1
+                                                );
+                                                setFocusedDirection('left');
                                             },
                                             onDelete() {
                                                 if (
-                                                    row.columns.every(
+                                                    row.cells.every(
                                                         e => e.content === ''
                                                     )
                                                 ) {
+                                                    if (
+                                                        onDelete &&
+                                                        rows.length === 1
+                                                    ) {
+                                                        onDelete();
+                                                        return;
+                                                    }
                                                     remove();
+                                                    setFocusedRow(rowIndex - 1);
+                                                    setFocusedDirection(
+                                                        'bottom'
+                                                    );
+                                                    return;
                                                 }
-                                                setFocusedCell([
-                                                    rowIndex - 1,
-                                                    columnIndex,
-                                                    'bottom',
-                                                ]);
+                                                setFocusedColumn(
+                                                    columnIndex - 1
+                                                );
+                                                setFocusedDirection('right');
                                             },
                                             onInsertAfter() {
                                                 insertAfter(
                                                     addKey({
-                                                        columns: [
-                                                            ...new Array(
-                                                                row.columns.length
-                                                            ).keys(),
+                                                        // Create a new empty row
+                                                        cells: [
+                                                            ...row.cells.keys(),
                                                         ].map(() =>
                                                             addKey({
                                                                 content: '',
@@ -106,11 +148,8 @@ function TableBlock({
                                                         ),
                                                     })
                                                 );
-                                                setFocusedCell([
-                                                    rowIndex + 1,
-                                                    columnIndex,
-                                                    'top',
-                                                ]);
+                                                setFocusedRow(rowIndex + 1);
+                                                setFocusedDirection('top');
                                             },
                                         };
 
@@ -124,19 +163,19 @@ function TableBlock({
                                                             content: newValue,
                                                         })
                                                     }
-                                                    focused={focused}
+                                                    focused={cellFocused}
                                                     focusSide={
-                                                        focused
-                                                            ? focusedCell[2]
+                                                        cellFocused
+                                                            ? focusedDirection
                                                             : undefined
                                                     }
-                                                    onFocus={() =>
-                                                        setFocusedCell([
-                                                            rowIndex,
-                                                            columnIndex,
-                                                            undefined,
-                                                        ])
-                                                    }
+                                                    onFocus={() => {
+                                                        onFocus();
+                                                        setFocusedColumn(
+                                                            columnIndex
+                                                        );
+                                                        setFocusedRow(rowIndex);
+                                                    }}
                                                     {...navigationHandlers}
                                                 />
                                             </td>

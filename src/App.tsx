@@ -17,6 +17,7 @@ function App() {
                 ['5', '6'],
             ])
         ),
+        addKey(NoteBlockData('')),
     ]);
 
     return (

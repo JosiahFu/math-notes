@@ -1,11 +1,15 @@
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import {
+    Block,
     ControlledComponentProps,
     Direction,
     FocusProps,
+    KeyedArray,
     MathSegmentData,
     NavigationHandlers,
     NoteBlockData,
+    Segment,
+    TableBlockData,
     TextSegmentData,
     WithKey,
     addKey,
@@ -24,9 +28,12 @@ function NoteBlock({
     onUpOut,
     onInsertAfter,
     onDelete,
+    onReplace,
 }: ControlledComponentProps<WithKey<NoteBlockData>> &
     NavigationHandlers &
-    FocusProps) {
+    FocusProps & {
+        onReplace?: (...blocks: KeyedArray<Block>) => void;
+    }) {
     const [content, setContent] = usePropState(value, onChange, 'content');
     // const [children, setChildren] = usePropState(value, onChange, 'children');
 
@@ -40,9 +47,28 @@ function NoteBlock({
         }
     }, [focused, focusedSegment]);
 
+    const handleChange = (newContent: KeyedArray<Segment>) => {
+        if (
+            onReplace &&
+            newContent.length === 1 &&
+            newContent[0].content === '\\table'
+        ) {
+            onReplace(
+                addKey(
+                    TableBlockData([
+                        ['', ''],
+                        ['', ''],
+                    ])
+                )
+            );
+            return;
+        }
+        setContent(newContent);
+    };
+
     return (
         <div className='flex flex-row flex-wrap'>
-            <ArrayMap array={content} setArray={setContent} keyProp='key'>
+            <ArrayMap array={content} setArray={handleChange} keyProp='key'>
                 {(segment, { set, replace }, index, { splice }) => {
                     const props = {
                         onLeftOut: () =>
