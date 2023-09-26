@@ -6,7 +6,7 @@ import {
     KeyedArray,
     NoteBlockData,
     addKey,
-} from '../data';
+} from '../../data';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import Block from './Block';
 

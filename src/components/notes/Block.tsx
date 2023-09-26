@@ -4,7 +4,7 @@ import {
     KeyedArray,
     NavigationProps,
     WithKey,
-} from '../data';
+} from '../../data';
 import NoteBlock from './NoteBlock';
 import TableBlock from './TableBlock';
 import { KeyboardEventHandler } from 'react';

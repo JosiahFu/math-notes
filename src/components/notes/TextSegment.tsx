@@ -4,9 +4,9 @@ import {
     TextSegmentData,
     WithKey,
     NavigationProps,
-} from '../data';
+} from '../../data';
 import { useDebouncedState } from '@tater-archives/react-use-debounce';
-import AutosizeInput from './AutosizeInput';
+import AutosizeInput from '../AutosizeInput';
 import { usePropState } from '@tater-archives/react-use-destructure';
 
 function TextSegment({

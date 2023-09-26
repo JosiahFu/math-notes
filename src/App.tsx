@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BlockData, KeyedArray, NoteBlockData, addKey } from './data';
-import Document from './components/Document';
+import Document from './components/notes/Document';
 import {
     deserializeDocument,
     documentToMarkdown,

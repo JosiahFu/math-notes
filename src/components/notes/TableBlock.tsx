@@ -5,7 +5,7 @@ import {
     NavigationProps,
     TableBlockData,
     WithKey,
-} from '../data';
+} from '../../data';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import MathInput from './MathInput';

@@ -3,7 +3,7 @@ import {
     MathSegmentData,
     NavigationProps,
     WithKey,
-} from '../data';
+} from '../../data';
 import MathInput from './MathInput';
 import { usePropState } from '@tater-archives/react-use-destructure';
 

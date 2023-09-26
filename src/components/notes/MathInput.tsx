@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { ControlledComponentProps, MQDir, NavigationProps } from '../data';
-import '../fixGlobal'; // Must be called before react-mathquill
+import { ControlledComponentProps, MQDir, NavigationProps } from '../../data';
+import '../../fixGlobal'; // Must be called before react-mathquill
 import { EditableMathField, MathField, MathFieldConfig } from 'react-mathquill';
 import '@edtr-io/mathquill/build/mathquill.css';
-import './mathquill.css';
+import './MathInput.css';
 
 const mathquillConfigOptions: MathFieldConfig = {
     spaceBehavesLikeTab: true,

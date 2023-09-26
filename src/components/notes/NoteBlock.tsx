@@ -12,7 +12,7 @@ import {
     TextSegmentData,
     WithKey,
     addKey,
-} from '../data';
+} from '../../data';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
 import TextSegment from './TextSegment';
