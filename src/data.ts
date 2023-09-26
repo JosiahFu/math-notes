@@ -89,8 +89,8 @@ interface ControlledComponentProps<T> {
 type Direction = 'left' | 'right' | 'top' | 'bottom';
 
 const MQDir = {
-    left: -1 as MQDirection,
-    right: 1 as MQDirection,
+    left: -1 as MQDirection.L,
+    right: 1 as MQDirection.R,
 };
 
 interface NavigationProps {
