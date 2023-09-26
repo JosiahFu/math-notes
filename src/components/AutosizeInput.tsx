@@ -18,7 +18,7 @@ const AutosizeInput = forwardRef(
         }: {
             value: string;
             onChange: (value: string) => void;
-            disableSizing: boolean;
+            disableSizing?: boolean;
             minWidth?: number;
         } & Omit<HTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>,
         forwardedRef: React.ForwardedRef<HTMLInputElement>

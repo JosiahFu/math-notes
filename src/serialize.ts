@@ -23,8 +23,8 @@ function rep(text: string, count: number) {
     return Array(count).fill(text).join('');
 }
 
-function documentToMarkdown(blocks: KeyedArray<Block>): string {
-    return blocks.map(block => {
+function documentToMarkdown(title: string, blocks: KeyedArray<Block>): string {
+    return `# ${title}\n\n` + blocks.map(block => {
         switch (block.type) {
             case 'NOTE':
                 return `${rep('  ', block.indent)}- ${block.content.map(e => e.type === 'MATH' ? `$$${e.content}$$` : e.content).join('')}`;

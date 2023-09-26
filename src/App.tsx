@@ -7,8 +7,10 @@ import {
     serializeDocument,
 } from './serialize';
 import { useDownload, useUpload } from './file';
+import AutosizeInput from './components/AutosizeInput';
 
 function App() {
+    const [title, setTitle] = useState('');
     const [blocks, setBlocks] = useState<KeyedArray<Block>>(() => [
         addKey(NoteBlockData('')),
     ]);
@@ -16,12 +18,22 @@ function App() {
     const [downloadLink, setDownload] = useDownload();
     const [exportLink, setExport] = useDownload();
 
-    const handleUpload = useUpload(data =>
-        setBlocks(deserializeDocument(JSON.parse(data)))
-    );
+    const handleUpload = useUpload(data => {
+        const document = JSON.parse(data);
+        setTitle(document.title);
+        setBlocks(deserializeDocument(JSON.parse(document.blocks)));
+    });
 
     return (
         <>
+            <h1 className='text-4xl'>
+                <AutosizeInput
+                    value={title}
+                    onChange={setTitle}
+                    minWidth={100}
+                    placeholder='Title'
+                />
+            </h1>
             <p className='text-gray-500'>
                 Type <code>$$</code> to insert math, write <code>\table</code>{' '}
                 on an empty line to create a table
@@ -33,7 +45,12 @@ function App() {
                 target='_blank'
                 download='save.json'
                 onClick={() =>
-                    setDownload(JSON.stringify(serializeDocument(blocks)))
+                    setDownload(
+                        JSON.stringify({
+                            title,
+                            blocks: serializeDocument(blocks),
+                        })
+                    )
                 }
                 className='block w-max cursor-pointer'>
                 Download
@@ -42,7 +59,7 @@ function App() {
                 href={exportLink}
                 target='_blank'
                 download='export.md'
-                onClick={() => setExport(documentToMarkdown(blocks))}
+                onClick={() => setExport(documentToMarkdown(title, blocks))}
                 className='block w-max cursor-pointer'>
                 Export to markdown
             </a>
