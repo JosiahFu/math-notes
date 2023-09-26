@@ -1,6 +1,18 @@
-import { Block, EmbedBlockData, KeyedArray, NoteBlockData, Segment, TableBlockData, addKey } from './data';
+import {
+    Block,
+    EmbedBlockData,
+    KeyedArray,
+    NoteBlockData,
+    Segment,
+    TableBlockData,
+    addKey,
+} from './data';
 
-type SerializedDocument = (Omit<NoteBlockData, 'content'> & { content: Segment[] } | TableBlockData | EmbedBlockData)[];
+type SerializedDocument = (
+    | (Omit<NoteBlockData, 'content'> & { content: Segment[] })
+    | TableBlockData
+    | EmbedBlockData
+)[];
 
 function serializeDocument(blocks: KeyedArray<Block>): SerializedDocument {
     return blocks.map(block => {
@@ -15,8 +27,14 @@ function serializeDocument(blocks: KeyedArray<Block>): SerializedDocument {
     }) as SerializedDocument;
 }
 
-function deserializeDocument(serialized: SerializedDocument): KeyedArray<Block> {
-    return serialized.map(e => e.type === 'NOTE' ? { ...e, content: e.content.map(addKey) } : e).map(addKey);
+function deserializeDocument(
+    serialized: SerializedDocument
+): KeyedArray<Block> {
+    return serialized
+        .map(e =>
+            e.type === 'NOTE' ? { ...e, content: e.content.map(addKey) } : e
+        )
+        .map(addKey);
 }
 
 function rep(text: string, count: number) {
@@ -24,17 +42,44 @@ function rep(text: string, count: number) {
 }
 
 function documentToMarkdown(title: string, blocks: KeyedArray<Block>): string {
-    return `# ${title}\n\n` + blocks.map(block => {
-        switch (block.type) {
-            case 'NOTE':
-                return `${rep('  ', block.indent)}- ${block.content.map(e => e.type === 'MATH' ? `$$${e.content}$$` : e.content).join('')}`;
-            case 'TABLE':
-                return rep('|     ', block.cells[0].length) + '|\n' + rep('| --- ', block.cells[0].length) + '|\n' + block.cells.map(e => `|${e.map(f => ` $$${f}$$ `).join('|')}|`).join('\n');
-        }
-    }).join('\n');
+    return (
+        `# ${title}\n\n` +
+        blocks
+            .map(block => {
+                switch (block.type) {
+                    case 'NOTE':
+                        return `${rep('  ', block.indent)}- ${block.content
+                            .map(e =>
+                                e.type === 'MATH'
+                                    ? `$$${e.content}$$`
+                                    : e.content
+                            )
+                            .join('')}`;
+                    case 'TABLE':
+                        return (
+                            rep('|     ', block.cells[0].length) +
+                            '|\n' +
+                            rep('| --- ', block.cells[0].length) +
+                            '|\n' +
+                            block.cells
+                                .map(
+                                    e =>
+                                        `|${e
+                                            .map(f => ` $$${f}$$ `)
+                                            .join('|')}|`
+                                )
+                                .join('\n')
+                        );
+                }
+            })
+            .join('\n')
+    );
 }
 
-function omit<T extends object, K extends keyof T>(object: T, prop: K): Omit<T, K> {
+function omit<T extends object, K extends keyof T>(
+    object: T,
+    prop: K
+): Omit<T, K> {
     const result: Partial<T> = {};
     (Object.keys(object) as (keyof T)[]).forEach(e => {
         if (e === prop) return;
@@ -43,4 +88,4 @@ function omit<T extends object, K extends keyof T>(object: T, prop: K): Omit<T, 
     return result as Omit<T, K>;
 }
 
-export { serializeDocument, deserializeDocument, documentToMarkdown }
+export { serializeDocument, deserializeDocument, documentToMarkdown };

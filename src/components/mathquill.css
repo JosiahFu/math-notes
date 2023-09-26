@@ -1,8 +1,8 @@
 /*You can't really add class names to mathquill fields so this exists*/
 .mq-editable-field {
-    @apply border-none shadow-none
+    @apply border-none shadow-none;
 }
 
 .mq-editable-field.mq-focused {
-    @apply shadow-none bg-gray-100
+    @apply bg-gray-100 shadow-none;
 }
