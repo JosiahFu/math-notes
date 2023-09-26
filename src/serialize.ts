@@ -41,49 +41,19 @@ function rep(text: string, count: number) {
     return Array(count).fill(text).join('');
 }
 
-function documentToMarkdown(title: string, blocks: KeyedArray<BlockData>): string {
+function documentToMarkdown(
+    title: string,
+    blocks: KeyedArray<BlockData>
+): string {
     return (
         `# ${title}\n\n` +
         blocks
             .map(block => {
-                switch (block.type) {
-                    case 'NOTE':
-                        return `${rep('  ', block.indent)}- ${block.content
-                            .map(e =>
-                                e.type === 'MATH'
-                                    ? `$$${e.content}$$`
-                                    : e.content
-                            )
-                            .join('')}`;
-                    case 'TABLE':
-                        return (
-                            rep('|     ', block.cells[0].length) +
-                            '|\n' +
-                            rep('| --- ', block.cells[0].length) +
-                            '|\n' +
-                            block.cells
-                                .map(
-                                    e =>
-                                        `|${e
-                                            .map(f => ` $$${f}$$ `)
-                                            .join('|')}|`
-                                )
-                                .join('\n')
-                        );
-                }
-            })
-            .join('\n')
-    );
-}
+                const indentSpaces = rep('  ', block.indent);
 
-function documentToLogseq(title: string, blocks: KeyedArray<BlockData>): string {
-    return (
-        `# ${title}\n\n` +
-        blocks
-            .map(block => {
                 switch (block.type) {
                     case 'NOTE':
-                        return `${rep('  ', block.indent)}- ${block.content
+                        return `${indentSpaces}- ${block.content
                             .map(e =>
                                 e.type === 'MATH'
                                     ? `$$${e.content}$$`
@@ -92,16 +62,16 @@ function documentToLogseq(title: string, blocks: KeyedArray<BlockData>): string 
                             .join('')}`;
                     case 'TABLE':
                         return (
-                            rep('  ', block.indent) +
-                            '- ' +
+                            `${indentSpaces}- ` +
                             rep('|     ', block.cells[0].length) +
                             '|\n' +
+                            `${indentSpaces}  ` +
                             rep('| --- ', block.cells[0].length) +
                             '|\n' +
                             block.cells
                                 .map(
                                     e =>
-                                        `|${e
+                                        `${indentSpaces}  |${e
                                             .map(f => ` $$${f}$$ `)
                                             .join('|')}|`
                                 )
@@ -125,4 +95,4 @@ function omit<T extends object, K extends keyof T>(
     return result as Omit<T, K>;
 }
 
-export { serializeDocument, deserializeDocument, documentToMarkdown, documentToLogseq };
+export { serializeDocument, deserializeDocument, documentToMarkdown };

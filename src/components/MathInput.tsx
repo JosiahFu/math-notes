@@ -29,7 +29,7 @@ function MathInput({
 }: ControlledComponentProps<string> & NavigationProps) {
     const mathFieldRef = useRef<MathField>();
 
-    const supressEditEvent = useRef(2);
+    const supressEditEvent = useRef(2); // MathQuill emits 2 edit events on initialization for some reason
 
     // Update mathquill config
     useEffect(() => {
@@ -45,13 +45,12 @@ function MathInput({
                     if (supressEditEvent.current > 0) {
                         supressEditEvent.current--;
                     } else {
-                        console.log('EDIT');
                         onChange(mathfield.latex());
                     }
                 },
                 enter: onInsertAfter,
                 deleteOutOf: () => {
-                    supressEditEvent.current = 1;
+                    supressEditEvent.current = 1; // edit is triggered at the same time as deleteOutOf
                     onDelete?.();
                 },
             },
