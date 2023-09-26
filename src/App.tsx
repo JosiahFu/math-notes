@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Block, KeyedArray, NoteBlockData, addKey } from './data';
+import { BlockData, KeyedArray, NoteBlockData, addKey } from './data';
 import Document from './components/Document';
 import {
     deserializeDocument,
@@ -10,7 +10,7 @@ import { useDownload, useUpload } from './file';
 
 function App() {
     const [title, setTitle] = useState('');
-    const [blocks, setBlocks] = useState<KeyedArray<Block>>(() => [
+    const [blocks, setBlocks] = useState<KeyedArray<BlockData>>(() => [
         addKey(NoteBlockData('')),
     ]);
 

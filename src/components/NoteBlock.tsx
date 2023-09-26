@@ -1,6 +1,6 @@
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import {
-    Block,
+    BlockData,
     ControlledComponentProps,
     Direction,
     KeyedArray,
@@ -16,7 +16,7 @@ import {
 import { usePropState } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
 import TextSegment from './TextSegment';
-import { KeyboardEventHandler, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function NoteBlock({
     value,
@@ -30,10 +30,9 @@ function NoteBlock({
     onReplace,
 }: ControlledComponentProps<WithKey<NoteBlockData>> &
     NavigationProps & {
-        onReplace?: (...blocks: KeyedArray<Block>) => void;
+        onReplace?: (...blocks: KeyedArray<BlockData>) => void;
     }) {
     const [content, setContent] = usePropState(value, onChange, 'content');
-    const [indent, setIndent] = usePropState(value, onChange, 'indent');
 
     const [focusedSegment, setFocusedSegment] = useState<
         [index: number, side: Direction | undefined] | undefined
@@ -67,88 +66,69 @@ function NoteBlock({
         setContent(newContent);
     };
 
-    const handleKeyDown: KeyboardEventHandler = event => {
-        if (event.key !== 'Tab') return;
-        if (event.shiftKey) {
-            if (indent === 0) return;
-            setIndent(indent - 1);
-        } else {
-            setIndent(indent + 1);
-        }
-        event.preventDefault();
-    };
-
     return (
-        <div
-            className='my-1 flex flex-row flex-wrap items-center'
-            onKeyDown={handleKeyDown}
-            style={{ marginLeft: `${indent * 2}em` }}>
-            <div className='ml-2 mr-2 h-1 w-1 rounded-full bg-gray-400' />
-            <ArrayMap array={content} setArray={handleChange} keyProp='key'>
-                {(segment, { set, replace }, index, { splice }) => {
-                    const props = {
-                        onLeftOut: () =>
-                            setFocusedSegment([index - 1, 'right']),
-                        onRightOut: () =>
-                            setFocusedSegment([index + 1, 'left']),
-                        onDownOut,
-                        onUpOut,
-                        onInsertAfter,
+        <ArrayMap array={content} setArray={handleChange} keyProp='key'>
+            {(segment, { set, replace }, index, { splice }) => {
+                const props = {
+                    onLeftOut: () => setFocusedSegment([index - 1, 'right']),
+                    onRightOut: () => setFocusedSegment([index + 1, 'left']),
+                    onDownOut,
+                    onUpOut,
+                    onInsertAfter,
 
-                        focused: focused && index === focusedSegment?.[0],
-                        focusSide:
-                            focused && index === focusedSegment?.[0]
-                                ? focusedSegment?.[1]
-                                : undefined,
-                        onFocus: () => {
-                            onFocus();
-                            setFocusedSegment([index, undefined]);
-                        },
-                    };
+                    focused: focused && index === focusedSegment?.[0],
+                    focusSide:
+                        focused && index === focusedSegment?.[0]
+                            ? focusedSegment?.[1]
+                            : undefined,
+                    onFocus: () => {
+                        onFocus();
+                        setFocusedSegment([index, undefined]);
+                    },
+                };
 
-                    return segment.type === 'MATH' ? (
-                        <MathSegment
-                            value={segment}
-                            onChange={set}
-                            onDelete={() => {
-                                splice(index - 1, 3, [
-                                    addKey(
-                                        TextSegmentData(
-                                            content[index - 1].content +
-                                                content[index + 1].content
-                                        )
-                                    ),
-                                ]);
-                                if (!focusedSegment) return;
-                                setFocusedSegment([
-                                    focusedSegment[0] - 1,
-                                    undefined,
-                                ]);
-                            }}
-                            {...props}
-                        />
-                    ) : (
-                        <TextSegment
-                            value={segment}
-                            onChange={set}
-                            onInsertMath={(before, after) => {
-                                replace(
-                                    addKey(TextSegmentData(before)),
-                                    addKey(MathSegmentData('')),
-                                    addKey(TextSegmentData(after))
-                                );
-                                setFocusedSegment([index + 1, undefined]);
-                            }}
-                            last={index === content.length - 1}
-                            onDelete={() => {
-                                if (content.length === 1) onDelete?.();
-                            }}
-                            {...props}
-                        />
-                    );
-                }}
-            </ArrayMap>
-        </div>
+                return segment.type === 'MATH' ? (
+                    <MathSegment
+                        value={segment}
+                        onChange={set}
+                        onDelete={() => {
+                            splice(index - 1, 3, [
+                                addKey(
+                                    TextSegmentData(
+                                        content[index - 1].content +
+                                            content[index + 1].content
+                                    )
+                                ),
+                            ]);
+                            if (!focusedSegment) return;
+                            setFocusedSegment([
+                                focusedSegment[0] - 1,
+                                undefined,
+                            ]);
+                        }}
+                        {...props}
+                    />
+                ) : (
+                    <TextSegment
+                        value={segment}
+                        onChange={set}
+                        onInsertMath={(before, after) => {
+                            replace(
+                                addKey(TextSegmentData(before)),
+                                addKey(MathSegmentData('')),
+                                addKey(TextSegmentData(after))
+                            );
+                            setFocusedSegment([index + 1, undefined]);
+                        }}
+                        last={index === content.length - 1}
+                        onDelete={() => {
+                            if (content.length === 1) onDelete?.();
+                        }}
+                        {...props}
+                    />
+                );
+            }}
+        </ArrayMap>
     );
 }
 

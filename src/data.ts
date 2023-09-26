@@ -74,10 +74,10 @@ function EmbedBlockData(url: string, indent = 0): EmbedBlockData {
     return { type: 'EMBED', url, indent };
 }
 
-type Block = NoteBlockData | TableBlockData | EmbedBlockData;
+type BlockData = NoteBlockData | TableBlockData | EmbedBlockData;
 
 interface DocumentData {
-    content: KeyedArray<Block>;
+    content: KeyedArray<BlockData>;
     title: string;
 }
 
@@ -118,7 +118,7 @@ export type {
     WithKey,
     KeyedArray,
     Segment,
-    Block,
+    BlockData,
     DocumentData,
     ControlledComponentProps,
     NavigationProps,

@@ -1,5 +1,5 @@
 import {
-    Block,
+    BlockData,
     EmbedBlockData,
     KeyedArray,
     NoteBlockData,
@@ -14,7 +14,7 @@ type SerializedDocument = (
     | EmbedBlockData
 )[];
 
-function serializeDocument(blocks: KeyedArray<Block>): SerializedDocument {
+function serializeDocument(blocks: KeyedArray<BlockData>): SerializedDocument {
     return blocks.map(block => {
         const output = omit(block, 'key');
 
@@ -29,7 +29,7 @@ function serializeDocument(blocks: KeyedArray<Block>): SerializedDocument {
 
 function deserializeDocument(
     serialized: SerializedDocument
-): KeyedArray<Block> {
+): KeyedArray<BlockData> {
     return serialized
         .map(e =>
             e.type === 'NOTE' ? { ...e, content: e.content.map(addKey) } : e
@@ -41,7 +41,7 @@ function rep(text: string, count: number) {
     return Array(count).fill(text).join('');
 }
 
-function documentToMarkdown(title: string, blocks: KeyedArray<Block>): string {
+function documentToMarkdown(title: string, blocks: KeyedArray<BlockData>): string {
     return (
         `# ${title}\n\n` +
         blocks
@@ -76,6 +76,43 @@ function documentToMarkdown(title: string, blocks: KeyedArray<Block>): string {
     );
 }
 
+function documentToLogseq(title: string, blocks: KeyedArray<BlockData>): string {
+    return (
+        `# ${title}\n\n` +
+        blocks
+            .map(block => {
+                switch (block.type) {
+                    case 'NOTE':
+                        return `${rep('  ', block.indent)}- ${block.content
+                            .map(e =>
+                                e.type === 'MATH'
+                                    ? `$$${e.content}$$`
+                                    : e.content
+                            )
+                            .join('')}`;
+                    case 'TABLE':
+                        return (
+                            rep('  ', block.indent) +
+                            '- ' +
+                            rep('|     ', block.cells[0].length) +
+                            '|\n' +
+                            rep('| --- ', block.cells[0].length) +
+                            '|\n' +
+                            block.cells
+                                .map(
+                                    e =>
+                                        `|${e
+                                            .map(f => ` $$${f}$$ `)
+                                            .join('|')}|`
+                                )
+                                .join('\n')
+                        );
+                }
+            })
+            .join('\n')
+    );
+}
+
 function omit<T extends object, K extends keyof T>(
     object: T,
     prop: K
@@ -88,4 +125,4 @@ function omit<T extends object, K extends keyof T>(
     return result as Omit<T, K>;
 }
 
-export { serializeDocument, deserializeDocument, documentToMarkdown };
+export { serializeDocument, deserializeDocument, documentToMarkdown, documentToLogseq };
