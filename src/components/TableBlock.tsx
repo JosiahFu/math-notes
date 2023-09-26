@@ -39,7 +39,7 @@ function TableBlock({
     }, [focusSide, focused, cells.length]);
 
     return (
-        <table>
+        <table className='border-collapse'>
             <tbody>
                 <ArrayMap array={cells} setArray={setCells}>
                     {(row, { set: setRow, insertAfter, remove }, rowIndex) => (
@@ -125,7 +125,7 @@ function TableBlock({
                                     };
 
                                     return (
-                                        <td>
+                                        <td className='border border-solid border-gray-400 p-0 text-center focus-within:bg-gray-100'>
                                             <MathInput
                                                 value={cell}
                                                 onChange={set}
