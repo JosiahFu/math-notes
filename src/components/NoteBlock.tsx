@@ -80,9 +80,10 @@ function NoteBlock({
 
     return (
         <div
-            className='flex flex-row flex-wrap'
+            className='flex flex-row flex-wrap items-center'
             onKeyDown={handleKeyDown}
             style={{ marginLeft: `${indent * 2}em` }}>
+            <div className='ml-2 mr-2 h-2 w-2 rounded-full bg-gray-400' />
             <ArrayMap array={content} setArray={handleChange} keyProp='key'>
                 {(segment, { set, replace }, index, { splice }) => {
                     const props = {
