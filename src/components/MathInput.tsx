@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { ControlledComponentProps, MQDir, NavigationProps } from '../data';
 import '../fixGlobal'; // Must be called before react-mathquill
 import { EditableMathField, MathField, MathFieldConfig } from 'react-mathquill';
-import '../mq_styles';
+import '@edtr-io/mathquill/build/mathquill.css';
 import './mathquill.css';
 
 const mathquillConfigOptions: MathFieldConfig = {

@@ -13,6 +13,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
+    "@edtr-io/mathquill": "^0.11.0",
     "@tater-archives/react-array-utils": "^2.2.3",
     "@tater-archives/react-use-debounce": "^1.0.5",
     "@tater-archives/react-use-destructure": "^1.1.2",
