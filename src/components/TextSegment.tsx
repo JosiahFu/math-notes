@@ -105,8 +105,9 @@ function TextSegment({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onFocus={onFocus}
+            minWidth={1}
             disableSizing={last}
-            className={last ? 'flex-grow' : ''}
+            className={`outline-none ${last ? 'flex-grow' : ''}`}
         />
     );
 }

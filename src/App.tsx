@@ -25,13 +25,14 @@ function App() {
     });
 
     return (
-        <>
-            <h1 className='text-4xl'>
+        <main className='mx-auto my-8 max-w-5xl'>
+            <h1 className='text-center text-4xl'>
                 <AutosizeInput
                     value={title}
                     onChange={setTitle}
                     minWidth={100}
                     placeholder='Title'
+                    className='outline-none'
                 />
             </h1>
             <p className='text-gray-500'>
@@ -67,7 +68,7 @@ function App() {
                 Upload
                 <input type='file' onChange={handleUpload} className='hidden' />
             </label>
-        </>
+        </main>
     );
 }
 
