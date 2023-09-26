@@ -21,7 +21,7 @@ function App() {
     const handleUpload = useUpload(data => {
         const document = JSON.parse(data);
         setTitle(document.title);
-        setBlocks(deserializeDocument(JSON.parse(document.blocks)));
+        setBlocks(deserializeDocument(document.blocks));
     });
 
     return (
