@@ -7,6 +7,7 @@ import {
     MathField,
     MathFieldConfig,
 } from 'react-mathquill';
+import '../mq_styles';
 import './mathquill.css';
 
 addStyles();

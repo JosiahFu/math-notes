@@ -36,6 +36,7 @@ function Document({
                         setFocused([index + 1, 'top']);
                     },
                     onDelete: () => {
+                        if (value.length <= 1) return;
                         remove();
                         setFocused([index - 1, 'bottom']);
                     },

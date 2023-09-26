@@ -53,7 +53,7 @@ function App() {
                         })
                     )
                 }
-                className='block w-max cursor-pointer'>
+                className='block w-max cursor-pointer hover:text-gray-700'>
                 Download
             </a>
             <a
@@ -61,10 +61,10 @@ function App() {
                 target='_blank'
                 download='export.md'
                 onClick={() => setExport(documentToMarkdown(title, blocks))}
-                className='block w-max cursor-pointer'>
+                className='block w-max cursor-pointer hover:text-gray-700'>
                 Export to markdown
             </a>
-            <label className='block w-max cursor-pointer'>
+            <label className='block w-max cursor-pointer hover:text-gray-700'>
                 Upload
                 <input type='file' onChange={handleUpload} className='hidden' />
             </label>

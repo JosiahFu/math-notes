@@ -80,7 +80,7 @@ function NoteBlock({
 
     return (
         <div
-            className='flex flex-row flex-wrap items-center'
+            className='my-1 flex flex-row flex-wrap items-center'
             onKeyDown={handleKeyDown}
             style={{ marginLeft: `${indent * 2}em` }}>
             <div className='ml-2 mr-2 h-1 w-1 rounded-full bg-gray-400' />
