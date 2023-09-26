@@ -7,7 +7,6 @@ import {
     serializeDocument,
 } from './serialize';
 import { useDownload, useUpload } from './file';
-import AutosizeInput from './components/AutosizeInput';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -26,13 +25,12 @@ function App() {
 
     return (
         <main className='mx-auto my-8 max-w-5xl'>
-            <h1 className='text-center text-4xl'>
-                <AutosizeInput
+            <h1 className='text-4xl'>
+                <input
                     value={title}
-                    onChange={setTitle}
-                    minWidth={100}
+                    onChange={event => setTitle(event.target.value)}
                     placeholder='Title'
-                    className='outline-none'
+                    className='w-full text-center outline-none'
                 />
             </h1>
             <p className='text-gray-500'>
