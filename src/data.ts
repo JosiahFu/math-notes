@@ -102,7 +102,7 @@ interface NavigationProps {
     onLeftOut?: () => void;
     onRightOut?: () => void;
     onInsertAfter?: () => void;
-    onDelete?: () => void;
+    onDeleteOut?: () => void;
 }
 
 export {

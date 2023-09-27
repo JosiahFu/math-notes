@@ -10,7 +10,7 @@ import { usePropState } from '@tater-archives/react-use-destructure';
 function MathSegment({
     value,
     onChange,
-    onDelete,
+    onDeleteOut,
     ...otherProps
 }: ControlledComponentProps<WithKey<MathSegmentData>> & NavigationProps) {
     const [content, setContent] = usePropState(value, onChange, 'content');
@@ -30,8 +30,8 @@ function MathSegment({
     };
 
     const handleDelete = () => {
-        if (onDelete && value.content === '') {
-            onDelete();
+        if (onDeleteOut && value.content === '') {
+            onDeleteOut();
         } else {
             otherProps.onRightOut?.();
         }
@@ -41,7 +41,7 @@ function MathSegment({
         <MathInput
             value={content}
             onChange={handleChange}
-            onDelete={handleDelete}
+            onDeleteOut={handleDelete}
             {...otherProps}
         />
     );

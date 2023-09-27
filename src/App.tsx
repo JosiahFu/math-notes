@@ -24,7 +24,7 @@ function App() {
     });
 
     return (
-        <main className='mx-auto my-8 max-w-5xl'>
+        <main className='mx-auto max-w-5xl p-8'>
             <h1 className='text-4xl'>
                 <input
                     value={title}
@@ -47,6 +47,7 @@ function App() {
                     setDownload(
                         JSON.stringify({
                             title,
+                            meta: `Open this document at ${window.location.href}`,
                             blocks: serializeDocument(blocks),
                         })
                     )

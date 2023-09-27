@@ -20,7 +20,7 @@ function TextSegment({
     onLeftOut,
     onRightOut,
     onInsertAfter,
-    onDelete,
+    onDeleteOut,
     onInsertMath,
     last = false,
 }: ControlledComponentProps<WithKey<TextSegmentData>> &
@@ -56,8 +56,11 @@ function TextSegment({
                 onInsertAfter?.();
                 break;
             case 'Backspace':
-                if (target.value === '') {
-                    onDelete?.();
+                if (
+                    target.selectionStart === target.selectionEnd &&
+                    target.selectionStart == 0
+                ) {
+                    onDeleteOut?.();
                     break;
                 }
                 return;

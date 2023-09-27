@@ -21,7 +21,7 @@ function TableBlock({
     onFocus,
     onDownOut,
     onUpOut,
-    onDelete,
+    onDeleteOut,
 }: ControlledComponentProps<WithKey<TableBlockData>> & NavigationProps) {
     const [cells, setCells] = usePropState(value, onChange, 'cells');
 
@@ -101,10 +101,10 @@ function TableBlock({
                                         onDelete() {
                                             if (row.every(e => e === '')) {
                                                 if (
-                                                    onDelete &&
+                                                    onDeleteOut &&
                                                     cells.length === 1
                                                 ) {
-                                                    onDelete();
+                                                    onDeleteOut();
                                                     return;
                                                 }
                                                 remove();

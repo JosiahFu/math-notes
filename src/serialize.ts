@@ -56,7 +56,9 @@ function documentToMarkdown(
                         return `${indentSpaces}- ${block.content
                             .map(e =>
                                 e.type === 'MATH'
-                                    ? `$$${e.content}$$`
+                                    ? block.content.length === 3
+                                        ? `$$${e.content}$$`
+                                        : `$${e.content}$`
                                     : e.content
                             )
                             .join('')}`;

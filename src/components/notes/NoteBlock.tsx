@@ -26,7 +26,7 @@ function NoteBlock({
     onDownOut,
     onUpOut,
     onInsertAfter,
-    onDelete,
+    onDeleteOut,
     onReplace,
 }: ControlledComponentProps<WithKey<NoteBlockData>> &
     NavigationProps & {
@@ -91,7 +91,7 @@ function NoteBlock({
                     <MathSegment
                         value={segment}
                         onChange={set}
-                        onDelete={() => {
+                        onDeleteOut={() => {
                             splice(index - 1, 3, [
                                 addKey(
                                     TextSegmentData(
@@ -121,8 +121,8 @@ function NoteBlock({
                             setFocusedSegment([index + 1, undefined]);
                         }}
                         last={index === content.length - 1}
-                        onDelete={() => {
-                            if (content.length === 1) onDelete?.();
+                        onDeleteOut={() => {
+                            if (content.length === 1) onDeleteOut?.();
                         }}
                         {...props}
                     />

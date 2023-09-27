@@ -25,7 +25,7 @@ function MathInput({
     onRightOut,
     onUpOut,
     onInsertAfter,
-    onDelete,
+    onDeleteOut,
 }: ControlledComponentProps<string> & NavigationProps) {
     const mathFieldRef = useRef<MathField>();
 
@@ -51,13 +51,13 @@ function MathInput({
                 enter: onInsertAfter,
                 deleteOutOf: () => {
                     supressEditEvent.current = 1; // edit is triggered at the same time as deleteOutOf
-                    onDelete?.();
+                    onDeleteOut?.();
                 },
             },
         });
     }, [
         onChange,
-        onDelete,
+        onDeleteOut,
         onDownOut,
         onInsertAfter,
         onLeftOut,
