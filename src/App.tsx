@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { BlockData, KeyedArray, NoteBlockData, addKey } from './data';
+import { BlockData, NoteBlockData } from './data/notes';
+import { KeyedArray, addKey } from './data/keys';
 import Document from './components/notes/Document';
 import {
     deserializeDocument,
     documentToMarkdown,
     serializeDocument,
-} from './serialize';
-import { useDownload, useUpload } from './file';
+} from './data/serialize';
+import { useDownload, useUpload } from './data/file';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -49,6 +50,7 @@ function App() {
                             title,
                             meta: `Open this document at ${window.location.href}`,
                             blocks: serializeDocument(blocks),
+                            version: 4,
                         })
                     )
                 }

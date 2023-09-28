@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
-import {
-    ControlledComponentProps,
-    Direction,
-    NavigationProps,
-    TableBlockData,
-    WithKey,
-} from '../../data';
+import { Direction, TableBlockData } from '../../data/notes';
+import { WithKey } from '../../data/keys';
+import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import MathInput from './MathInput';

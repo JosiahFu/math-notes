@@ -1,10 +1,7 @@
 import { KeyboardEventHandler, useEffect, useRef } from 'react';
-import {
-    ControlledComponentProps,
-    TextSegmentData,
-    WithKey,
-    NavigationProps,
-} from '../../data';
+import { TextSegmentData } from '../../data/notes';
+import { WithKey } from '../../data/keys';
+import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import { useDebouncedState } from '@tater-archives/react-use-debounce';
 import AutosizeInput from '../AutosizeInput';
 import { usePropState } from '@tater-archives/react-use-destructure';

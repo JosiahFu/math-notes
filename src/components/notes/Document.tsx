@@ -1,12 +1,7 @@
 import { useState } from 'react';
-import {
-    BlockData,
-    ControlledComponentProps,
-    Direction,
-    KeyedArray,
-    NoteBlockData,
-    addKey,
-} from '../../data';
+import { BlockData, Direction, NoteBlockData } from '../../data/notes';
+import { KeyedArray, addKey } from '../../data/keys';
+import { ControlledComponentProps } from '../../data/props';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import Block from './Block';
 

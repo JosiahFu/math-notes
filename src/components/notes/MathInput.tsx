@@ -1,9 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { ControlledComponentProps, MQDir, NavigationProps } from '../../data';
+import { Direction as MQDirection } from 'react-mathquill';
+import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import '../../fixGlobal'; // Must be called before react-mathquill
 import { EditableMathField, MathField, MathFieldConfig } from 'react-mathquill';
 import '@edtr-io/mathquill/build/mathquill.css';
 import './MathInput.css';
+
+const MQDir = {
+    left: -1 as MQDirection.L,
+    right: 1 as MQDirection.R,
+};
 
 const mathquillConfigOptions: MathFieldConfig = {
     spaceBehavesLikeTab: true,

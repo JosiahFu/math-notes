@@ -1,12 +1,11 @@
 import {
     BlockData,
     EmbedBlockData,
-    KeyedArray,
     NoteBlockData,
     Segment,
     TableBlockData,
-    addKey,
-} from './data';
+} from './notes';
+import { KeyedArray, addKey } from './keys';
 
 type SerializedDocument = (
     | (Omit<NoteBlockData, 'content'> & { content: Segment[] })

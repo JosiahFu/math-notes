@@ -1,18 +1,15 @@
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import {
     BlockData,
-    ControlledComponentProps,
     Direction,
-    KeyedArray,
     MathSegmentData,
-    NavigationProps,
     NoteBlockData,
     Segment,
     TableBlockData,
     TextSegmentData,
-    WithKey,
-    addKey,
-} from '../../data';
+} from '../../data/notes';
+import { KeyedArray, WithKey, addKey } from '../../data/keys';
+import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
 import TextSegment from './TextSegment';

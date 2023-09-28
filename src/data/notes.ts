@@ -1,16 +1,4 @@
-import { Direction as MQDirection } from 'react-mathquill';
-
-type WithKey<T extends object> = T & { key: string | number };
-
-type KeyedArray<T extends object> = WithKey<T>[];
-
-let currentKey = 0;
-
-function addKey<T extends object>(object: T): WithKey<T> {
-    (object as WithKey<T>).key = currentKey;
-    currentKey++;
-    return object as WithKey<T>;
-}
+import { KeyedArray, addKey } from './keys';
 
 interface TextSegmentData {
     type: 'TEXT';
@@ -81,33 +69,9 @@ interface DocumentData {
     title: string;
 }
 
-interface ControlledComponentProps<T> {
-    value: T;
-    onChange: (value: T) => void;
-}
-
 type Direction = 'left' | 'right' | 'top' | 'bottom';
 
-const MQDir = {
-    left: -1 as MQDirection.L,
-    right: 1 as MQDirection.R,
-};
-
-interface NavigationProps {
-    focused: boolean;
-    focusSide: Direction | undefined;
-    onFocus: () => void;
-    onUpOut?: () => void;
-    onDownOut?: () => void;
-    onLeftOut?: () => void;
-    onRightOut?: () => void;
-    onInsertAfter?: () => void;
-    onDeleteOut?: () => void;
-}
-
 export {
-    addKey,
-    MQDir,
     TextSegmentData,
     MathSegmentData,
     NoteBlockData,
@@ -115,12 +79,8 @@ export {
     EmbedBlockData,
 };
 export type {
-    WithKey,
-    KeyedArray,
     Segment,
     BlockData,
     DocumentData,
-    ControlledComponentProps,
-    NavigationProps,
     Direction,
 };

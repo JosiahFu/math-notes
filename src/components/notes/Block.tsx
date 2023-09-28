@@ -1,10 +1,6 @@
-import {
-    BlockData,
-    ControlledComponentProps,
-    KeyedArray,
-    NavigationProps,
-    WithKey,
-} from '../../data';
+import { BlockData } from '../../data/notes';
+import { KeyedArray, WithKey } from '../../data/keys';
+import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import NoteBlock from './NoteBlock';
 import TableBlock from './TableBlock';
 import { KeyboardEventHandler } from 'react';

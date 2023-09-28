@@ -1,9 +1,6 @@
-import {
-    ControlledComponentProps,
-    MathSegmentData,
-    NavigationProps,
-    WithKey,
-} from '../../data';
+import { MathSegmentData } from '../../data/notes';
+import { WithKey } from '../../data/keys';
+import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import MathInput from './MathInput';
 import { usePropState } from '@tater-archives/react-use-destructure';
 
