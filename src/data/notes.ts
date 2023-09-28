@@ -73,8 +73,4 @@ export {
     TableBlockData,
     EmbedBlockData,
 };
-export type {
-    Segment,
-    BlockData,
-    Direction,
-};
+export type { Segment, BlockData, Direction };

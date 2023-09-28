@@ -18,22 +18,26 @@ type SerializedDocument = {
     meta?: string;
     blocks: SerializedBlocks;
     version: 3;
-}
+};
 
-function serializeDocument(title: string, blocks: KeyedArray<BlockData>): SerializedDocument {
+function serializeDocument(
+    title: string,
+    blocks: KeyedArray<BlockData>
+): SerializedDocument {
     return {
         title,
         meta: `Open this document at ${window.location.href}`,
         blocks: blocks.map(block => {
-        const output = omit(block, 'key');
+            const output = omit(block, 'key');
 
-        if (block.type === 'NOTE') {
-            const segments = block.content.map(e => omit(e, 'key'));
-            return { ...output, content: segments };
-        }
+            if (block.type === 'NOTE') {
+                const segments = block.content.map(e => omit(e, 'key'));
+                return { ...output, content: segments };
+            }
 
-        return output;
-        }) as SerializedBlocks, version: 3
+            return output;
+        }) as SerializedBlocks,
+        version: 3,
     };
 }
 
@@ -66,7 +70,11 @@ function documentToMarkdown(
                         return `${indentSpaces}- ${block.content
                             .map(e =>
                                 e.type === 'MATH'
-                                    ? block.content.every(segment => segment.type === 'MATH' || segment.content === '')
+                                    ? block.content.every(
+                                          segment =>
+                                              segment.type === 'MATH' ||
+                                              segment.content === ''
+                                      )
                                         ? `$$${e.content}$$`
                                         : `$${e.content}$`
                                     : e.content

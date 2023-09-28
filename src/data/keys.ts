@@ -1,4 +1,4 @@
-type WithKey<T extends object> = T & { key: string | number; };
+type WithKey<T extends object> = T & { key: string | number };
 
 type KeyedArray<T extends object> = WithKey<T>[];
 

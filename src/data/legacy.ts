@@ -6,8 +6,8 @@ type SliceAfter<T extends unknown[], U extends T[number]> = T extends [
     ...infer Rest,
 ]
     ? First extends U
-    ? Rest
-    : SliceAfter<Rest, U>
+        ? Rest
+        : SliceAfter<Rest, U>
     : never;
 
 type LegacyFieldType = 'MATH' | 'TEXT';
@@ -25,7 +25,7 @@ interface V2 {
     version: 2;
 }
 
-interface V3 extends SerializedDocument { }
+interface V3 extends SerializedDocument {}
 
 //  ==================
 
@@ -53,10 +53,10 @@ function fixV2(data: NewerThan<V1>): asserts data is NewerThan<V2> {
                     content:
                         block.type === 'MATH'
                             ? [
-                                TextSegmentData(''),
-                                MathSegmentData(block.value),
-                                TextSegmentData(''),
-                            ]
+                                  TextSegmentData(''),
+                                  MathSegmentData(block.value),
+                                  TextSegmentData(''),
+                              ]
                             : [TextSegmentData(block.value)],
                     indent: index === 0 ? 0 : 1,
                     isAnswer: block.isAnswer,
