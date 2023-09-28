@@ -7,14 +7,24 @@ import {
 } from './notes';
 import { KeyedArray, addKey } from './keys';
 
-type SerializedDocument = (
+type SerializedBlocks = (
     | (Omit<NoteBlockData, 'content'> & { content: Segment[] })
     | TableBlockData
     | EmbedBlockData
 )[];
 
-function serializeDocument(blocks: KeyedArray<BlockData>): SerializedDocument {
-    return blocks.map(block => {
+type SerializedDocument = {
+    title: string;
+    meta?: string;
+    blocks: SerializedBlocks;
+    version: 3;
+}
+
+function serializeDocument(title: string, blocks: KeyedArray<BlockData>): SerializedDocument {
+    return {
+        title,
+        meta: `Open this document at ${window.location.href}`,
+        blocks: blocks.map(block => {
         const output = omit(block, 'key');
 
         if (block.type === 'NOTE') {
@@ -23,11 +33,12 @@ function serializeDocument(blocks: KeyedArray<BlockData>): SerializedDocument {
         }
 
         return output;
-    }) as SerializedDocument;
+        }) as SerializedBlocks, version: 3
+    };
 }
 
 function deserializeDocument(
-    serialized: SerializedDocument
+    serialized: SerializedBlocks
 ): KeyedArray<BlockData> {
     return serialized
         .map(e =>
@@ -96,4 +107,5 @@ function omit<T extends object, K extends keyof T>(
     return result as Omit<T, K>;
 }
 
+export type { SerializedDocument, SerializedBlocks };
 export { serializeDocument, deserializeDocument, documentToMarkdown };

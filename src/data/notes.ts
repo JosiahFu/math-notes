@@ -64,11 +64,6 @@ function EmbedBlockData(url: string, indent = 0): EmbedBlockData {
 
 type BlockData = NoteBlockData | TableBlockData | EmbedBlockData;
 
-interface DocumentData {
-    content: KeyedArray<BlockData>;
-    title: string;
-}
-
 type Direction = 'left' | 'right' | 'top' | 'bottom';
 
 export {
@@ -81,6 +76,5 @@ export {
 export type {
     Segment,
     BlockData,
-    DocumentData,
     Direction,
 };

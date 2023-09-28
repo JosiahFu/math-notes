@@ -7,7 +7,8 @@ import {
     documentToMarkdown,
     serializeDocument,
 } from './data/serialize';
-import { useDownload, useUpload } from './data/file';
+import { useDownload, useUpload } from './file';
+import { dataFixerUpper } from './data/legacy';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -19,7 +20,7 @@ function App() {
     const [exportLink, setExport] = useDownload();
 
     const handleUpload = useUpload(data => {
-        const document = JSON.parse(data);
+        const document = dataFixerUpper(JSON.parse(data));
         setTitle(document.title);
         setBlocks(deserializeDocument(document.blocks));
     });
@@ -46,12 +47,7 @@ function App() {
                 download='save.json'
                 onClick={() =>
                     setDownload(
-                        JSON.stringify({
-                            title,
-                            meta: `Open this document at ${window.location.href}`,
-                            blocks: serializeDocument(blocks),
-                            version: 4,
-                        })
+                        JSON.stringify(serializeDocument(title, blocks))
                     )
                 }
                 className='block w-max cursor-pointer hover:text-gray-700'>
