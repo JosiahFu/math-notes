@@ -66,7 +66,7 @@ function documentToMarkdown(
                         return `${indentSpaces}- ${block.content
                             .map(e =>
                                 e.type === 'MATH'
-                                    ? block.content.length === 3
+                                    ? block.content.every(segment => segment.type === 'MATH' || segment.content === '')
                                         ? `$$${e.content}$$`
                                         : `$${e.content}$`
                                     : e.content
