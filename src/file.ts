@@ -35,4 +35,8 @@ function useUpload(
     );
 }
 
-export { useDownload, useUpload };
+function safeFileName(text: string) {
+    return text.replace(/[/#%&{}\\<>*?$!'":@+`|= ]/g, '_');
+}
+
+export { useDownload, useUpload, safeFileName };

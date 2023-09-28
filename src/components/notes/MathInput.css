@@ -1,5 +1,6 @@
-/*You can't add class names to mathquill fields because it overwrites the
- native class names, so this exists*/
+/*You can't add tailwind class names to mathquill fields because it overwrites
+ * the native class names, so this is the workaround*/
+
 .mq-editable-field {
     @apply border-none shadow-none;
 }

@@ -7,7 +7,7 @@ import {
     documentToMarkdown,
     serializeDocument,
 } from './data/serialize';
-import { useDownload, useUpload } from './file';
+import { safeFileName, useDownload, useUpload } from './file';
 import { dataFixerUpper } from './data/legacy';
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
             <a
                 href={downloadLink}
                 target='_blank'
-                download='save.json'
+                download={`${safeFileName(title)}.json`}
                 onClick={() =>
                     setDownload(
                         JSON.stringify(serializeDocument(title, blocks))
@@ -56,14 +56,19 @@ function App() {
             <a
                 href={exportLink}
                 target='_blank'
-                download='export.md'
+                download={`${safeFileName(title)}.md`}
                 onClick={() => setExport(documentToMarkdown(title, blocks))}
                 className='block w-max cursor-pointer hover:text-gray-700'>
                 Export to markdown
             </a>
             <label className='block w-max cursor-pointer hover:text-gray-700'>
                 Upload
-                <input type='file' onChange={handleUpload} className='hidden' />
+                <input
+                    type='file'
+                    onChange={handleUpload}
+                    className='hidden'
+                    accept='.json, application/json'
+                />
             </label>
         </main>
     );
