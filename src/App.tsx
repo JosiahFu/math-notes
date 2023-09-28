@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BlockData, NoteBlockData } from './data/notes';
 import { KeyedArray, addKey } from './data/keys';
 import Document from './components/notes/Document';
@@ -7,8 +7,10 @@ import {
     documentToMarkdown,
     serializeDocument,
 } from './data/serialize';
-import { safeFileName, useDownload, useUpload } from './file';
+import { safeFileName } from './file';
 import { dataFixerUpper } from './data/legacy';
+import DownloadButton from './components/control/DownloadButton';
+import UploadButton from './components/control/UploadButton';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -16,14 +18,15 @@ function App() {
         addKey(NoteBlockData('')),
     ]);
 
-    const [downloadLink, setDownload] = useDownload();
-    const [exportLink, setExport] = useDownload();
+    useEffect(() => {
+        document.title = title ? `Math Notes - ${title}` : 'Math Notes';
+    }, [title]);
 
-    const handleUpload = useUpload(data => {
+    const handleUpload = (data: string) => {
         const document = dataFixerUpper(JSON.parse(data));
         setTitle(document.title);
         setBlocks(deserializeDocument(document.blocks));
-    });
+    };
 
     return (
         <main className='mx-auto max-w-5xl p-8'>
@@ -40,36 +43,21 @@ function App() {
                 on an empty line to create a table
             </p>
             <Document value={blocks} onChange={setBlocks} />
-            {/*These buttons should be extracted into components later */}
-            <a
-                href={downloadLink}
-                target='_blank'
-                download={`${safeFileName(title)}.json`}
-                onClick={() =>
-                    setDownload(
-                        JSON.stringify(serializeDocument(title, blocks))
-                    )
-                }
-                className='block w-max cursor-pointer hover:text-gray-700'>
+            <DownloadButton
+                filename={`${safeFileName(title) || 'Untitled'}.json`}
+                onDownload={() =>
+                    JSON.stringify(serializeDocument(title, blocks))
+                }>
                 Download
-            </a>
-            <a
-                href={exportLink}
-                target='_blank'
-                download={`${safeFileName(title)}.md`}
-                onClick={() => setExport(documentToMarkdown(title, blocks))}
-                className='block w-max cursor-pointer hover:text-gray-700'>
+            </DownloadButton>
+            <DownloadButton
+                filename={`${safeFileName(title) || 'Untitled'}.md`}
+                onDownload={() =>
+                    JSON.stringify(documentToMarkdown(title, blocks))
+                }>
                 Export to markdown
-            </a>
-            <label className='block w-max cursor-pointer hover:text-gray-700'>
-                Upload
-                <input
-                    type='file'
-                    onChange={handleUpload}
-                    className='hidden'
-                    accept='.json, application/json'
-                />
-            </label>
+            </DownloadButton>
+            <UploadButton onUpload={handleUpload}>Upload</UploadButton>
         </main>
     );
 }
