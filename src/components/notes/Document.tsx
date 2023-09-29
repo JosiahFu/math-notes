@@ -32,7 +32,7 @@ function Document({
     };
 
     return (
-        <div onKeyDown={handleKeyDown}>
+        <div className='mb-16 mt-4' onKeyDown={handleKeyDown}>
             <ArrayMap array={value} setArray={onChange} keyProp='key'>
                 {(
                     block,

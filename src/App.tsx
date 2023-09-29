@@ -74,25 +74,27 @@ function App() {
                 on an empty line to create a table
             </p>
             <Document value={blocks} onChange={setBlocks} />
-            <DownloadButton
-                filename={`${safeFileName(title) || 'Untitled'}.json`}
-                onDownload={provideDownload}>
-                <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
-                    Download
-                </div>
-            </DownloadButton>
-            <DownloadButton
-                filename={`${safeFileName(title) || 'Untitled'}.md`}
-                onDownload={provideExport}>
-                <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
-                    Export to markdown
-                </div>
-            </DownloadButton>
-            <UploadButton onUpload={handleUpload}>
-                <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
-                    Upload
-                </div>
-            </UploadButton>
+            <div className='fixed bottom-4 left-4 flex flex-row gap-4 bg-white p-4'>
+                <DownloadButton
+                    filename={`${safeFileName(title) || 'Untitled'}.json`}
+                    onDownload={provideDownload}>
+                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
+                        Download
+                    </div>
+                </DownloadButton>
+                <DownloadButton
+                    filename={`${safeFileName(title) || 'Untitled'}.md`}
+                    onDownload={provideExport}>
+                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
+                        Export to markdown
+                    </div>
+                </DownloadButton>
+                <UploadButton onUpload={handleUpload}>
+                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
+                        Upload
+                    </div>
+                </UploadButton>
+            </div>
         </main>
     );
 }
