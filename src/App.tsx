@@ -20,18 +20,21 @@ function App() {
 
     const saved = useRef(true);
 
+    // Track if document is unsaved
     useEffect(() => {
         saved.current = false;
     }, [blocks]);
 
-    // Set title
+    // Set tab title
     useEffect(() => {
         document.title = title ? `Math Notes - ${title}` : 'Math Notes';
     }, [title]);
 
+    // Add handler to prevent unloading page when unsaved
     useEffect(() => {
         const handler = (event: BeforeUnloadEvent) => {
-            if (!saved.current) {
+            // Disable prevent reload if in DEV mode
+            if (import.meta.env.PROD && !saved.current) {
                 event.preventDefault();
             }
         };

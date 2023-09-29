@@ -35,12 +35,14 @@ function NoteBlock({
         [index: number, side: Direction | undefined] | undefined
     >();
 
+    // Handle Focusing
     useEffect(() => {
         if (focused && focusedSegment === undefined) {
             setFocusedSegment([0, undefined]);
         }
     }, [focused, focusedSegment]);
 
+    // Should this be moved to Document?
     const handleChange = (newContent: KeyedArray<Segment>) => {
         if (
             onReplace &&
@@ -56,7 +58,8 @@ function NoteBlock({
                         ],
                         value.indent
                     )
-                )
+                ),
+                addKey(NoteBlockData('', value.indent)) // Temporary fix until I find a more elegant solution to insert blocks after a table
             );
             return;
         }
@@ -119,7 +122,11 @@ function NoteBlock({
                         }}
                         last={index === content.length - 1}
                         onDeleteOut={() => {
-                            if (content.length === 1) onDeleteOut?.();
+                            if (content.length === 1) {
+                                onDeleteOut?.();
+                            } else {
+                                setFocusedSegment([index - 1, undefined]);
+                            }
                         }}
                         {...props}
                     />

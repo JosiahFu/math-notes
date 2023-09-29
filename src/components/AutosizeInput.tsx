@@ -40,6 +40,7 @@ const AutosizeInput = forwardRef(
             inputRef.current = element;
         };
 
+        // Adjust size of input
         useLayoutEffect(() => {
             if (disableSizing || !inputRef.current) return;
             inputRef.current.style.width = '0';
@@ -49,6 +50,7 @@ const AutosizeInput = forwardRef(
             )}px`;
         });
 
+        // Unset input size when disableSizing is turned on
         useEffect(() => {
             if (!disableSizing || !inputRef.current) return;
             inputRef.current.style.width = '';

@@ -6,8 +6,6 @@ import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import MathInput from './MathInput';
 
-// Table still has weird navigation behavior, revert necessary?
-
 // This code is going to be absolutely horrible to debug later
 function TableBlock({
     value,
@@ -27,6 +25,7 @@ function TableBlock({
         Direction | undefined
     >();
 
+    // Handle focusing
     useEffect(() => {
         if (focused) {
             if (focusSide === 'bottom') setFocusedRow(cells.length - 1);
@@ -94,8 +93,11 @@ function TableBlock({
                                             }
                                             focusRight();
                                         },
-                                        onDelete() {
-                                            if (row.every(e => e === '')) {
+                                        onDeleteOut() {
+                                            if (
+                                                columnIndex === 0 &&
+                                                row.every(e => e === '')
+                                            ) {
                                                 if (
                                                     onDeleteOut &&
                                                     cells.length === 1

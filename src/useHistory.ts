@@ -5,6 +5,7 @@ function useHistory<T>(value: T, setValue: (value: T) => void) {
     const redoHistory = useRef<T[]>([]);
     const ignoreEdit = useRef(false);
 
+    // Add versions to history when value changes
     useEffect(() => {
         if (ignoreEdit.current) {
             ignoreEdit.current = false;
@@ -13,7 +14,7 @@ function useHistory<T>(value: T, setValue: (value: T) => void) {
 
         undoHistory.current.push(value);
         if (redoHistory.current.length > 1) redoHistory.current.length = 0; // Clear array
-    }, [value])
+    }, [value]);
 
     const handleUndo = () => {
         if (undoHistory.current.length <= 1) return;
@@ -21,15 +22,17 @@ function useHistory<T>(value: T, setValue: (value: T) => void) {
         ignoreEdit.current = true;
         redoHistory.current.push(undoHistory.current.pop()!);
         setValue(undoHistory.current[undoHistory.current.length - 1]);
-    }
+    };
 
     const handleRedo = () => {
         if (redoHistory.current.length === 0) return;
 
         ignoreEdit.current = true;
-        undoHistory.current.push(redoHistory.current[redoHistory.current.length - 1]);
+        undoHistory.current.push(
+            redoHistory.current[redoHistory.current.length - 1]
+        );
         setValue(redoHistory.current.pop()!);
-    }
+    };
 
     return [handleUndo, handleRedo];
 }

@@ -92,7 +92,16 @@ function Document({
                             }
                             onInsertAfter={() => {
                                 insertAfter(
-                                    addKey(NoteBlockData('', block.indent))
+                                    addKey(
+                                        NoteBlockData(
+                                            '',
+                                            // If the next block is a child of this one, make the new block also a child
+                                            value[index + 1]?.indent >
+                                                block.indent
+                                                ? block.indent + 1
+                                                : block.indent
+                                        )
+                                    )
                                 );
                                 setFocused([index + 1, 'top']);
                             }}
