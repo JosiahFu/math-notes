@@ -17,8 +17,7 @@ function DownloadButton({
             href={downloadLink}
             target='_blank'
             download={filename}
-            onClick={() => setDownload(onDownload())}
-            className='block w-max cursor-pointer hover:text-gray-700'>
+            onClick={() => setDownload(onDownload())}>
             {children}
         </a>
     );

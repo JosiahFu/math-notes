@@ -49,9 +49,19 @@ function App() {
         setBlocks(deserializeDocument(document.blocks));
     };
 
+    const provideDownload = () => {
+        saved.current = true;
+        return JSON.stringify(serializeDocument(title, blocks));
+    };
+
+    const provideExport = () => {
+        saved.current = true;
+        return JSON.stringify(documentToMarkdown(title, blocks));
+    };
+
     return (
-        <main className='mx-auto max-w-5xl p-8'>
-            <h1 className='text-4xl'>
+        <main className='mx-auto max-w-5xl p-8 print:p-0'>
+            <h1 className='my-8 text-4xl'>
                 <input
                     value={title}
                     onChange={event => setTitle(event.target.value)}
@@ -59,28 +69,30 @@ function App() {
                     className='w-full text-center outline-none'
                 />
             </h1>
-            <p className='text-gray-500'>
+            <p className='text-gray-500 print:hidden'>
                 Type <code>$$</code> to insert math, write <code>\table</code>{' '}
                 on an empty line to create a table
             </p>
             <Document value={blocks} onChange={setBlocks} />
             <DownloadButton
                 filename={`${safeFileName(title) || 'Untitled'}.json`}
-                onDownload={() => {
-                    saved.current = true;
-                    return JSON.stringify(serializeDocument(title, blocks));
-                }}>
-                Download
+                onDownload={provideDownload}>
+                <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
+                    Download
+                </div>
             </DownloadButton>
             <DownloadButton
                 filename={`${safeFileName(title) || 'Untitled'}.md`}
-                onDownload={() => {
-                    saved.current = true;
-                    return JSON.stringify(documentToMarkdown(title, blocks));
-                }}>
-                Export to markdown
+                onDownload={provideExport}>
+                <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
+                    Export to markdown
+                </div>
             </DownloadButton>
-            <UploadButton onUpload={handleUpload}>Upload</UploadButton>
+            <UploadButton onUpload={handleUpload}>
+                <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
+                    Upload
+                </div>
+            </UploadButton>
         </main>
     );
 }
