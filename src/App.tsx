@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BlockData, NoteBlockData } from './data/notes';
 import { KeyedArray, addKey } from './data/keys';
 import Document from './components/notes/Document';
@@ -18,9 +18,27 @@ function App() {
         addKey(NoteBlockData('')),
     ]);
 
+    const saved = useRef(true);
+
+    useEffect(() => {
+        saved.current = false;
+    }, [blocks]);
+
+    // Set title
     useEffect(() => {
         document.title = title ? `Math Notes - ${title}` : 'Math Notes';
     }, [title]);
+
+    useEffect(() => {
+        const handler = (event: BeforeUnloadEvent) => {
+            if (!saved.current) {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, []);
 
     const handleUpload = (data: string) => {
         const document = dataFixerUpper(JSON.parse(data));
@@ -45,16 +63,18 @@ function App() {
             <Document value={blocks} onChange={setBlocks} />
             <DownloadButton
                 filename={`${safeFileName(title) || 'Untitled'}.json`}
-                onDownload={() =>
-                    JSON.stringify(serializeDocument(title, blocks))
-                }>
+                onDownload={() => {
+                    saved.current = true;
+                    return JSON.stringify(serializeDocument(title, blocks));
+                }}>
                 Download
             </DownloadButton>
             <DownloadButton
                 filename={`${safeFileName(title) || 'Untitled'}.md`}
-                onDownload={() =>
-                    JSON.stringify(documentToMarkdown(title, blocks))
-                }>
+                onDownload={() => {
+                    saved.current = true;
+                    return JSON.stringify(documentToMarkdown(title, blocks));
+                }}>
                 Export to markdown
             </DownloadButton>
             <UploadButton onUpload={handleUpload}>Upload</UploadButton>

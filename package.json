@@ -17,6 +17,7 @@
     "@tater-archives/react-array-utils": "^2.2.3",
     "@tater-archives/react-use-debounce": "^1.0.5",
     "@tater-archives/react-use-destructure": "^1.1.2",
+    "@tater-archives/react-use-handler": "^1.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-mathquill": "^1.0.3"
