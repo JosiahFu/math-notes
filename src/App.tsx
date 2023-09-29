@@ -11,9 +11,9 @@ import { safeFileName } from './file';
 import { dataFixerUpper } from './data/legacy';
 import DownloadButton from './components/control/DownloadButton';
 import UploadButton from './components/control/UploadButton';
-import DownloadIcon from './assets/download.svg?react';
-import OpenIcon from './assets/open.svg?react';
-import MarkdownIcon from './assets/markdown.svg?react';
+import { DownloadIcon, OpenIcon, MarkdownIcon, CopyIcon } from './icons';
+import Dialog from './components/Dialog';
+import IconButton from './components/IconButton';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -22,6 +22,8 @@ function App() {
     ]);
 
     const saved = useRef(true);
+
+    const [exportShown, setExportShown] = useState(false);
 
     // Track if document is unsaved
     useEffect(() => {
@@ -77,27 +79,32 @@ function App() {
                 on an empty line to create a table
             </p>
             <Document value={blocks} onChange={setBlocks} />
+
             <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 lg:gap-3'>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
                     onDownload={provideDownload}>
-                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden'>
-                        <DownloadIcon className='h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10' />
-                    </div>
+                    <IconButton icon={DownloadIcon} />
                 </DownloadButton>
+                <UploadButton onUpload={handleUpload}>
+                    <IconButton icon={OpenIcon} />
+                </UploadButton>
+                <button onClick={() => setExportShown(true)}>
+                    <IconButton icon={MarkdownIcon} />
+                </button>
+            </div>
+
+            <Dialog
+                modal
+                open={exportShown}
+                onClose={() => setExportShown(false)}>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.md`}
                     onDownload={provideExport}>
-                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden'>
-                        <MarkdownIcon className='h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10' />
-                    </div>
+                    <IconButton icon={DownloadIcon} />
                 </DownloadButton>
-                <UploadButton onUpload={handleUpload}>
-                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden'>
-                        <OpenIcon className='h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10' />
-                    </div>
-                </UploadButton>
-            </div>
+                <IconButton icon={CopyIcon} />
+            </Dialog>
         </main>
     );
 }
