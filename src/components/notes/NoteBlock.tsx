@@ -125,7 +125,7 @@ function NoteBlock({
                             if (content.length === 1) {
                                 onDeleteOut?.();
                             } else {
-                                setFocusedSegment([index - 1, undefined]);
+                                setFocusedSegment([index - 1, 'right']);
                             }
                         }}
                         {...props}

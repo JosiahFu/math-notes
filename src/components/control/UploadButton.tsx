@@ -9,7 +9,7 @@ function UploadButton({
     children: ReactNode;
 }) {
     return (
-        <label className='block w-max cursor-pointer hover:text-gray-700'>
+        <label className='contents'>
             {children}
             <input
                 type='file'

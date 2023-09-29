@@ -11,6 +11,9 @@ import { safeFileName } from './file';
 import { dataFixerUpper } from './data/legacy';
 import DownloadButton from './components/control/DownloadButton';
 import UploadButton from './components/control/UploadButton';
+import DownloadIcon from './assets/download.svg?react';
+import OpenIcon from './assets/open.svg?react';
+import MarkdownIcon from './assets/markdown.svg?react';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -56,17 +59,17 @@ function App() {
 
     const provideExport = () => {
         saved.current = true;
-        return JSON.stringify(documentToMarkdown(title, blocks));
+        return documentToMarkdown(title, blocks);
     };
 
     return (
         <main className='mx-auto max-w-5xl p-8 print:p-0'>
-            <h1 className='my-8 text-4xl'>
+            <h1 className='my-8 text-3xl sm:text-4xl lg:text-5xl'>
                 <input
                     value={title}
                     onChange={event => setTitle(event.target.value)}
                     placeholder='Title'
-                    className='w-full text-center outline-none'
+                    className='w-full text-center outline-none placeholder:italic dark:placeholder:text-gray-600'
                 />
             </h1>
             <p className='text-gray-500 print:hidden'>
@@ -74,24 +77,24 @@ function App() {
                 on an empty line to create a table
             </p>
             <Document value={blocks} onChange={setBlocks} />
-            <div className='fixed bottom-4 left-4 flex flex-row gap-4 bg-white p-4'>
+            <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 lg:gap-3'>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
                     onDownload={provideDownload}>
-                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
-                        Download
+                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden'>
+                        <DownloadIcon className='h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10' />
                     </div>
                 </DownloadButton>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.md`}
                     onDownload={provideExport}>
-                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
-                        Export to markdown
+                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden'>
+                        <MarkdownIcon className='h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10' />
                     </div>
                 </DownloadButton>
                 <UploadButton onUpload={handleUpload}>
-                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 print:hidden'>
-                        Upload
+                    <div className='block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden'>
+                        <OpenIcon className='h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10' />
                     </div>
                 </UploadButton>
             </div>

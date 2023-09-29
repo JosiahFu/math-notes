@@ -6,7 +6,11 @@
 }
 
 .mq-editable-field.mq-focused {
-    @apply bg-gray-100 shadow-none;
+    @apply bg-gray-200 dark:bg-gray-700 shadow-none;
+}
+
+.mq-editable-field .mq-cursor {
+    @apply border-l-gray-800 dark:border-l-gray-300;
 }
 
 td .mq-editable-field {
