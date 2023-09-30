@@ -3,11 +3,11 @@ import { useDownload } from '../../file';
 
 function DownloadButton({
     filename,
-    onDownload,
+    content,
     children,
 }: {
     filename: string;
-    onDownload: () => string;
+    content: string | (() => string);
     children: ReactNode;
 }) {
     const [downloadLink, setDownload] = useDownload();
@@ -17,7 +17,9 @@ function DownloadButton({
             href={downloadLink}
             target='_blank'
             download={filename}
-            onClick={() => setDownload(onDownload())}>
+            onClick={() =>
+                setDownload(typeof content === 'string' ? content : content())
+            }>
             {children}
         </a>
     );

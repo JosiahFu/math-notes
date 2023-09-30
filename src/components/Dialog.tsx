@@ -2,42 +2,35 @@ import { MouseEventHandler, ReactNode, useEffect, useRef } from 'react';
 
 function Dialog({
     children,
-    open = false,
-    modal = false,
-    popover = false,
     onClose,
+    className,
 }: {
     children?: ReactNode;
-    open?: boolean;
-    modal?: boolean;
-    popover?: boolean;
     onClose?: () => void;
+    className?: string;
 }) {
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     const handleClick: MouseEventHandler<HTMLDialogElement> = event => {
-        if (event.target === dialogRef.current) {
-            dialogRef.current.close();
+        if (onClose && event.target === dialogRef.current) {
+            onClose();
         }
     };
 
     useEffect(() => {
-        if (open) {
-            if (popover) {
-                dialogRef.current?.showPopover();
-            } else if (modal) {
-                dialogRef.current?.showModal();
-            } else {
-                dialogRef.current?.show();
-            }
-        } else {
-            dialogRef.current?.close();
-        }
-    }, [modal, open, popover]);
+        dialogRef.current?.showModal();
+    }, []);
 
     return (
-        <dialog ref={dialogRef} onClose={onClose} onClick={handleClick}>
-            {children}
+        <dialog
+            ref={dialogRef}
+            className='backdrop:bg-neutral-900/50'
+            onClose={onClose}
+            onClick={handleClick}>
+            <div
+                className={`rounded-xl bg-white p-8 dark:bg-gray-800 ${className}`}>
+                {children}
+            </div>
         </dialog>
     );
 }

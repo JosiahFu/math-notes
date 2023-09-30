@@ -4,7 +4,7 @@ import Button from './Button';
 function IconButton({
     icon: Icon,
     ...otherProps
-}: HTMLAttributes<HTMLButtonElement> & {
+}: HTMLAttributes<HTMLDivElement> & {
     icon: FunctionComponent<SVGProps<SVGSVGElement>>;
 }) {
     return (

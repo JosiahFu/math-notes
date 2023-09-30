@@ -11,9 +11,9 @@ import { safeFileName } from './file';
 import { dataFixerUpper } from './data/legacy';
 import DownloadButton from './components/control/DownloadButton';
 import UploadButton from './components/control/UploadButton';
-import { DownloadIcon, OpenIcon, MarkdownIcon, CopyIcon } from './icons';
-import Dialog from './components/Dialog';
+import { DownloadIcon, OpenIcon, MarkdownIcon } from './icons';
 import IconButton from './components/IconButton';
+import ExportDialog from './components/ExportDialog';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -59,11 +59,6 @@ function App() {
         return JSON.stringify(serializeDocument(title, blocks));
     };
 
-    const provideExport = () => {
-        saved.current = true;
-        return documentToMarkdown(title, blocks);
-    };
-
     return (
         <main className='mx-auto max-w-5xl p-8 print:p-0'>
             <h1 className='my-8 text-3xl sm:text-4xl lg:text-5xl'>
@@ -83,28 +78,26 @@ function App() {
             <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 lg:gap-3'>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
-                    onDownload={provideDownload}>
+                    content={provideDownload}>
                     <IconButton icon={DownloadIcon} />
                 </DownloadButton>
                 <UploadButton onUpload={handleUpload}>
                     <IconButton icon={OpenIcon} />
                 </UploadButton>
-                <button onClick={() => setExportShown(true)}>
-                    <IconButton icon={MarkdownIcon} />
-                </button>
+                <IconButton
+                    icon={MarkdownIcon}
+                    onClick={() => setExportShown(true)}
+                />
             </div>
 
-            <Dialog
-                modal
-                open={exportShown}
-                onClose={() => setExportShown(false)}>
-                <DownloadButton
+            {exportShown && (
+                <ExportDialog
+                    content={documentToMarkdown(title, blocks)}
+                    onDownload={() => (saved.current = true)}
                     filename={`${safeFileName(title) || 'Untitled'}.md`}
-                    onDownload={provideExport}>
-                    <IconButton icon={DownloadIcon} />
-                </DownloadButton>
-                <IconButton icon={CopyIcon} />
-            </Dialog>
+                    onClose={() => setExportShown(false)}
+                />
+            )}
         </main>
     );
 }

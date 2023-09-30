@@ -10,13 +10,13 @@ function UploadButton({
 }) {
     return (
         <label className='contents'>
-            {children}
             <input
                 type='file'
                 onChange={useUpload(onUpload)}
                 className='hidden'
                 accept='.json, application/json'
             />
+            {children}
         </label>
     );
 }

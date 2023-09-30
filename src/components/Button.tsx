@@ -4,16 +4,16 @@ function Button({
     className,
     children,
     ...otherProps
-}: HTMLAttributes<HTMLButtonElement> & {
+}: HTMLAttributes<HTMLDivElement> & {
     className?: string;
     children?: ReactNode;
 }) {
     return (
-        <button
+        <div
             className={`block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden ${className}`}
             {...otherProps}>
             {children}
-        </button>
+        </div>
     );
 }
 

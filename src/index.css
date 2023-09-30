@@ -4,10 +4,14 @@
 
 @layer base {
     body {
-        @apply bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300 lg:text-xl;
+        @apply bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300 lg:text-xl selection:bg-gray-800/20 dark:selection:bg-gray-300/10;
     }
 
-    input {
+    input, textarea {
+        @apply bg-transparent text-inherit;
+    }
+    
+    dialog {
         @apply bg-transparent;
     }
 }
