@@ -96,7 +96,11 @@ function App() {
                 <button onClick={print}>
                     <IconButton icon={PrintIcon} title='Print' />
                 </button>
-                <button onClick={print}>
+                <button
+                    onClick={() => {
+                        alert('Choose "Save as PDF" as the Destination option');
+                        print();
+                    }}>
                     <IconButton icon={PDFIcon} title='Export as PDF' />
                 </button>
                 <button onClick={() => setExportShown(true)}>
