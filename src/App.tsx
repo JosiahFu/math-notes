@@ -11,7 +11,13 @@ import { safeFileName } from './file';
 import { dataFixerUpper } from './data/legacy';
 import DownloadButton from './components/control/DownloadButton';
 import UploadButton from './components/control/UploadButton';
-import { DownloadIcon, OpenIcon, MarkdownIcon } from './icons';
+import {
+    DownloadIcon,
+    OpenIcon,
+    MarkdownIcon,
+    PrintIcon,
+    PDFIcon,
+} from './icons';
 import IconButton from './components/IconButton';
 import ExportDialog from './components/ExportDialog';
 import Tooltip from './components/Tooltip';
@@ -82,15 +88,23 @@ function App() {
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
                     content={provideDownload}>
-                    <IconButton icon={DownloadIcon} />
+                    <IconButton icon={DownloadIcon} title='Save and download' />
                 </DownloadButton>
                 <UploadButton onUpload={handleUpload}>
-                    <IconButton icon={OpenIcon} />
+                    <IconButton icon={OpenIcon} title='Open file' />
                 </UploadButton>
-                <IconButton
-                    icon={MarkdownIcon}
-                    onClick={() => setExportShown(true)}
-                />
+                <button onClick={print}>
+                    <IconButton icon={PrintIcon} title='Print' />
+                </button>
+                <button onClick={print}>
+                    <IconButton icon={PDFIcon} title='Export as PDF' />
+                </button>
+                <button onClick={() => setExportShown(true)}>
+                    <IconButton
+                        icon={MarkdownIcon}
+                        title='Export as markdown'
+                    />
+                </button>
             </div>
 
             {exportShown && (

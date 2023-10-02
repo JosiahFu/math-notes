@@ -123,7 +123,7 @@ function TableBlock({
                                     };
 
                                     return (
-                                        <td className='border border-solid border-gray-400 p-0 text-center focus-within:bg-gray-200'>
+                                        <td className='border border-solid border-gray-400 p-0 text-center focus-within:bg-gray-200 dark:focus-within:bg-gray-700'>
                                             <MathInput
                                                 value={cell}
                                                 onChange={set}
