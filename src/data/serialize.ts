@@ -97,6 +97,8 @@ function documentToMarkdown(
                                 )
                                 .join('\n')
                         );
+                    case 'EMBED':
+                        return `${indentSpaces}- <iframe src=${block.url} width=900 height=500 style="border: none;" />`
                 }
             })
             .join('\n')

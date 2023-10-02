@@ -72,9 +72,10 @@ function App() {
             </h1>
             <Document value={blocks} onChange={setBlocks} />
 
-            <Tooltip>
+            <Tooltip className='fixed right-4 top-4'>
                 Type <code>$$</code> to insert math, write <code>\table</code>{' '}
-                on an empty line to create a table
+                and <code>\embed</code> on an empty line to create a table and
+                embed respectively
             </Tooltip>
 
             <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 lg:gap-3'>

@@ -4,6 +4,7 @@ import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import NoteBlock from './NoteBlock';
 import TableBlock from './TableBlock';
 import { KeyboardEventHandler } from 'react';
+import EmbedBlock from './EmbedBlock';
 
 function Block({
     value,
@@ -46,15 +47,23 @@ function Block({
                         {...otherProps}
                     />
                 );
+            case 'EMBED':
+                return (
+                    <EmbedBlock
+                        value={value}
+                        onChange={onChange}
+                        {...otherProps}
+                    />
+                );
         }
     })();
 
     return (
         <div
-            className='my-1 flex flex-row flex-wrap items-center'
+            className='my-1 flex flex-row items-start'
             onKeyDown={handleKeyDown}
             style={{ marginLeft: `${value.indent * 2}em` }}>
-            <div className='ml-2 mr-2 h-1 w-1 rounded-full bg-gray-400 dark:bg-gray-500' />
+            <div className='mx-2 my-3 h-1 w-1 flex-shrink-0 rounded-full bg-gray-400 dark:bg-gray-500' />
             {blockType}
         </div>
     );
