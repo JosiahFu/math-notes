@@ -27,6 +27,10 @@ function Block({
             onIndent?.(1);
         }
     };
+    
+    const handleBulletClick = () => {
+        otherProps.onFocus();
+    };
 
     const blockType = (() => {
         switch (value.type) {
@@ -63,7 +67,10 @@ function Block({
             className='my-1 flex flex-row items-start'
             onKeyDown={handleKeyDown}
             style={{ marginLeft: `${value.indent * 2}em` }}>
-            <div className='mx-2 my-3 h-1 w-1 flex-shrink-0 rounded-full bg-gray-400 dark:bg-gray-500' />
+            <div
+                className='flex-shrink-0 cursor-pointer px-2 py-3 after:block after:h-1 after:w-1 after:rounded-full after:bg-gray-400 after:dark:bg-gray-500'
+                onClick={handleBulletClick}
+            />
             {blockType}
         </div>
     );
