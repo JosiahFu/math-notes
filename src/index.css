@@ -15,3 +15,13 @@
         @apply bg-transparent;
     }
 }
+
+@layer components {
+    .button {
+        @apply block w-max cursor-pointer rounded-lg bg-gray-300 p-2 transition hover:opacity-80 dark:bg-gray-700 print:hidden
+    }
+    
+    .icon {
+        @apply h-8 w-8 fill-gray-800 dark:fill-gray-200 lg:h-10 lg:w-10 
+    }
+}

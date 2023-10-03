@@ -6,3 +6,4 @@ export { default as RecoveryIcon } from './assets/recovery.svg?react';
 export { default as InfoIcon } from './assets/info.svg?react';
 export { default as PrintIcon } from './assets/print.svg?react';
 export { default as PDFIcon } from './assets/pdf.svg?react';
+export { default as AnswerIcon } from './assets/answer.svg?react';

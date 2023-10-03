@@ -14,7 +14,8 @@ import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import MathSegment from './MathSegment';
 import TextSegment from './TextSegment';
-import { useEffect, useState } from 'react';
+import { KeyboardEventHandler, useEffect, useState } from 'react';
+import { AnswerIcon } from '../../icons';
 
 function NoteBlock({
     value,
@@ -31,6 +32,14 @@ function NoteBlock({
         onReplace?: (...blocks: KeyedArray<BlockData>) => void;
     }) {
     const [content, setContent] = usePropState(value, onChange, 'content');
+    const [isAnswer, setIsAnswer] = usePropState(value, onChange, 'isAnswer');
+
+    const handleKeyDown: KeyboardEventHandler = event => {
+        if (event.key === 'j' && event.ctrlKey) {
+            setIsAnswer(!isAnswer);
+            event.preventDefault();
+        }
+    };
 
     const [focusedSegment, setFocusedSegment] = useState<
         [index: number, side: Direction | undefined] | undefined
@@ -69,7 +78,11 @@ function NoteBlock({
     };
 
     return (
-        <div className='flex flex-grow flex-row flex-wrap items-center'>
+        <div
+            className={`group relative flex flex-grow flex-row flex-wrap items-center ${
+                isAnswer && 'rounded-md bg-cyan-400/25 p-1'
+            }`}
+            onKeyDown={handleKeyDown}>
             <ArrayMap array={content} setArray={handleChange} keyProp='key'>
                 {(segment, { set, replace }, index, { splice }) => {
                     const props = {
@@ -138,6 +151,13 @@ function NoteBlock({
                     );
                 }}
             </ArrayMap>
+            <div className='absolute right-1 top-1 hidden group-hover:block'>
+                <button
+                    className='button p-1'
+                    onClick={() => setIsAnswer(!isAnswer)}>
+                    <AnswerIcon className='icon h-5 w-5' />
+                </button>
+            </div>
         </div>
     );
 }

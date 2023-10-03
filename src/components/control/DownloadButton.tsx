@@ -5,10 +5,12 @@ function DownloadButton({
     filename,
     content,
     children,
+    className,
 }: {
     filename: string;
     content: string | (() => string);
     children: ReactNode;
+    className?: string;
 }) {
     const [downloadLink, setDownload] = useDownload();
 
@@ -19,7 +21,8 @@ function DownloadButton({
             download={filename}
             onClick={() =>
                 setDownload(typeof content === 'string' ? content : content())
-            }>
+            }
+            className={className}>
             {children}
         </a>
     );

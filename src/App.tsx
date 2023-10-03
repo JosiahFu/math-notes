@@ -18,7 +18,6 @@ import {
     PrintIcon,
     PDFIcon,
 } from './icons';
-import IconButton from './components/IconButton';
 import ExportDialog from './components/ExportDialog';
 import Tooltip from './components/Tooltip';
 
@@ -87,27 +86,26 @@ function App() {
             <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 lg:gap-3'>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
-                    content={provideDownload}>
-                    <IconButton icon={DownloadIcon} title='Save and download' />
+                    content={provideDownload}
+                    className='button'>
+                    <DownloadIcon className='icon' title='Save and download' />
                 </DownloadButton>
-                <UploadButton onUpload={handleUpload}>
-                    <IconButton icon={OpenIcon} title='Open file' />
+                <UploadButton onUpload={handleUpload} className='button'>
+                    <OpenIcon className='icon' title='Open file' />
                 </UploadButton>
-                <button onClick={print}>
-                    <IconButton icon={PrintIcon} title='Print' />
+                <button className='button' onClick={print}>
+                    <PrintIcon className='icon' title='Print' />
                 </button>
                 <button
+                    className='button'
                     onClick={() => {
                         alert('Choose "Save as PDF" as the Destination option');
                         print();
                     }}>
-                    <IconButton icon={PDFIcon} title='Export as PDF' />
+                    <PDFIcon className='icon' title='Export as PDF' />
                 </button>
-                <button onClick={() => setExportShown(true)}>
-                    <IconButton
-                        icon={MarkdownIcon}
-                        title='Export as markdown'
-                    />
+                <button className='button' onClick={() => setExportShown(true)}>
+                    <MarkdownIcon className='icon' title='Export as markdown' />
                 </button>
             </div>
 
