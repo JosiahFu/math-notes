@@ -27,6 +27,7 @@ function EmbedBlock({
     );
 
     const handleKeyDown: KeyboardEventHandler = event => {
+        const target = event.target as HTMLInputElement;
         switch (event.key) {
             case 'ArrowUp':
                 onUpOut?.();
@@ -38,12 +39,18 @@ function EmbedBlock({
                 onInsertAfter?.();
                 break;
             case 'Backspace':
-                if (url === '') {
-                    onDeleteOut?.();
-                } else {
-                    onUpOut?.();
+                if (
+                    target.selectionStart === target.selectionEnd &&
+                    target.selectionStart == 0
+                ) {
+                    if (url === '') {
+                        onDeleteOut?.();
+                    } else {
+                        onUpOut?.();
+                    }
+                    break;
                 }
-                break;
+                return;
             default:
                 return;
         }

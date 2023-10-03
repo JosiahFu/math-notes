@@ -108,7 +108,11 @@ function Document({
                             onDeleteOut={() => {
                                 if (value.length <= 1) return;
                                 remove();
-                                setFocused([index - 1, 'bottom']);
+                                if (index === 0) {
+                                    setFocused([index, 'top']);
+                                } else {
+                                    setFocused([index - 1, 'bottom']);
+                                }
                             }}
                             focused={index === focused?.[0]}
                             focusSide={
