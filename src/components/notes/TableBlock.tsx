@@ -5,6 +5,7 @@ import { ControlledComponentProps, NavigationProps } from '../../data/props';
 import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import MathInput from './MathInput';
+import { AddIcon, RemoveIcon } from '../../icons';
 
 // This code is going to be absolutely horrible to debug later
 function TableBlock({
@@ -33,8 +34,39 @@ function TableBlock({
         }
     }, [focusSide, focused, cells.length]);
 
+    const addColumn = () => {
+        setCells(cells.map(row => [...row, '']));
+    };
+
+    const removeColumn = () => {
+        setCells(cells.map(row => row.slice(0, -1)));
+    };
+
     return (
         <table className='border-collapse'>
+            <thead>
+                <tr>
+                    {cells[0].slice(0, -1).map((_, i) => (
+                        <th key={i}></th>
+                    ))}
+                    <th>
+                        {cells[0].length > 1 && (
+                            <button
+                                className='button float-right rounded-md p-1'
+                                onClick={removeColumn}>
+                                <RemoveIcon className='icon h-4 w-4' />
+                            </button>
+                        )}
+                    </th>
+                    <th>
+                        <button
+                            className='button rounded-md p-1'
+                            onClick={addColumn}>
+                            <AddIcon className='icon h-4 w-4' />
+                        </button>
+                    </th>
+                </tr>
+            </thead>
             <tbody>
                 <ArrayMap array={cells} setArray={setCells}>
                     {(row, { set: setRow, insertAfter, remove }, rowIndex) => (
@@ -87,32 +119,45 @@ function TableBlock({
                                         },
                                         onRightOut() {
                                             if (columnIndex >= row.length - 1) {
-                                                setCells(
-                                                    cells.map(e => [...e, ''])
-                                                );
+                                                addColumn();
                                             }
                                             focusRight();
                                         },
                                         onDeleteOut() {
-                                            if (
-                                                columnIndex === 0 &&
-                                                row.every(e => e === '')
-                                            ) {
-                                                if (
-                                                    onDeleteOut &&
-                                                    cells.length === 1
-                                                ) {
-                                                    onDeleteOut();
+                                            if (columnIndex === 0) {
+                                                if (row.every(e => e === '')) {
+                                                    if (
+                                                        onDeleteOut &&
+                                                        cells.length === 1
+                                                    ) {
+                                                        onDeleteOut();
+                                                        return;
+                                                    }
+                                                    remove();
+                                                    // Go to start of previous row
+                                                    setFocusedColumn(
+                                                        row.length - 1
+                                                    );
+                                                    setFocusedRow(rowIndex - 1);
+                                                    setFocusedDirection(
+                                                        'right'
+                                                    );
                                                     return;
                                                 }
-                                                remove();
-                                                // Go to start of previous row
-                                                setFocusedColumn(
-                                                    row.length - 1
+                                            } else if (
+                                                cells.every(
+                                                    e => e[columnIndex] === ''
+                                                )
+                                            ) {
+                                                setCells(
+                                                    cells.map(e =>
+                                                        e.filter(
+                                                            (_, i) =>
+                                                                i !==
+                                                                columnIndex
+                                                        )
+                                                    )
                                                 );
-                                                setFocusedRow(rowIndex - 1);
-                                                setFocusedDirection('right');
-                                                return;
                                             }
                                             focusLeft();
                                         },
