@@ -78,7 +78,7 @@ function EmbedBlock({
             <Tooltip
                 className='absolute right-6 top-6'
                 localStorageKey='embedHintShown'>
-                If you are using a Desmos embed make sure you save the link by
+                If you are using a Desmos embed, make sure you save the link by
                 clicking the share button
             </Tooltip>
             <iframe src={url} className='aspect-video rounded-md' />
