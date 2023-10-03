@@ -26,7 +26,7 @@ function ExportDialog({
         <Dialog onClose={onClose} className='flex flex-col gap-4'>
             <textarea
                 ref={textareaRef}
-                className='h-[60vh] w-[75vw] resize-none overscroll-contain rounded-lg bg-gray-100 p-4 font-mono text-sm text-gray-800 outline-none dark:bg-gray-850 dark:text-gray-300'
+                className='h-[60vh] w-[75vw] resize-none overscroll-contain rounded-lg bg-gray-100 p-4 font-mono text-sm outline-none dark:bg-gray-850 '
                 value={content}
                 readOnly
             />

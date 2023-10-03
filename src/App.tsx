@@ -17,9 +17,11 @@ import {
     MarkdownIcon,
     PrintIcon,
     PDFIcon,
+    FeedbackIcon,
 } from './icons';
 import ExportDialog from './components/ExportDialog';
 import Tooltip from './components/Tooltip';
+import Dialog from './components/Dialog';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -30,6 +32,7 @@ function App() {
     const saved = useRef(true);
 
     const [exportShown, setExportShown] = useState(false);
+    const [feedbackShown, setFeedbackShown] = useState(false);
 
     // Track if document is unsaved
     useEffect(() => {
@@ -119,6 +122,13 @@ function App() {
                 </button>
             </div>
 
+            <button
+                className='fixed bottom-4 right-4'
+                onClick={() => setFeedbackShown(true)}
+                title='Feedback'>
+                <FeedbackIcon className='h-4 w-4 cursor-pointer fill-current opacity-80 hover:opacity-100' />
+            </button>
+
             {exportShown && (
                 <ExportDialog
                     content={documentToMarkdown(title, blocks)}
@@ -126,6 +136,27 @@ function App() {
                     filename={`${safeFileName(title) || 'Untitled'}.md`}
                     onClose={() => setExportShown(false)}
                 />
+            )}
+
+            {feedbackShown && (
+                <Dialog onClose={() => setFeedbackShown(false)}>
+                    <h2 className='text-xl font-bold lg:text-2xl'>Feedback</h2>
+                    <p>
+                        Report issues or suggestions on{' '}
+                        <a
+                            href='https://github.com/JosiahFu/math-notes/issues'
+                            className='underline'>
+                            Github
+                        </a>{' '}
+                        or{' '}
+                        <a
+                            href='mailto:josiahfu@gmail.com'
+                            className='underline'>
+                            email me
+                        </a>
+                        .
+                    </p>
+                </Dialog>
             )}
         </main>
     );

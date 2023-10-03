@@ -24,7 +24,7 @@ function Dialog({
     return (
         <dialog
             ref={dialogRef}
-            className='backdrop:bg-neutral-900/50'
+            className='text-inherit backdrop:bg-neutral-900/50'
             onClose={onClose}
             onClick={handleClick}>
             <div

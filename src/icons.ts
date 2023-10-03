@@ -9,3 +9,4 @@ export { default as PDFIcon } from './assets/pdf.svg?react';
 export { default as AnswerIcon } from './assets/answer.svg?react';
 export { default as AddIcon } from './assets/add.svg?react';
 export { default as RemoveIcon } from './assets/remove.svg?react';
+export { default as FeedbackIcon } from './assets/feedback.svg?react';
