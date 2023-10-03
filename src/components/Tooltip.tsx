@@ -12,7 +12,6 @@ function Tooltip({
     localStorageKey: string;
 }) {
     const [showHint, setShowHint] = useLocalStorage(true, localStorageKey);
-    const [hovered, setHovered] = useState(false);
     const [clicked, setClicked] = useState(showHint);
 
     useEffect(() => {
@@ -30,20 +29,19 @@ function Tooltip({
     };
 
     return (
-        <div className={`inline-block print:hidden ${className}`}>
+        <div className={`group inline-block print:hidden ${className}`}>
             <div className='relative'>
                 <InfoIcon
                     className='h-4 w-4 cursor-pointer fill-current hover:brightness-110'
-                    onMouseEnter={() => setHovered(true)}
-                    onMouseLeave={() => setHovered(false)}
                     onClick={handleClicked}
                 />
 
-                {(hovered || clicked) && (
-                    <div className='absolute right-full -mt-[50%] mr-3 w-max -translate-y-1/2 rounded-md bg-black/60 p-2 text-sm text-white'>
-                        {children}
-                    </div>
-                )}
+                <div
+                    className={`absolute right-full -mt-[50%] mr-3 w-max -translate-y-1/2 rounded-md bg-black/60 p-2 text-sm text-white ${
+                        clicked ? 'block' : 'hidden group-hover:block'
+                    }`}>
+                    {children}
+                </div>
             </div>
         </div>
     );
