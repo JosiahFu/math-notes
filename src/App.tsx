@@ -89,25 +89,33 @@ function App() {
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
                     content={provideDownload}
-                    className='button'>
-                    <DownloadIcon className='icon' title='Save and download' />
+                    className='button'
+                    title='Save and download'>
+                    <DownloadIcon className='icon' />
                 </DownloadButton>
-                <UploadButton onUpload={handleUpload} className='button'>
-                    <OpenIcon className='icon' title='Open file' />
+                <UploadButton
+                    onUpload={handleUpload}
+                    className='button'
+                    title='Open file'>
+                    <OpenIcon className='icon' />
                 </UploadButton>
-                <button className='button' onClick={print}>
-                    <PrintIcon className='icon' title='Print' />
+                <button className='button' onClick={print} title='Print'>
+                    <PrintIcon className='icon' />
                 </button>
                 <button
                     className='button'
                     onClick={() => {
                         alert('Choose "Save as PDF" as the Destination option');
                         print();
-                    }}>
-                    <PDFIcon className='icon' title='Export as PDF' />
+                    }}
+                    title='Export as PDF'>
+                    <PDFIcon className='icon' />
                 </button>
-                <button className='button' onClick={() => setExportShown(true)}>
-                    <MarkdownIcon className='icon' title='Export as markdown' />
+                <button
+                    className='button'
+                    onClick={() => setExportShown(true)}
+                    title='Export as markdown'>
+                    <MarkdownIcon className='icon' />
                 </button>
             </div>
 

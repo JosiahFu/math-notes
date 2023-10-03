@@ -35,10 +35,14 @@ function ExportDialog({
                 <DownloadButton
                     filename={filename}
                     content={() => (onDownload?.(), content)}
-                    className='button'>
+                    className='button'
+                    title='Download'>
                     <DownloadIcon className='icon' />
                 </DownloadButton>
-                <button onClick={handleCopy} className='button'>
+                <button
+                    onClick={handleCopy}
+                    className='button'
+                    title='Copy text'>
                     <CopyIcon className='icon' />
                 </button>
             </div>

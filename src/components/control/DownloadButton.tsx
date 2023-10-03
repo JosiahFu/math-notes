@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 import { useDownload } from '../../file';
 
 function DownloadButton({
@@ -6,12 +6,16 @@ function DownloadButton({
     content,
     children,
     className,
+    ...otherProps
 }: {
     filename: string;
     content: string | (() => string);
     children: ReactNode;
     className?: string;
-}) {
+} & Omit<
+    HTMLAttributes<HTMLAnchorElement>,
+    'href' | 'target' | 'download' | 'onClick' | 'className' | 'content'
+>) {
     const [downloadLink, setDownload] = useDownload();
 
     return (
@@ -22,7 +26,8 @@ function DownloadButton({
             onClick={() =>
                 setDownload(typeof content === 'string' ? content : content())
             }
-            className={className}>
+            className={className}
+            {...otherProps}>
             {children}
         </a>
     );
