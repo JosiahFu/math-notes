@@ -69,6 +69,7 @@ function EmbedBlock({
         <div className='relative flex flex-grow flex-col gap-2 rounded-xl bg-gray-200 p-4 dark:bg-gray-700'>
             <input
                 ref={inputRef}
+                type='url'
                 className='rounded-md bg-gray-300 px-2 py-1 text-blue-700 outline-none dark:bg-gray-600 dark:text-blue-500'
                 value={debouncedUrl}
                 onChange={event => setDebouncedUrl(event.target.value)}
@@ -78,10 +79,13 @@ function EmbedBlock({
             <Tooltip
                 className='absolute right-6 top-6'
                 localStorageKey='embedHintShown'>
-                If you are using a Desmos embed, make sure you save the link by
-                clicking the share button
+                If you are using a Desmos embed, make sure you save the graph by
+                clicking the Desmos share button and replacing the embed link
             </Tooltip>
-            <iframe src={url} className='aspect-video rounded-md' />
+            <iframe
+                src={url}
+                className='aspect-video rounded-md bg-white/50 dark:bg-gray-800/50'
+            />
         </div>
     );
 }

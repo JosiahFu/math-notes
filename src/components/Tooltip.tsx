@@ -37,7 +37,7 @@ function Tooltip({
                 />
 
                 <div
-                    className={`absolute right-full -mt-[50%] mr-3 w-max -translate-y-1/2 rounded-md bg-black/60 p-2 text-sm text-white ${
+                    className={`absolute right-full -mt-[50%] mr-3 w-max max-w-lg -translate-y-4 rounded-md bg-black/60 p-2 text-sm text-white ${
                         clicked ? 'block' : 'hidden group-hover:block'
                     }`}>
                     {children}
