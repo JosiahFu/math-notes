@@ -75,7 +75,9 @@ function EmbedBlock({
                 onKeyDown={handleKeyDown}
                 onFocus={onFocus}
             />
-            <Tooltip className='absolute right-6 top-6'>
+            <Tooltip
+                className='absolute right-6 top-6'
+                localStorageKey='embedHintShown'>
                 If you are using a Desmos embed make sure you save the link by
                 clicking the share button
             </Tooltip>

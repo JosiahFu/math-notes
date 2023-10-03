@@ -1,22 +1,28 @@
 import { MouseEventHandler, ReactNode, useEffect, useState } from 'react';
 import { InfoIcon } from '../icons';
+import { useLocalStorage } from '@tater-archives/react-use-localstorage';
 
-// Left/right prop
 function Tooltip({
     className,
     children,
+    localStorageKey,
 }: {
     className?: string;
     children: ReactNode;
+    localStorageKey: string;
 }) {
+    const [showHint, setShowHint] = useLocalStorage(true, localStorageKey);
     const [hovered, setHovered] = useState(false);
-    const [clicked, setClicked] = useState(true);
+    const [clicked, setClicked] = useState(showHint);
 
     useEffect(() => {
-        const handler = () => setClicked(false);
+        const handler = () => {
+            if (showHint) setShowHint(false);
+            setClicked(false);
+        };
         window.addEventListener('click', handler);
         return () => window.removeEventListener('click', handler);
-    }, []);
+    }, [setClicked, setShowHint, showHint]);
 
     const handleClicked: MouseEventHandler = event => {
         setClicked(true);

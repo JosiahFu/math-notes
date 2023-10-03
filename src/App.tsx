@@ -77,7 +77,9 @@ function App() {
             </h1>
             <Document value={blocks} onChange={setBlocks} />
 
-            <Tooltip className='fixed right-4 top-4'>
+            <Tooltip
+                className='fixed right-4 top-4'
+                localStorageKey='usageHintShown'>
                 Type <code>$$</code> to insert math, write <code>\table</code>{' '}
                 and <code>\embed</code> on an empty line to create a table and
                 embed respectively
