@@ -48,10 +48,11 @@ function MathInput({
                     (direction === MQDir.right ? onRightOut : onLeftOut)?.();
                 },
                 edit: (mathfield: MathField) => {
+                    const latex = mathfield.latex();
                     if (supressEditEvent.current > 0) {
                         supressEditEvent.current--;
                     } else {
-                        onChange(mathfield.latex());
+                        onChange(latex);
                     }
                 },
                 enter: onInsertAfter,
