@@ -10,3 +10,4 @@ export { default as AnswerIcon } from './assets/answer.svg?react';
 export { default as AddIcon } from './assets/add.svg?react';
 export { default as RemoveIcon } from './assets/remove.svg?react';
 export { default as FeedbackIcon } from './assets/feedback.svg?react';
+export { default as DropdownIcon } from './assets/dropdown.svg?react';

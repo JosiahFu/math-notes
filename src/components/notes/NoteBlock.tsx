@@ -65,8 +65,7 @@ function NoteBlock({
                             ],
                             value.indent
                         )
-                    ),
-                    addKey(NoteBlockData('', value.indent)) // Temporary fix until I find a more elegant solution to insert blocks after a table
+                    )
                 );
                 return;
             } else if (newContent[0].content === '\\embed') {

@@ -10,6 +10,9 @@ export default {
         gray: {
           850: '#18202F'
         }
+      },
+      spacing: {
+        '2px': '2px'
       }
     },
   },

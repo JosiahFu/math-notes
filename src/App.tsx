@@ -88,7 +88,7 @@ function App() {
                 embed respectively
             </Tooltip>
 
-            <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 lg:gap-3'>
+            <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 print:hidden lg:gap-3'>
                 <DownloadButton
                     filename={`${safeFileName(title) || 'Untitled'}.json`}
                     content={provideDownload}
@@ -123,7 +123,7 @@ function App() {
             </div>
 
             <button
-                className='fixed bottom-4 right-4'
+                className='fixed bottom-4 right-4 print:hidden'
                 onClick={() => setFeedbackShown(true)}
                 title='Feedback'>
                 <FeedbackIcon className='h-4 w-4 cursor-pointer fill-current opacity-80 hover:opacity-100' />
