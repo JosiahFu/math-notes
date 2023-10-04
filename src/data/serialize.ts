@@ -67,7 +67,9 @@ function documentToMarkdown(
 
                 switch (block.type) {
                     case 'NOTE':
-                        return `${indentSpaces}- ${block.isAnswer ? '<mark>' : ''}${block.content
+                        return `${indentSpaces}- ${
+                            block.isAnswer ? '<mark>' : ''
+                        }${block.content
                             .map(e =>
                                 e.type === 'MATH'
                                     ? block.content.every(
@@ -98,7 +100,7 @@ function documentToMarkdown(
                                 .join('\n')
                         );
                     case 'EMBED':
-                        return `${indentSpaces}- <iframe src=${block.url} width=900 height=500 style="border: none;" />`
+                        return `${indentSpaces}- <iframe src=${block.url} width=900 height=500 style="border: none;" />`;
                 }
             })
             .join('\n')

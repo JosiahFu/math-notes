@@ -56,6 +56,7 @@ function Document({
 
     const [dropdownShown, setDropdownShown] = useState(false);
 
+    // Hide dropdown when clicked anywhere
     useEffect(() => {
         const handler = () => {
             setDropdownShown(false);
@@ -161,7 +162,7 @@ function Document({
                     );
                 }}
             </ArrayMap>
-            <div className='gap-2px relative flex flex-row justify-center print:hidden'>
+            <div className='relative flex flex-row justify-center gap-2px print:hidden'>
                 <button
                     className='button rounded-l-md rounded-r-none p-1'
                     onClick={() => addBlock(NoteBlockData(''))}>
@@ -176,7 +177,7 @@ function Document({
                     <DropdownIcon className='icon h-5 w-5' />
                 </button>
                 {dropdownShown && (
-                    <div className='gap-2px absolute left-1/2 top-full mt-1 flex flex-col'>
+                    <div className='absolute left-1/2 top-full mt-1 flex flex-col gap-2px'>
                         {addOptions.map(([label, provider], i) => (
                             <button
                                 key={i}

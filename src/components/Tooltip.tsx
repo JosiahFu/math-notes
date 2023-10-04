@@ -14,6 +14,7 @@ function Tooltip({
     const [showHint, setShowHint] = useLocalStorage(true, localStorageKey);
     const [clicked, setClicked] = useState(showHint);
 
+    // Hide hint when user clicks anywhere
     useEffect(() => {
         const handler = () => {
             if (showHint) setShowHint(false);

@@ -27,7 +27,7 @@ function Block({
             onIndent?.(1);
         }
     };
-    
+
     const handleBulletClick = () => {
         otherProps.onFocus();
     };
