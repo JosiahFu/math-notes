@@ -17,7 +17,6 @@ const mathquillConfigOptions: MathFieldConfig = {
         'sqrt pi tau theta langle rangle union intersection and or infinity int sum prod',
     autoOperatorNames:
         'log ln exp sin cos tan sec csc cot arcsin arccos arctan arcsec arccsc arccot sinh cosh tanh sech csch coth arcsinh arccosh arctanh arcsech arccsch arccoth',
-    autoSubscriptNumerals: true,
 };
 
 function MathInput({
