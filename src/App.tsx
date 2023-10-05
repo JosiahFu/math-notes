@@ -47,6 +47,7 @@ function App() {
     const [recoveryOptions, loadRecovery] = useRecovery(
         title,
         blocks,
+        saved,
         blocks => serializeDocument(title, blocks),
         loadSerialized
     );
