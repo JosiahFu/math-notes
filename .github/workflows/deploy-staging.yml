@@ -1,8 +1,8 @@
 name: Deploy React to gh-pages with staging branch
 
 on:
-    push:
-        branches: ['main', 'rewrite']
+    # push:
+    #     branches: ['main', 'rewrite']
 
     workflow_dispatch:
 

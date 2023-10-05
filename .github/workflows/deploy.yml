@@ -1,8 +1,8 @@
 name: Deploy React to gh-pages
 
 on:
-    # push:
-    #   branches: [ "main" ]
+    push:
+      branches: [ "main" ]
 
     workflow_dispatch:
 
@@ -12,6 +12,8 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3
+              with:
+                  ref: rewrite
 
             - uses: actions/setup-node@v3
               with:
@@ -20,7 +22,7 @@ jobs:
             - run: npm ci
 
             - name: Build app
-              run: PUBLIC_URL=https://JosiahFu.github.io/math-notes npm run build
+              run: npm run build
 
             - name: Upload GitHub Pages artifact
               uses: actions/upload-pages-artifact@v1.0.4
