@@ -24,7 +24,7 @@ jobs:
             - name: Build app
               run: npm run build
             
-            - run: find dist
+            - run: find public
 
             - name: Upload GitHub Pages artifact
               uses: actions/upload-pages-artifact@v1.0.4
