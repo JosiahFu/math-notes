@@ -1,86 +1,205 @@
-import React, { useEffect, useState } from 'react';
-import Notes from './notes/Notes';
-import { MathNoteState } from './notes/MathNoteField';
-import './App.css';
-import { DownloadButton, LoadButton, RecoveryButton, deleteRecovery, setRecovery } from './Saving';
-import { MaterialSymbol } from 'react-material-symbols';
-import 'react-material-symbols/dist/rounded.css';
+import { useEffect, useRef, useState } from 'react';
+import { BlockData, NoteBlockData } from './data/notes';
+import { KeyedArray, addKey } from './data/keys';
+import Document from './components/notes/Document';
+import {
+    SerializedDocument,
+    deserializeDocument,
+    documentToMarkdown,
+    serializeDocument,
+} from './data/serialize';
+import { safeFileName } from './file';
+import { dataFixerUpper } from './data/legacy';
+import DownloadButton from './components/control/DownloadButton';
+import UploadButton from './components/control/UploadButton';
+import {
+    DownloadIcon,
+    OpenIcon,
+    MarkdownIcon,
+    PrintIcon,
+    FeedbackIcon,
+    RecoveryIcon,
+} from './icons';
+import ExportDialog from './components/ExportDialog';
+import Tooltip from './components/Tooltip';
+import DialogButton from './components/DialogButton';
+import { useHistory } from './useHistory';
+import DropdownButton from './components/DropdownButton';
+import { useRecovery } from './useRecovery';
 
-// TODO: Duplicate button/key
-// TODO: Link Embed
-// TODO: Search and Replace
-// TODO: *Optional section titles
-// TODO: *Indenting
-// TODO: Section delete button
-// TODO: *Text then Math box
-// TODO: *Math Tables
-// TODO: Clear button
-// * Requires storage format changes
+function App() {
+    const [title, setTitle] = useState('');
+    const [blocks, setBlocks] = useState<KeyedArray<BlockData>>(() => [
+        addKey(NoteBlockData('')),
+    ]);
 
-function Title({ value, setValue, placeholder }: {
-    value: string,
-    setValue: (value: string) => void,
-    placeholder: string,
-}) {
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
+    const [undo, redo, replaceHistory, setSaved, saved] = useHistory(
+        blocks,
+        setBlocks
+    );
+
+    const loadSerialized = (serialized: SerializedDocument) => {
+        const document = dataFixerUpper(serialized);
+        setTitle(document.title);
+        replaceHistory(deserializeDocument(document.blocks));
     };
 
-    return (
-        <h1>
-            <input
-                type="text"
-                value={value}
-                placeholder={placeholder}
-                onChange={handleChange}
-            />
-        </h1>
+    const [recoveryOptions, loadRecovery] = useRecovery(
+        title,
+        blocks,
+        blocks => serializeDocument(title, blocks),
+        loadSerialized
     );
-}
 
-// TODO: Move local storage saving to Saving.tsx somehow?
-function App() {
-    const [sections, setSections] = useState<MathNoteState[][]>([[new MathNoteState()]]);
-    const [changes, setChanges] = useState(false);
-    const [title, setTitle] = useState('');
+    const savedRef = useRef(saved);
+    savedRef.current = saved;
 
+    // Set tab title
     useEffect(() => {
-        document.title = title || 'Math Notes'; // If blank
+        document.title = title ? `Math Notes - ${title}` : 'Math Notes';
     }, [title]);
 
-    const updateLastSave = () => {
-        setChanges(false);
-        deleteRecovery(title);
-    };
-
-    const handleChange = () => {
-        setChanges(true);
-        setRecovery(title, sections);
-    };
-
+    // Add handler to prevent unloading page when unsaved
     useEffect(() => {
-        const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
-        if (changes) {
-            window.addEventListener('beforeunload', preventUnload);
-            return () => window.removeEventListener('beforeunload', preventUnload);
-        }
-    }, [changes]);
+        const handler = (event: BeforeUnloadEvent) => {
+            // Disable prevent reload if in DEV mode
+            if (import.meta.env.PROD && !savedRef.current) {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, []);
+
+    const confirmReplace = () => {
+        return saved || confirm('Replace current document?');
+    };
+
+    const handleUpload = (data: string) => {
+        if (!confirmReplace()) return;
+        loadSerialized(JSON.parse(data));
+    };
+
+    const provideDownload = () => {
+        setSaved();
+        return JSON.stringify(serializeDocument(title, blocks));
+    };
 
     return (
-        <main className="app">
-            <Title value={title} setValue={setTitle} placeholder="Untitled Notes" />
-            <Notes sections={sections} setSections={setSections} onChange={handleChange} />
-            <div className="control-buttons">
-                <DownloadButton sections={sections} title={title || "Untitled Notes"} onClick={updateLastSave}>
-                    <MaterialSymbol icon="download" fill className="button load-button" size={40} grade={100} />
+        <main className='mx-auto max-w-5xl p-8 print:p-0'>
+            <h1 className='my-8 text-3xl sm:text-4xl lg:text-5xl'>
+                <input
+                    value={title}
+                    onChange={event => setTitle(event.target.value)}
+                    placeholder='Title'
+                    className='w-full text-center outline-none placeholder:italic dark:placeholder:text-gray-600'
+                />
+            </h1>
+
+            <Document
+                value={blocks}
+                onChange={setBlocks}
+                onUndo={undo}
+                onRedo={redo}
+            />
+
+            <Tooltip
+                className='fixed right-4 top-4'
+                localStorageKey='usageHintShown'>
+                Type <code>$$</code> to insert math, write <code>\table</code>{' '}
+                and <code>\embed</code> on an empty line to create a table and
+                embed respectively
+            </Tooltip>
+
+            <div className='fixed bottom-4 left-4 flex flex-row gap-2 rounded-lg bg-white/80 p-4 dark:bg-gray-800/80 print:hidden lg:gap-3'>
+                <DownloadButton
+                    filename={`${safeFileName(title) || 'Untitled'}.json`}
+                    content={provideDownload}
+                    className='button'
+                    title='Save and download'>
+                    <DownloadIcon className='icon' />
                 </DownloadButton>
-                <LoadButton setSections={setSections} setTitle={setTitle}>
-                    <MaterialSymbol icon="upload" fill className="button load-button" size={40} grade={100} />
-                </LoadButton>
-                <RecoveryButton onLoadRecovery={(title, sections) => { setTitle(title); setSections(sections); }}>
-                    <MaterialSymbol icon="history" fill className="button load-button" size={40} grade={100} />
-                </RecoveryButton>
+                <UploadButton
+                    onUpload={handleUpload}
+                    className='button'
+                    title='Open file'>
+                    <OpenIcon className='icon' />
+                </UploadButton>
+                <button className='button' onClick={print} title='Print'>
+                    <PrintIcon className='icon' />
+                </button>
+                <DialogButton
+                    className='button'
+                    dialogClassName='flex flex-col gap-4'
+                    title='Export as markdown'
+                    dialogContent={
+                        <ExportDialog
+                            content={documentToMarkdown(title, blocks)}
+                            onDownload={setSaved}
+                            filename={`${safeFileName(title) || 'Untitled'}.md`}
+                        />
+                    }>
+                    <MarkdownIcon className='icon' />
+                </DialogButton>
+                {recoveryOptions.length > 0 && (
+                    <DropdownButton
+                        className='button'
+                        title='Recover unsaved documents'
+                        dropdownContent={
+                            <div className='my-1 flex max-h-64 flex-col gap-2px'>
+                                {recoveryOptions.map((e, i) => (
+                                    <button
+                                        key={i}
+                                        className={`button w-auto px-2 py-1 text-left ${
+                                            i === 0
+                                                ? 'rounded-b-none '
+                                                : i ===
+                                                  recoveryOptions.length - 1
+                                                ? 'rounded-t-none'
+                                                : 'rounded-none'
+                                        }`}
+                                        onClick={() => {
+                                            if (!confirmReplace()) return;
+                                            loadRecovery(e);
+                                        }}>
+                                        {e || <em>Untitled</em>}
+                                    </button>
+                                ))}
+                            </div>
+                        }>
+                        <RecoveryIcon className='icon' />
+                    </DropdownButton>
+                )}
             </div>
+
+            <DialogButton
+                className='fixed bottom-4 right-4 print:hidden'
+                title='Feedback'
+                dialogContent={
+                    <>
+                        <h2 className='text-xl font-bold lg:text-2xl'>
+                            Feedback
+                        </h2>
+                        <p>
+                            Report issues or suggestions on{' '}
+                            <a
+                                href='https://github.com/JosiahFu/math-notes/issues'
+                                className='underline'>
+                                Github
+                            </a>{' '}
+                            or{' '}
+                            <a
+                                href='mailto:josiahfu@gmail.com'
+                                className='underline'>
+                                email me
+                            </a>
+                            .
+                        </p>
+                    </>
+                }>
+                <FeedbackIcon className='h-4 w-4 cursor-pointer fill-current opacity-80 hover:opacity-100' />
+            </DialogButton>
         </main>
     );
 }

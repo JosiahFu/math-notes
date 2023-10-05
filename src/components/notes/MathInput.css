@@ -1,0 +1,22 @@
+/*You can't add tailwind class names to mathquill fields because it overwrites
+ * the native class names, so this is the workaround*/
+
+.mq-editable-field {
+    @apply border-none shadow-none;
+}
+
+.mq-editable-field.mq-focused {
+    @apply bg-black/10 shadow-none dark:bg-white/10;
+}
+
+.mq-editable-field .mq-cursor {
+    @apply border-l-gray-800 dark:border-l-gray-300;
+}
+
+td .mq-editable-field {
+    @apply block;
+}
+
+td .mq-editable-field.mq-editable-field.mq-focused {
+    @apply bg-transparent;
+}

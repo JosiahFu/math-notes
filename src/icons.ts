@@ -1,0 +1,13 @@
+export { default as CopyIcon } from './assets/icons/copy.svg?react';
+export { default as MarkdownIcon } from './assets/icons/markdown.svg?react';
+export { default as DownloadIcon } from './assets/icons/download.svg?react';
+export { default as OpenIcon } from './assets/icons/open.svg?react';
+export { default as RecoveryIcon } from './assets/icons/recovery.svg?react';
+export { default as InfoIcon } from './assets/icons/info.svg?react';
+export { default as PrintIcon } from './assets/icons/print.svg?react';
+export { default as PDFIcon } from './assets/icons/pdf.svg?react';
+export { default as AnswerIcon } from './assets/icons/answer.svg?react';
+export { default as AddIcon } from './assets/icons/add.svg?react';
+export { default as RemoveIcon } from './assets/icons/remove.svg?react';
+export { default as FeedbackIcon } from './assets/icons/feedback.svg?react';
+export { default as DropdownIcon } from './assets/icons/dropdown.svg?react';
