@@ -20,14 +20,10 @@ type SerializedDocument = {
     version: 3;
 };
 
-function serializeDocument(
-    title: string,
+function serializeBlocks(
     blocks: KeyedArray<BlockData>
-): SerializedDocument {
-    return {
-        title,
-        meta: `Open this document at ${window.location.href}`,
-        blocks: blocks.map(block => {
+) {
+    return blocks.map(block => {
             const output = omit(block, 'key');
 
             if (block.type === 'NOTE') {
@@ -36,7 +32,17 @@ function serializeDocument(
             }
 
             return output;
-        }) as SerializedBlocks,
+    }) as SerializedBlocks
+}
+
+function serializeDocument(
+    title: string,
+    blocks: KeyedArray<BlockData>
+): SerializedDocument {
+    return {
+        title,
+        meta: `Open this document at ${window.location.href}`,
+        blocks: serializeBlocks(blocks),
         version: 3,
     };
 }
@@ -120,4 +126,4 @@ function omit<T extends object, K extends keyof T>(
 }
 
 export type { SerializedDocument, SerializedBlocks };
-export { serializeDocument, deserializeDocument, documentToMarkdown };
+export { serializeBlocks, serializeDocument, deserializeDocument, documentToMarkdown };

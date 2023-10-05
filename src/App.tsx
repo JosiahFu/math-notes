@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BlockData, NoteBlockData } from './data/notes';
 import { KeyedArray, addKey } from './data/keys';
 import Document from './components/notes/Document';
@@ -23,10 +23,9 @@ import {
 import ExportDialog from './components/ExportDialog';
 import Tooltip from './components/Tooltip';
 import DialogButton from './components/DialogButton';
-import { useLocalStorage } from '@tater-archives/react-use-localstorage';
-import { useDebounce } from '@tater-archives/react-use-debounce';
 import { useHistory } from './useHistory';
 import DropdownButton from './components/DropdownButton';
+import { useRecovery } from './useRecovery';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -34,37 +33,26 @@ function App() {
         addKey(NoteBlockData('')),
     ]);
 
-    const [recovery, setRecovery] = useLocalStorage<
-        Record<string, SerializedDocument>
-    >({}, 'recovery');
-    const recoveryLength = useMemo(
-        () => Object.keys(recovery).length,
-        [recovery]
-    );
-
     const [undo, redo, replaceHistory, setSaved, saved] = useHistory(
         blocks,
         setBlocks
     );
 
-    const savedRef = useRef(saved);
-    savedRef.current = saved;
+    const loadSerialized = (serialized: SerializedDocument) => {
+        const document = dataFixerUpper(serialized);
+        setTitle(document.title);
+        replaceHistory(deserializeDocument(document.blocks));
+    };
 
-    const debouncedSaveRecovery = useDebounce(
-        (title: string, blocks: KeyedArray<BlockData>) =>
-            setRecovery({
-                ...recovery,
-                [title]: serializeDocument(title, blocks),
-            }),
-        5000
+    const [recoveryOptions, loadRecovery] = useRecovery(
+        title,
+        blocks,
+        blocks => serializeDocument(title, blocks),
+        loadSerialized
     );
 
-    // Track if document is unsaved
-    useEffect(() => {
-        if (!saved) {
-            debouncedSaveRecovery(title, blocks);
-        }
-    }, [blocks, debouncedSaveRecovery, saved, title]);
+    const savedRef = useRef(saved);
+    savedRef.current = saved;
 
     // Set tab title
     useEffect(() => {
@@ -83,12 +71,6 @@ function App() {
         window.addEventListener('beforeunload', handler);
         return () => window.removeEventListener('beforeunload', handler);
     }, []);
-
-    const loadSerialized = (serialized: SerializedDocument) => {
-        const document = dataFixerUpper(serialized);
-        setTitle(document.title);
-        replaceHistory(deserializeDocument(document.blocks));
-    };
 
     const confirmReplace = () => {
         return saved || confirm('Replace current document?');
@@ -160,25 +142,26 @@ function App() {
                     }>
                     <MarkdownIcon className='icon' />
                 </DialogButton>
-                {recoveryLength > 0 && (
+                {recoveryOptions.length > 0 && (
                     <DropdownButton
                         className='button'
                         title='Recover unsaved documents'
                         dropdownContent={
                             <div className='my-1 flex max-h-64 flex-col gap-2px'>
-                                {Object.keys(recovery).map((e, i) => (
+                                {recoveryOptions.map((e, i) => (
                                     <button
                                         key={i}
                                         className={`button w-auto px-2 py-1 text-left ${
                                             i === 0
                                                 ? 'rounded-b-none '
-                                                : i === recoveryLength - 1
+                                                : i ===
+                                                  recoveryOptions.length - 1
                                                 ? 'rounded-t-none'
                                                 : 'rounded-none'
                                         }`}
                                         onClick={() => {
                                             if (!confirmReplace()) return;
-                                            loadSerialized(recovery[e]);
+                                            loadRecovery(e);
                                         }}>
                                         {e || <em>Untitled</em>}
                                     </button>
