@@ -55,22 +55,38 @@ function NoteBlock({
     // Should this be moved to Document?
     const handleChange = (newContent: KeyedArray<Segment>) => {
         if (onReplace && newContent.length === 1) {
-            if (newContent[0].content === '\\table') {
-                onReplace(
-                    addKey(
-                        TableBlockData(
-                            [
-                                ['', ''],
-                                ['', ''],
-                            ],
-                            value.indent
+            switch (newContent[0].content) {
+                case '\\table':
+                    onReplace(
+                        addKey(
+                            TableBlockData(
+                                [
+                                    ['', ''],
+                                    ['', ''],
+                                ],
+                                value.indent
+                            )
                         )
-                    )
-                );
-                return;
-            } else if (newContent[0].content === '\\embed') {
-                onReplace(addKey(EmbedBlockData('https://', value.indent)));
-                return;
+                    );
+                    return;
+                case '\\htable':
+                    onReplace(
+                        addKey(
+                            TableBlockData(
+                                [
+                                    ['x', 'y'],
+                                    ['', ''],
+                                ],
+                                value.indent,
+                                true
+                            )
+                        )
+                    );
+                    return;
+                case '\\embed':
+                    onReplace(addKey(EmbedBlockData('https://', value.indent)));
+                    return;
+                default:
             }
         }
         setContent(newContent);

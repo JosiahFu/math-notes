@@ -1,4 +1,11 @@
-import { MathSegmentData, TextSegmentData } from './notes';
+import {
+    EmbedBlockData,
+    MathSegmentData,
+    NoteBlockData,
+    Segment,
+    TableBlockData,
+    TextSegmentData,
+} from './notes';
 import { SerializedBlocks, SerializedDocument } from './serialize';
 
 type SliceAfter<T extends unknown[], U extends T[number]> = T extends [
@@ -25,11 +32,22 @@ interface V2 {
     version: 2;
 }
 
-interface V3 extends SerializedDocument {}
+interface V3 {
+    title: string;
+    meta?: string;
+    blocks: (
+        | (Omit<NoteBlockData, 'content'> & { content: Segment[] })
+        | Omit<TableBlockData, 'headers'>
+        | EmbedBlockData
+    )[];
+    version: 3;
+}
+
+interface V4 extends SerializedDocument {}
 
 //  ==================
 
-type Order = [V1, V2, V3];
+type Order = [V1, V2, V3, V4];
 
 type NewerThan<T extends Order[number]> = SliceAfter<Order, T>[number];
 
@@ -67,10 +85,19 @@ function fixV2(data: NewerThan<V1>): asserts data is NewerThan<V2> {
     }
 }
 
+function fixV3(data: NewerThan<V2>): asserts data is NewerThan<V3> {
+    (data as V4).blocks.forEach(e => {
+        if (e.type === 'TABLE') {
+            e.headers = false;
+        }
+    });
+}
+
 function dataFixerUpper(data: ImportedData): SerializedDocument {
     const fixed = structuredClone(data);
     fixV1(fixed);
     fixV2(fixed);
+    fixV3(fixed);
 
     return fixed;
 }

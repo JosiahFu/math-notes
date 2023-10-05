@@ -44,12 +44,14 @@ interface TableBlockData {
     type: 'TABLE';
     cells: string[][];
     indent: number;
+    headers: boolean;
 }
-function TableBlockData(cells: string[][], indent = 0): TableBlockData {
+function TableBlockData(cells: string[][], indent = 0, headers = false): TableBlockData {
     return {
         type: 'TABLE',
         cells,
         indent,
+        headers,
     };
 }
 

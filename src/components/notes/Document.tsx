@@ -23,6 +23,18 @@ const addOptions: [label: string, producer: () => BlockData][] = [
                 ['', ''],
             ]),
     ],
+    [
+        'Header Table',
+        () =>
+            TableBlockData(
+                [
+                    ['x', 'y'],
+                    ['', ''],
+                ],
+                0,
+                true
+            ),
+    ],
     ['Embed', () => EmbedBlockData('https://')],
     ['Desmos', () => EmbedBlockData('https://desmos.com/calculator')],
     ['Desmos Geometry', () => EmbedBlockData('https://desmos.com/geometry')],

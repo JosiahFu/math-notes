@@ -6,6 +6,7 @@ import { usePropState } from '@tater-archives/react-use-destructure';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import MathInput from './MathInput';
 import { AddIcon, RemoveIcon } from '../../icons';
+import TextInput from './TextInput';
 
 // This code is going to be absolutely horrible to debug later
 function TableBlock({
@@ -95,7 +96,18 @@ function TableBlock({
                                         setFocusedDirection('left');
                                     };
 
-                                    const navigationHandlers = {
+                                    const inputProps = {
+                                        value: cell,
+                                        onChange: set,
+                                        focused: cellFocused,
+                                        focusSide: cellFocused
+                                            ? focusedDirection
+                                            : undefined,
+                                        onFocus() {
+                                            onFocus();
+                                            setFocusedColumn(columnIndex);
+                                            setFocusedRow(rowIndex);
+                                        },
                                         onUpOut() {
                                             if (onUpOut && rowIndex <= 0) {
                                                 onUpOut();
@@ -167,26 +179,20 @@ function TableBlock({
                                         },
                                     };
 
-                                    return (
-                                        <td className='border border-solid border-gray-400 p-0 text-center focus-within:bg-black/10 dark:focus-within:bg-white/10'>
-                                            <MathInput
-                                                value={cell}
-                                                onChange={set}
-                                                focused={cellFocused}
-                                                focusSide={
-                                                    cellFocused
-                                                        ? focusedDirection
-                                                        : undefined
-                                                }
-                                                onFocus={() => {
-                                                    onFocus();
-                                                    setFocusedColumn(
-                                                        columnIndex
-                                                    );
-                                                    setFocusedRow(rowIndex);
-                                                }}
-                                                {...navigationHandlers}
+                                    const className =
+                                        'border border-solid border-gray-400 p-0 text-center focus-within:bg-black/10 dark:focus-within:bg-white/10';
+
+                                    return value.headers && rowIndex === 0 ? (
+                                        <th
+                                            className={`font-bold ${className}`}>
+                                            <TextInput
+                                                {...inputProps}
+                                                minWidth='100%'
                                             />
+                                        </th>
+                                    ) : (
+                                        <td className={className}>
+                                            <MathInput {...inputProps} />
                                         </td>
                                     );
                                 }}

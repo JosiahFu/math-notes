@@ -20,19 +20,17 @@ type SerializedDocument = {
     version: 3;
 };
 
-function serializeBlocks(
-    blocks: KeyedArray<BlockData>
-) {
+function serializeBlocks(blocks: KeyedArray<BlockData>) {
     return blocks.map(block => {
-            const output = omit(block, 'key');
+        const output = omit(block, 'key');
 
-            if (block.type === 'NOTE') {
-                const segments = block.content.map(e => omit(e, 'key'));
-                return { ...output, content: segments };
-            }
+        if (block.type === 'NOTE') {
+            const segments = block.content.map(e => omit(e, 'key'));
+            return { ...output, content: segments };
+        }
 
-            return output;
-    }) as SerializedBlocks
+        return output;
+    }) as SerializedBlocks;
 }
 
 function serializeDocument(
@@ -91,12 +89,14 @@ function documentToMarkdown(
                     case 'TABLE':
                         return (
                             `${indentSpaces}- ` +
-                            rep('|     ', block.cells[0].length) +
+                            (block.headers
+                                ? `|${block.cells[0].map(e => ` ${e} `).join('|')}`
+                                : rep('|     ', block.cells[0].length)) +
                             '|\n' +
                             `${indentSpaces}  ` +
                             rep('| --- ', block.cells[0].length) +
                             '|\n' +
-                            block.cells
+                            (block.headers ? block.cells.slice(1) : block.cells)
                                 .map(
                                     e =>
                                         `${indentSpaces}  |${e
@@ -126,4 +126,9 @@ function omit<T extends object, K extends keyof T>(
 }
 
 export type { SerializedDocument, SerializedBlocks };
-export { serializeBlocks, serializeDocument, deserializeDocument, documentToMarkdown };
+export {
+    serializeBlocks,
+    serializeDocument,
+    deserializeDocument,
+    documentToMarkdown,
+};
