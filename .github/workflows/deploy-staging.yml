@@ -13,7 +13,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
               with:
-                  ref: main
+                  ref: rewrite
 
             - uses: actions/setup-node@v3
               with:
@@ -22,11 +22,11 @@ jobs:
             - run: npm ci
 
             - name: Build app
-              run: PUBLIC_URL=https://JosiahFu.github.io/math-notes npm run build
+              run: npm run build
 
             - uses: actions/upload-artifact@v3
               with:
-                  path: build/*
+                  path: dist/*
                   name: build-main
 
     build-staging:

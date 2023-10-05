@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     svgr(),
   ],
-  base: '/math-notes/staging',
+  base: '/math-notes',
 })
