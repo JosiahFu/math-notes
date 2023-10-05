@@ -67,15 +67,12 @@ function fixV2(data: NewerThan<V1>): asserts data is NewerThan<V2> {
     }
 }
 
-/**
- * NOTE: Mutates data
- * @param data
- */
 function dataFixerUpper(data: ImportedData): SerializedDocument {
-    fixV1(data);
-    fixV2(data);
+    const fixed = structuredClone(data);
+    fixV1(fixed);
+    fixV2(fixed);
 
-    return data;
+    return fixed;
 }
 
 export { dataFixerUpper };
