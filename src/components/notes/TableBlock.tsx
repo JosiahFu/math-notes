@@ -47,10 +47,7 @@ function TableBlock({
         <table className='border-collapse'>
             <thead>
                 <tr>
-                    {cells[0].slice(0, -1).map((_, i) => (
-                        <th key={i}></th>
-                    ))}
-                    <th>
+                    <th colSpan={cells[0].length}>
                         {cells[0].length > 1 && (
                             <button
                                 className='button float-right rounded-md p-1'
