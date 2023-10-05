@@ -34,7 +34,7 @@ function MathInput({
 }: ControlledComponentProps<string> & NavigationProps) {
     const mathFieldRef = useRef<MathField>();
 
-    const supressEditEvent = useRef(2); // MathQuill emits 2 edit events on initialization for some reason
+    const supressEditEvent = useRef(import.meta.env.DEV ? 2 : 1); // EditableMathField has an effect which triggers the edit event at init
 
     // Update mathquill config
     useEffect(() => {

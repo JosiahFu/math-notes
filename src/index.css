@@ -13,7 +13,7 @@
     }
 
     dialog {
-        @apply bg-transparent;
+        @apply bg-transparent text-inherit;
     }
 }
 

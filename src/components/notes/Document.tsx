@@ -1,4 +1,4 @@
-import { KeyboardEventHandler, useEffect, useState } from 'react';
+import { KeyboardEventHandler, useState } from 'react';
 import {
     BlockData,
     Direction,
@@ -10,8 +10,8 @@ import { KeyedArray, addKey } from '../../data/keys';
 import { ControlledComponentProps } from '../../data/props';
 import { ArrayMap } from '@tater-archives/react-array-utils';
 import Block from './Block';
-import { useHistory } from '../../useHistory';
 import { AddIcon, DropdownIcon } from '../../icons';
+import DropdownButton from '../DropdownButton';
 
 const addOptions: [label: string, producer: () => BlockData][] = [
     ['Note', () => NoteBlockData('')],
@@ -30,40 +30,32 @@ const addOptions: [label: string, producer: () => BlockData][] = [
 ];
 
 function Document({
+    onUndo,
+    onRedo,
     value,
     onChange,
-}: ControlledComponentProps<KeyedArray<BlockData>>) {
+}: ControlledComponentProps<KeyedArray<BlockData>> & {
+    onUndo: () => void;
+    onRedo: () => void;
+}) {
     const [focused, setFocused] = useState<
         [index: number, side: Direction | undefined] | undefined
     >();
-
-    const [undo, redo] = useHistory(value, onChange);
 
     const handleKeyDown: KeyboardEventHandler = event => {
         if (!event.ctrlKey) return;
         switch (event.key) {
             case 'z':
-                undo();
+                onUndo();
                 break;
             case 'y':
-                redo();
+                onRedo();
                 break;
             default:
                 return;
         }
         event.preventDefault();
     };
-
-    const [dropdownShown, setDropdownShown] = useState(false);
-
-    // Hide dropdown when clicked anywhere
-    useEffect(() => {
-        const handler = () => {
-            setDropdownShown(false);
-        };
-        addEventListener('click', handler);
-        return () => removeEventListener('click', handler);
-    }, []);
 
     const addBlock = (block: BlockData) => {
         onChange([...value, addKey(block)]);
@@ -168,32 +160,28 @@ function Document({
                     onClick={() => addBlock(NoteBlockData(''))}>
                     <AddIcon className='icon h-6 w-6' />
                 </button>
-                <button
+                <DropdownButton
                     className='button rounded-l-none rounded-r-md p-0'
-                    onClick={event => {
-                        setDropdownShown(!dropdownShown);
-                        event.stopPropagation();
-                    }}>
+                    dropdownContent={
+                        <div className='my-1 flex flex-col gap-2px'>
+                            {addOptions.map(([label, provider], i) => (
+                                <button
+                                    key={i}
+                                    className={`button w-auto px-2 py-1 text-left text-base ${
+                                        i === 0
+                                            ? 'rounded-b-none '
+                                            : i === addOptions.length - 1
+                                            ? 'rounded-t-none'
+                                            : 'rounded-none'
+                                    }`}
+                                    onClick={() => addBlock(provider())}>
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+                    }>
                     <DropdownIcon className='icon h-5 w-5' />
-                </button>
-                {dropdownShown && (
-                    <div className='absolute left-1/2 top-full mt-1 flex flex-col gap-2px'>
-                        {addOptions.map(([label, provider], i) => (
-                            <button
-                                key={i}
-                                className={`button w-auto p-1 text-left text-base ${
-                                    i === 0
-                                        ? 'rounded-b-none '
-                                        : i === addOptions.length - 1
-                                        ? 'rounded-t-none'
-                                        : 'rounded-none'
-                                }`}
-                                onClick={() => addBlock(provider())}>
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-                )}
+                </DropdownButton>
             </div>
         </div>
     );

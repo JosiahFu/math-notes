@@ -1,17 +1,14 @@
 import { useRef } from 'react';
-import Dialog from './Dialog';
 import DownloadButton from './control/DownloadButton';
 import { CopyIcon, DownloadIcon } from '../icons';
 
 function ExportDialog({
     content,
     filename,
-    onClose,
     onDownload,
 }: {
     content: string;
     filename: string;
-    onClose?: () => void;
     onDownload?: () => void;
 }) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -23,7 +20,7 @@ function ExportDialog({
     };
 
     return (
-        <Dialog onClose={onClose} className='flex flex-col gap-4'>
+        <>
             <textarea
                 ref={textareaRef}
                 className='h-[60vh] w-[75vw] resize-none overscroll-contain rounded-lg bg-gray-100 p-4 font-mono text-sm outline-none dark:bg-gray-850 '
@@ -46,7 +43,7 @@ function ExportDialog({
                     <CopyIcon className='icon' />
                 </button>
             </div>
-        </Dialog>
+        </>
     );
 }
 

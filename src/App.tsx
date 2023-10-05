@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlockData, NoteBlockData } from './data/notes';
 import { KeyedArray, addKey } from './data/keys';
 import Document from './components/notes/Document';
 import {
+    SerializedDocument,
     deserializeDocument,
     documentToMarkdown,
     serializeDocument,
@@ -16,12 +17,16 @@ import {
     OpenIcon,
     MarkdownIcon,
     PrintIcon,
-    PDFIcon,
     FeedbackIcon,
+    RecoveryIcon,
 } from './icons';
 import ExportDialog from './components/ExportDialog';
 import Tooltip from './components/Tooltip';
-import Dialog from './components/Dialog';
+import DialogButton from './components/DialogButton';
+import { useLocalStorage } from '@tater-archives/react-use-localstorage';
+import { useDebounce } from '@tater-archives/react-use-debounce';
+import { useHistory } from './useHistory';
+import DropdownButton from './components/DropdownButton';
 
 function App() {
     const [title, setTitle] = useState('');
@@ -29,15 +34,37 @@ function App() {
         addKey(NoteBlockData('')),
     ]);
 
-    const saved = useRef(true);
+    const [recovery, setRecovery] = useLocalStorage<
+        Record<string, SerializedDocument>
+    >({}, 'recovery');
+    const recoveryLength = useMemo(
+        () => Object.keys(recovery).length,
+        [recovery]
+    );
 
-    const [exportShown, setExportShown] = useState(false);
-    const [feedbackShown, setFeedbackShown] = useState(false);
+    const [undo, redo, replaceHistory, setSaved, saved] = useHistory(
+        blocks,
+        setBlocks
+    );
+
+    const savedRef = useRef(saved);
+    savedRef.current = saved;
+
+    const debouncedSaveRecovery = useDebounce(
+        (title: string, blocks: KeyedArray<BlockData>) =>
+            setRecovery({
+                ...recovery,
+                [title]: serializeDocument(title, blocks),
+            }),
+        5000
+    );
 
     // Track if document is unsaved
     useEffect(() => {
-        saved.current = false;
-    }, [blocks]);
+        if (!saved) {
+            debouncedSaveRecovery(title, blocks);
+        }
+    }, [blocks, debouncedSaveRecovery, saved, title]);
 
     // Set tab title
     useEffect(() => {
@@ -48,7 +75,7 @@ function App() {
     useEffect(() => {
         const handler = (event: BeforeUnloadEvent) => {
             // Disable prevent reload if in DEV mode
-            if (import.meta.env.PROD && !saved.current) {
+            if (import.meta.env.PROD && !savedRef.current) {
                 event.preventDefault();
             }
         };
@@ -57,14 +84,23 @@ function App() {
         return () => window.removeEventListener('beforeunload', handler);
     }, []);
 
-    const handleUpload = (data: string) => {
-        const document = dataFixerUpper(JSON.parse(data));
+    const loadSerialized = (serialized: SerializedDocument) => {
+        const document = dataFixerUpper(serialized);
         setTitle(document.title);
-        setBlocks(deserializeDocument(document.blocks));
+        replaceHistory(deserializeDocument(document.blocks));
+    };
+
+    const confirmReplace = () => {
+        return saved || confirm('Replace current document?');
+    };
+
+    const handleUpload = (data: string) => {
+        if (!confirmReplace()) return;
+        loadSerialized(JSON.parse(data));
     };
 
     const provideDownload = () => {
-        saved.current = true;
+        setSaved();
         return JSON.stringify(serializeDocument(title, blocks));
     };
 
@@ -78,7 +114,13 @@ function App() {
                     className='w-full text-center outline-none placeholder:italic dark:placeholder:text-gray-600'
                 />
             </h1>
-            <Document value={blocks} onChange={setBlocks} />
+
+            <Document
+                value={blocks}
+                onChange={setBlocks}
+                onUndo={undo}
+                onRedo={redo}
+            />
 
             <Tooltip
                 className='fixed right-4 top-4'
@@ -105,59 +147,76 @@ function App() {
                 <button className='button' onClick={print} title='Print'>
                     <PrintIcon className='icon' />
                 </button>
-                <button
+                <DialogButton
                     className='button'
-                    onClick={() => {
-                        alert('Choose "Save as PDF" as the Destination option');
-                        print();
-                    }}
-                    title='Export as PDF'>
-                    <PDFIcon className='icon' />
-                </button>
-                <button
-                    className='button'
-                    onClick={() => setExportShown(true)}
-                    title='Export as markdown'>
+                    dialogClassName='flex flex-col gap-4'
+                    title='Export as markdown'
+                    dialogContent={
+                        <ExportDialog
+                            content={documentToMarkdown(title, blocks)}
+                            onDownload={setSaved}
+                            filename={`${safeFileName(title) || 'Untitled'}.md`}
+                        />
+                    }>
                     <MarkdownIcon className='icon' />
-                </button>
+                </DialogButton>
+                {recoveryLength > 0 && (
+                    <DropdownButton
+                        className='button'
+                        title='Recover unsaved documents'
+                        dropdownContent={
+                            <div className='my-1 flex max-h-64 flex-col gap-2px'>
+                                {Object.keys(recovery).map((e, i) => (
+                                    <button
+                                        key={i}
+                                        className={`button w-auto px-2 py-1 text-left ${
+                                            i === 0
+                                                ? 'rounded-b-none '
+                                                : i === recoveryLength - 1
+                                                ? 'rounded-t-none'
+                                                : 'rounded-none'
+                                        }`}
+                                        onClick={() => {
+                                            if (!confirmReplace()) return;
+                                            loadSerialized(recovery[e]);
+                                        }}>
+                                        {e || <em>Untitled</em>}
+                                    </button>
+                                ))}
+                            </div>
+                        }>
+                        <RecoveryIcon className='icon' />
+                    </DropdownButton>
+                )}
             </div>
 
-            <button
+            <DialogButton
                 className='fixed bottom-4 right-4 print:hidden'
-                onClick={() => setFeedbackShown(true)}
-                title='Feedback'>
+                title='Feedback'
+                dialogContent={
+                    <>
+                        <h2 className='text-xl font-bold lg:text-2xl'>
+                            Feedback
+                        </h2>
+                        <p>
+                            Report issues or suggestions on{' '}
+                            <a
+                                href='https://github.com/JosiahFu/math-notes/issues'
+                                className='underline'>
+                                Github
+                            </a>{' '}
+                            or{' '}
+                            <a
+                                href='mailto:josiahfu@gmail.com'
+                                className='underline'>
+                                email me
+                            </a>
+                            .
+                        </p>
+                    </>
+                }>
                 <FeedbackIcon className='h-4 w-4 cursor-pointer fill-current opacity-80 hover:opacity-100' />
-            </button>
-
-            {exportShown && (
-                <ExportDialog
-                    content={documentToMarkdown(title, blocks)}
-                    onDownload={() => (saved.current = true)}
-                    filename={`${safeFileName(title) || 'Untitled'}.md`}
-                    onClose={() => setExportShown(false)}
-                />
-            )}
-
-            {feedbackShown && (
-                <Dialog onClose={() => setFeedbackShown(false)}>
-                    <h2 className='text-xl font-bold lg:text-2xl'>Feedback</h2>
-                    <p>
-                        Report issues or suggestions on{' '}
-                        <a
-                            href='https://github.com/JosiahFu/math-notes/issues'
-                            className='underline'>
-                            Github
-                        </a>{' '}
-                        or{' '}
-                        <a
-                            href='mailto:josiahfu@gmail.com'
-                            className='underline'>
-                            email me
-                        </a>
-                        .
-                    </p>
-                </Dialog>
-            )}
+            </DialogButton>
         </main>
     );
 }
