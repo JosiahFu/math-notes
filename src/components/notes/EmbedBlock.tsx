@@ -84,6 +84,7 @@ function EmbedBlock({
             </Tooltip>
             <iframe
                 src={url}
+                loading='lazy'
                 className='aspect-video rounded-md bg-white/50 dark:bg-gray-800/50'
             />
         </div>
