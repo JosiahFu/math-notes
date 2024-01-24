@@ -74,7 +74,7 @@ function documentToMarkdown(
                 switch (block.type) {
                     case 'NOTE':
                         return `${indentSpaces}- ${
-                            block.isAnswer ? '<mark>' : ''
+                            block.isAnswer ? '> ' : ''
                         }${block.content
                             .map(e =>
                                 e.type === 'MATH'
@@ -87,7 +87,7 @@ function documentToMarkdown(
                                         : `$${e.content}$`
                                     : e.content
                             )
-                            .join('')}${block.isAnswer ? '</mark>' : ''}`;
+                            .join('')}`;
                     case 'TABLE':
                         return (
                             `${indentSpaces}- ` +
