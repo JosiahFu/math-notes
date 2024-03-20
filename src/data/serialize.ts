@@ -64,7 +64,8 @@ function rep(text: string, count: number) {
 function latexFix(latex: string) {
     return latex
         .replace(/\\lim_/g, '\\lim\\limits_')
-        .replace(/\\int_{ }\^{ }/g, '\\int ');
+        .replace(/\\int_{ }\^{ }(?=[A-Za-z])/g, '\\int ')
+        .replace(/\\int_{ }\^{ }(?![A-Za-z])/g, '\\int');
 }
 
 function documentToMarkdown(
