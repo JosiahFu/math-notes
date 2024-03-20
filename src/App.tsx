@@ -148,7 +148,7 @@ function App() {
                         className='button'
                         title='Recover unsaved documents'
                         dropdownContent={
-                            <div className='my-1 flex max-h-64 flex-col gap-2px rounded-md overflow-y-auto'>
+                            <div className='my-1 flex max-h-64 flex-col gap-2px rounded-lg overflow-y-auto'>
                                 {recoveryOptions.map((e, i) => (
                                     <button
                                         key={i}
