@@ -16,7 +16,7 @@ const mathquillConfigOptions: MathFieldConfig = {
     autoCommands:
         'sqrt pi tau theta langle rangle union intersection and or infinity infty int sum prod to',
     autoOperatorNames:
-        'log ln exp sin cos tan sec csc cot arcsin arccos arctan arcsec arccsc arccot sinh cosh tanh sech csch coth arcsinh arccosh arctanh arcsech arccsch arccoth',
+        'log ln exp sin cos tan sec csc cot arcsin arccos arctan arcsec arccsc arccot sinh cosh tanh sech csch coth arcsinh arccosh arctanh arcsech arccsch arccoth lim',
 };
 
 function MathInput({
@@ -34,7 +34,7 @@ function MathInput({
 }: ControlledComponentProps<string> & NavigationProps) {
     const mathFieldRef = useRef<MathField>();
 
-    const supressEditEvent = useRef(import.meta.env.DEV ? 2 : 1); // EditableMathField has an effect which triggers the edit event at init
+    const supressEditEvent = useRef(import.meta.env.DEV ? 2 : 0); // EditableMathField has an effect which triggers the edit event at init
 
     // Update mathquill config
     useEffect(() => {
@@ -47,6 +47,7 @@ function MathInput({
                     (direction === MQDir.right ? onRightOut : onLeftOut)?.();
                 },
                 edit: (mathfield: MathField) => {
+                    console.log('event');
                     const latex = mathfield.latex();
                     if (supressEditEvent.current > 0) {
                         supressEditEvent.current--;

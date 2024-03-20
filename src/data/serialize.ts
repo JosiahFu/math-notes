@@ -61,12 +61,18 @@ function rep(text: string, count: number) {
     return Array(count).fill(text).join('');
 }
 
+function latexFix(latex: string) {
+    return latex
+        .replace(/\\lim_/g, '\\lim\\limits_')
+        .replace(/\\int_{ }\^{ }/g, '\\int ');
+}
+
 function documentToMarkdown(
     title: string,
     blocks: KeyedArray<BlockData>
 ): string {
     return (
-        `# ${title}\n\n` +
+        (title ? `# ${title}\n\n` : '') +
         blocks
             .map(block => {
                 const indentSpaces = rep('  ', block.indent);
@@ -83,8 +89,8 @@ function documentToMarkdown(
                                               segment.type === 'MATH' ||
                                               segment.content === ''
                                       )
-                                        ? `$$${e.content}$$`
-                                        : `$${e.content}$`
+                                        ? `$$${latexFix(e.content)}$$`
+                                        : `$${latexFix(e.content)}$`
                                     : e.content
                             )
                             .join('')}`;

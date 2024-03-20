@@ -148,18 +148,11 @@ function App() {
                         className='button'
                         title='Recover unsaved documents'
                         dropdownContent={
-                            <div className='my-1 flex max-h-64 flex-col gap-2px'>
+                            <div className='my-1 flex max-h-64 flex-col gap-2px rounded-md overflow-y-auto'>
                                 {recoveryOptions.map((e, i) => (
                                     <button
                                         key={i}
-                                        className={`button w-auto px-2 py-1 text-left ${
-                                            i === 0
-                                                ? 'rounded-b-none '
-                                                : i ===
-                                                  recoveryOptions.length - 1
-                                                ? 'rounded-t-none'
-                                                : 'rounded-none'
-                                        }`}
+                                        className='button w-auto px-2 py-1 text-left rounded-none'
                                         onClick={() => {
                                             if (!confirmReplace()) return;
                                             loadRecovery(e);

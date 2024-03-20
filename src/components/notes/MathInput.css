@@ -20,3 +20,7 @@ td .mq-editable-field {
 td .mq-editable-field.mq-editable-field.mq-focused {
     @apply bg-transparent;
 }
+
+.mq-editable-field.mq-math-mode .mq-empty {
+    @apply dark:bg-gray-600;
+}
