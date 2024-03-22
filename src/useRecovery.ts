@@ -2,8 +2,17 @@ import { useDebounce } from '@tater-archives/react-use-debounce';
 import { useEffect } from 'react';
 import { useLocalStorage } from '@tater-archives/react-use-localstorage';
 
-function useRecovery<T, S>(name: string, value: T, saved: boolean, serialize: (value: T) => S, apply: (serialized: S) => void): [options: string[], recover: (name: string) => void] {
-    const [recovery, setRecovery] = useLocalStorage<Record<string, S>>({}, 'recovery');
+function useRecovery<T, S>(
+    name: string,
+    value: T,
+    saved: boolean,
+    serialize: (value: T) => S,
+    apply: (serialized: S) => void
+): [options: string[], recover: (name: string) => void] {
+    const [recovery, setRecovery] = useLocalStorage<Record<string, S>>(
+        {},
+        'recovery'
+    );
 
     const debouncedSaveRecovery = useDebounce(
         (name: string, value: T) =>
@@ -20,7 +29,7 @@ function useRecovery<T, S>(name: string, value: T, saved: boolean, serialize: (v
 
     const restore = (name: string) => {
         apply(recovery[name]);
-    }
+    };
 
     return [Object.keys(recovery), restore];
 }

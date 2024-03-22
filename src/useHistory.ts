@@ -1,13 +1,23 @@
 import { useEffect, useRef } from 'react';
 
-function useHistory<T>(value: T, setValue: (value: T) => void): [undo: () => void, redo: () => void, replace: (value: T) => void, setSaved: () => void, isSaved: boolean] {
+function useHistory<T>(
+    value: T,
+    setValue: (value: T) => void
+): [
+    undo: () => void,
+    redo: () => void,
+    replace: (value: T) => void,
+    setSaved: () => void,
+    isSaved: boolean,
+] {
     const undoHistory = useRef<T[]>([]); // undoHistory[last] is always equal to blocks
     const redoHistory = useRef<T[]>([]);
     const lastSaved = useRef<T>(value);
 
     // Add versions to history when value changes
     useEffect(() => {
-        if (value === undoHistory.current[undoHistory.current.length - 1]) return;
+        if (value === undoHistory.current[undoHistory.current.length - 1])
+            return;
 
         undoHistory.current.push(value);
         if (redoHistory.current.length > 1) redoHistory.current.length = 0; // Clear array
@@ -33,11 +43,11 @@ function useHistory<T>(value: T, setValue: (value: T) => void): [undo: () => voi
         undoHistory.current.length = 0;
         lastSaved.current = value;
         setValue(value);
-    }
+    };
 
     const handleSave = () => {
         lastSaved.current = value;
-    }
+    };
 
     const saved = value === lastSaved.current;
 

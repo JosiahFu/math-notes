@@ -43,13 +43,21 @@ function DropdownButton({
         }
 
         dropdownRef.current.show();
-        
-        setAbove(buttonRef.current.getBoundingClientRect().bottom + dropdownRef.current.offsetHeight > window.innerHeight);
+
+        setAbove(
+            buttonRef.current.getBoundingClientRect().bottom +
+                dropdownRef.current.offsetHeight >
+                window.innerHeight
+        );
     }, [opened, above]);
-    
+
     const dialog = (
         <div className='relative'>
-            <dialog className={`absolute m-0 left-0 ${above ? 'bottom-0' : 'top-0'} w-max`} ref={dropdownRef}>
+            <dialog
+                className={`absolute left-0 m-0 ${
+                    above ? 'bottom-0' : 'top-0'
+                } w-max`}
+                ref={dropdownRef}>
                 {dropdownContent}
             </dialog>
         </div>

@@ -161,13 +161,13 @@ function Document({
                     <AddIcon className='icon h-6 w-6' />
                 </button>
                 <DropdownButton
-                    className='button rounded-l-none rounded-r-md p-0 h-full'
+                    className='button h-full rounded-l-none rounded-r-md p-0'
                     dropdownContent={
-                        <div className='my-1 flex flex-col divide-y-2 divide-white dark:divide-gray-800 rounded-lg overflow-hidden'>
+                        <div className='my-1 flex flex-col divide-y-2 divide-white overflow-hidden rounded-lg dark:divide-gray-800'>
                             {addOptions.map(([label, provider], i) => (
                                 <button
                                     key={i}
-                                    className='button w-auto px-2 py-1 text-left text-base rounded-none'
+                                    className='button w-auto rounded-none px-2 py-1 text-left text-base'
                                     onClick={() => addBlock(provider())}>
                                     {label}
                                 </button>

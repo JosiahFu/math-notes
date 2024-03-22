@@ -2,7 +2,7 @@ name: Deploy React to gh-pages
 
 on:
     push:
-      branches: [ "main" ]
+        branches: ['main']
 
     workflow_dispatch:
 
@@ -21,7 +21,7 @@ jobs:
 
             - name: Build app
               run: npm run build
-            
+
             - name: Upload GitHub Pages artifact
               uses: actions/upload-pages-artifact@v3
               with:
