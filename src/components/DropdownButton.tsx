@@ -18,6 +18,7 @@ function DropdownButton({
     const dropdownRef = useRef<HTMLDialogElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [opened, setOpened] = useState(false);
+    const [above, setAbove] = useState(false);
 
     useEffect(() => {
         const handler = () => {
@@ -32,7 +33,7 @@ function DropdownButton({
         event.stopPropagation();
     };
 
-    // Show/hide box and reposition
+    // Show/hide box
     useEffect(() => {
         if (!dropdownRef.current || !buttonRef.current) return;
 
@@ -42,31 +43,26 @@ function DropdownButton({
         }
 
         dropdownRef.current.show();
-
-        const buttonBox = buttonRef.current.getBoundingClientRect();
-        const dropdownHeight = dropdownRef.current.offsetHeight;
-
-        const up = dropdownHeight > window.innerHeight - buttonBox.bottom;
-
-        dropdownRef.current.style.left = `${buttonBox.left}px`;
-        if (up) {
-            dropdownRef.current.style.top = `${
-                buttonBox.top - dropdownHeight
-            }px`;
-        } else {
-            dropdownRef.current.style.top = `${buttonBox.bottom}px`;
-        }
-    }, [opened]);
+        
+        setAbove(buttonRef.current.getBoundingClientRect().bottom + dropdownRef.current.offsetHeight > window.innerHeight);
+    }, [opened, above]);
+    
+    const dialog = (
+        <div className='relative'>
+            <dialog className={`absolute m-0 left-0 ${above ? 'bottom-0' : 'top-0'} w-max`} ref={dropdownRef}>
+                {dropdownContent}
+            </dialog>
+        </div>
+    );
 
     return (
-        <>
+        <div>
+            {above && dialog}
             <button ref={buttonRef} onClick={handleButtonClick} {...otherProps}>
                 {children}
             </button>
-            <dialog className='fixed m-0' ref={dropdownRef}>
-                {dropdownContent}
-            </dialog>
-        </>
+            {!above && dialog}
+        </div>
     );
 }
 

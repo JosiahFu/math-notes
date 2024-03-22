@@ -43,7 +43,7 @@ function EmbedBlock({
                     target.selectionStart === target.selectionEnd &&
                     target.selectionStart == 0
                 ) {
-                    if (url === '') {
+                    if (debouncedUrl === '') {
                         onDeleteOut?.();
                     } else {
                         onUpOut?.();
