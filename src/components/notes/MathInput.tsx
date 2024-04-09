@@ -47,7 +47,6 @@ function MathInput({
                     (direction === MQDir.right ? onRightOut : onLeftOut)?.();
                 },
                 edit: (mathfield: MathField) => {
-                    console.log('event');
                     const latex = mathfield.latex();
                     if (supressEditEvent.current > 0) {
                         supressEditEvent.current--;
