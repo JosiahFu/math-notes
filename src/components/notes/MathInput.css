@@ -13,6 +13,10 @@
     @apply border-l-gray-800 dark:border-l-gray-300;
 }
 
+.mq-editable-field .mq-overline {
+    @apply dark:border-t-gray-300;
+}
+
 td .mq-editable-field {
     @apply block;
 }
